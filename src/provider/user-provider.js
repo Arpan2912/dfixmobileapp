@@ -33,12 +33,22 @@ export default class UserProvider {
     }
 
     static getUserTokenFromLocalStorage() {
-        return AsyncStorage.getItem('token')
-            // .then(data => {
-            //     return data;
-            // })
-            // .catch(e => {
-            //     console.error(e);
-            // })
+        return AsyncStorage.getItem('token');
+    }
+
+    static updateUserDetail(usrObj){
+        return new Promise((resolve, reject) => {
+            fetch('http://192.168.43.72:3333/api/update-user', {
+                method: 'POST',
+                body: JSON.stringify(usrObj),
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                }
+            }).then((response) => response.json())
+                .then(data => {
+                    resolve(data);
+                })
+        })
     }
 }
