@@ -11,14 +11,16 @@ import {
     TouchableOpacity,
     Image,
     Dimensions,
-    ScrollView
+    ScrollView,
+    AsyncStorage
 } from 'react-native';
 import CameraModal from '../../modal/camera-modal'
 import {
     Container,
     Footer
 } from 'native-base';
-
+import Validation from '../../provider/validation';
+import StartDayProvider from '../../provider/startday-provider';
 var { height, width } = Dimensions.get('screen');
 
 export default class StartDay extends Component {
@@ -28,13 +30,21 @@ export default class StartDay extends Component {
     }
     state = {
         modalVisible: false,
-        base64: ''
+        userId: null,
+
+        base64: null,
+        base64Error: true,
+        base64ErrorMsg: null,
+
+        km: null,
+        kmError: true,
+        kmErrorMsg: null
     }
 
     static navigationOptions = {};
 
     static navigationOptions = ({ navigation }) => ({
-        title:navigation.state.params.title,
+        title: navigation.state.params.title,
         headerStyle: {
             backgroundColor: '#009688'
         },
@@ -50,8 +60,40 @@ export default class StartDay extends Component {
 
     saveImage = (base64) => {
         this.setState({ modalVisible: false });
-        this.setState({ base64: base64 })
+        this.setState({ base64: base64 });
+        if (!base64) {
+            this.setState({ base64Error: true, base64ErrorMsg: "Please capture image" });
+        } else {
+            this.setState({ base64Error: false, base64ErrorMsg: null });
+        }
     }
+
+    setKm(text) {
+        this.setState({ km: text });
+        let numberError = Validation.numberValidation(text);
+        if (numberError) {
+            this.setState({ kmError: numberError.error, kmErrorMsg: numberError.errorMsg });
+        } else {
+            this.setState({ kmError: false, kmErrorMsg: null });
+        }
+    }
+
+    startDay() {
+        AsyncStorage.getItem('userId')
+            .then(data => {
+                this.setState({ userId: data });
+            })
+        StartDayProvider.startDay(this.state.km, this.state.base64, this.state.userId)
+            .then(data => {
+                if(data.success===true){
+                    this.props.navigation.goBack();
+                }
+                // this.props.navigation.go
+            })
+    }
+
+
+
     render() {
 
         return (
@@ -63,7 +105,7 @@ export default class StartDay extends Component {
                         placeholder="Km"
                         underlineColorAndroid='#009688'
                         placeholderTextColor="#26A69A"
-                        onChangeText={(text) => this.setState({ km: text })}
+                        onChangeText={(text) => this.setKm(text)}
                     > </TextInput>
                     <CameraModal
                         modalVisible={this.state.modalVisible}
@@ -74,7 +116,7 @@ export default class StartDay extends Component {
                         <Text style={styles.textInsideButton}
                             onPress={this.openCameraModal}
                         >
-                            Capture Image 
+                            Capture Image
                         </Text>
                     </TouchableOpacity>
                     {this.state.base64 !== '' &&
@@ -92,7 +134,7 @@ export default class StartDay extends Component {
                 </View>
 
                 <Footer style={styles.FooterDesign}>
-                    <TouchableOpacity style={styles.FooterButton} onPress={() => this.props.navigation.navigate('StartDay')}>
+                    <TouchableOpacity disabled={this.state.kmError || this.state.base64Error} style={styles.FooterButton} onPress={() => this.startDay()}>
                         <Text style={styles.FooterText}>
                             Save
                         </Text>

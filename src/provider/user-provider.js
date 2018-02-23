@@ -36,7 +36,19 @@ export default class UserProvider {
         return AsyncStorage.getItem('token');
     }
 
-    static updateUserDetail(usrObj){
+    static setUserTokenToLocalStorage(token) {
+        return AsyncStorage.setItem('token', token);
+    }
+
+    static setUserIdToLocalStorage(userId) {
+        return AsyncStorage.setItem('userId', userId);
+    }
+
+    static getUserIdFromLocalStorage() {
+        return AsyncStorage.getItem('userId');
+    }
+
+    static updateUserDetail(usrObj) {
         return new Promise((resolve, reject) => {
             fetch('http://192.168.43.72:3333/api/update-user', {
                 method: 'POST',

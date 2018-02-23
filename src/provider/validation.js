@@ -23,4 +23,12 @@ export default class Validation {
         }
     }
 
+    static numberValidation(text) {
+        if (text) {
+            return null;
+        } else {
+            return { error: true, errorMsg: 'only numbers are valid' };
+        }
+    }
+
 }

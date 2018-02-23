@@ -28,7 +28,12 @@ export default class Password extends Component {
             .then(data => {
                 this.setState({ title: JSON.stringify(data) })
                 if (data.success === true) {
-                    AsyncStorage.setItem('token', data.data.token)
+                    Promise.all([
+                        UserProvider.setUserIdToLocalStorage(data.data.userId),
+                        UserProvider.setUserTokenToLocalStorage(data.data.token)
+                    ])
+                        // AsyncStorage.setItem('userId', data.data.userId);
+                        // AsyncStorage.setItem('token', data.data.token)
                         .then(data => {
                             this.props.navigation.navigate('Home');
                         })
