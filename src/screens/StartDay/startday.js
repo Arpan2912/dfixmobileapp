@@ -21,16 +21,25 @@ import {
 } from 'native-base';
 import Validation from '../../provider/validation';
 import StartDayProvider from '../../provider/startday-provider';
+import EventSingleton from '../../event/eventSingleton';
+import UserProvider from '../../provider/user-provider';
+
 var { height, width } = Dimensions.get('screen');
+let eventObj;
+let id = null;
+
 
 export default class StartDay extends Component {
     title = 'Start'
     constructor(props) {
         super();
+        id = props.navigation.state.params._id;
+        console.log("id", JSON.stringify(props));
     }
     state = {
         modalVisible: false,
         userId: null,
+        startday: null,
 
         base64: null,
         base64Error: true,
@@ -39,6 +48,18 @@ export default class StartDay extends Component {
         km: null,
         kmError: true,
         kmErrorMsg: null
+    }
+
+    componentWillMount() {
+        eventObj = EventSingleton.geteventEmitterObj();
+        UserProvider.getStartDayStatus()
+            .then(data => {
+                try {
+                    this.setState({ startday: data })
+                } catch (e) {
+
+                }
+            })
     }
 
     static navigationOptions = {};
@@ -85,17 +106,49 @@ export default class StartDay extends Component {
             })
         StartDayProvider.startDay(this.state.km, this.state.base64, this.state.userId)
             .then(data => {
-                if(data.success===true){
+                if (data.success === true) {
+                    let status = {
+                        startDayId: data.data._id,
+                        status: 'true'
+                    }
+                    // this.setState({ startday: status });
+                    if (this.props.navigation.state.params.title === 'Start Day')
+                        eventObj.emit('startday', 'true');
+                    UserProvider.setStartDayStatus(JSON.stringify(status));
                     this.props.navigation.goBack();
                 }
-                // this.props.navigation.go
+            })
+    }
+
+    stopDay() {
+        Promise.all(UserProvider.getUserIdFromLocalStorage, UserProvider.getStartDayStatus)
+            // AsyncStorage.getItem('userId')
+            .then(data => {
+
+                this.setState({ userId: data[0] });
+
+
+            })
+        console.log("id", id);
+        StartDayProvider.stopDay(this.state.km, this.state.base64, this.state.userId, id)
+            .then(data => {
+                if (data.success === true) {
+                    let status = {
+                        startDayId: data.data._id,
+                        status: 'true'
+                    }
+                    if (this.props.navigation.state.params.title === 'Stop Day')
+                        eventObj.emit('startday', 'false');
+                    UserProvider.setStartDayStatus(JSON.stringify(status));
+                    this.props.navigation.goBack();
+                }
             })
     }
 
 
 
     render() {
-
+        let title = this.props.navigation.state.params.title;
         return (
             <Container>
 
@@ -129,18 +182,18 @@ export default class StartDay extends Component {
 
                     {/* </View> */}
 
-
+                    <Text>{JSON.stringify(this.state.startday)}   {(!!id) ? id.toString() : null}</Text>
 
                 </View>
 
                 <Footer style={styles.FooterDesign}>
-                    <TouchableOpacity disabled={this.state.kmError || this.state.base64Error} style={styles.FooterButton} onPress={() => this.startDay()}>
+                    <TouchableOpacity disabled={this.state.kmError || this.state.base64Error} style={styles.FooterButton} onPress={() => (title === 'Start Day') ? this.startDay() : this.stopDay()}>
                         <Text style={styles.FooterText}>
                             Save
                         </Text>
                     </TouchableOpacity>
                 </Footer>
-            </Container>
+            </Container >
         )
     }
 }

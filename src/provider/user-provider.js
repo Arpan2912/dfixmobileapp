@@ -32,6 +32,22 @@ export default class UserProvider {
         })
     }
 
+    static updateUserDetail(usrObj) {
+        return new Promise((resolve, reject) => {
+            fetch('http://192.168.43.72:3333/api/update-user', {
+                method: 'POST',
+                body: JSON.stringify(usrObj),
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                }
+            }).then((response) => response.json())
+                .then(data => {
+                    resolve(data);
+                })
+        })
+    }
+
     static getUserTokenFromLocalStorage() {
         return AsyncStorage.getItem('token');
     }
@@ -48,19 +64,20 @@ export default class UserProvider {
         return AsyncStorage.getItem('userId');
     }
 
-    static updateUserDetail(usrObj) {
-        return new Promise((resolve, reject) => {
-            fetch('http://192.168.43.72:3333/api/update-user', {
-                method: 'POST',
-                body: JSON.stringify(usrObj),
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                }
-            }).then((response) => response.json())
-                .then(data => {
-                    resolve(data);
-                })
-        })
+    static setStartDayStatus(status) {
+        console.log(status)
+        return AsyncStorage.setItem('startDay', status);
+    }
+
+    static getStartDayStatus() {
+        return AsyncStorage.getItem('startDay');
+    }
+
+    static getAll() {
+        return AsyncStorage.getAllKeys();
+    }
+
+    static removeAll() {
+        return AsyncStorage.clear();
     }
 }

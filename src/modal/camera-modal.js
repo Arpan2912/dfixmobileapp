@@ -14,8 +14,8 @@ import { CameraKitCamera } from 'react-native-camera-kit';
 
 export default class CameraModal extends Component {
     state = {
-        image: '',
-        text: ''
+        image:null,
+        text: null
     }
     // onBottomButtonPressed(event) {
     //     const captureImages = JSON.stringify(event.captureImages);
@@ -32,7 +32,7 @@ export default class CameraModal extends Component {
         this.props.closeCameraModal();
     }
 
-    saveImage=()=>{
+    saveImage = () => {
         this.props.saveImage(this.state.image);
     }
     takePicture = () => {
@@ -40,9 +40,10 @@ export default class CameraModal extends Component {
         this.camera.capture(true)
             .then(data => {
                 image = data.base64;
-                this.setState((prevState, props) => {
-                    return { image: image, text: 'image is captured' }
-                })
+                // this.setState((prevState, props) => {
+                //     return { image: image, text: 'image is captured' }
+                // })
+                this.props.saveImage(image);
                 // data: { height: 2304,
                 //     width: 1296,
                 //     name: '1518296786611.jpg',
@@ -79,13 +80,13 @@ export default class CameraModal extends Component {
                         ratioOverlayColor: '#00000077' // optional
                     }}
                 />
-                {this.state.image !== '' &&
+                {/* {this.state.image !== '' &&
                     <Image
-                        style={{ width: 300, height: 500 }}
+                        style={{ width: 400, height: 600 }}
                         // source={{ uri: '/storage/emulated/0/DCIM/Camera/1518296786611.jpg' }}
                         source={{ uri: 'data:image/jpeg;base64,' + this.state.image }}
                     />
-                }
+                } */}
                 <Text onPress={this.takePicture}>Capture {this.state.text}</Text>
                 <Text onPress={this.saveImage}>save Image </Text>
             </Modal>

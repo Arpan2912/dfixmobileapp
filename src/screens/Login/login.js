@@ -14,7 +14,8 @@ import UserProvider from '../../provider/user-provider';
 export default class Login extends Component {
 
     state = {
-        email: null
+        email: null,
+
     }
 
     static navigationOptions = {
@@ -27,6 +28,17 @@ export default class Login extends Component {
     }
 
     verifyEmailExistOrNot = () => {
+        // UserProvider.getStartDayStatus()
+        // .then(data => {
+        //     this.setState({ email: data });
+        // });
+        // UserProvider.removeAll()
+        //     .then(data => {
+        //         return UserProvider.getAll()
+        //     })
+        //     .then(data => {
+        //         this.setState({ email: JSON.stringify(data) });
+        //     });
         UserProvider.getUserDetailsByEmail(this.state.email)
             .then(data1 => {
                 let userId, email;
