@@ -6,6 +6,7 @@ import Signup from '../screens/SignUp/signup';
 import Password from '../screens/Password/password';
 import Home from '../screens/Home/home';
 import StartDay from '../screens/StartDay/startday';
+import StartVisit from '../screens/StartVisit/startVisit';
 
 export const routes = StackNavigator({
     Login: {
@@ -22,6 +23,9 @@ export const routes = StackNavigator({
     },
     StartDay:{
         screen:StartDay
+    },
+    StartVisit:{
+        screen:StartVisit
     }
 },
 {

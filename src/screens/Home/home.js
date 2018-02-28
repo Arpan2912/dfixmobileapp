@@ -37,8 +37,10 @@ export default class Home extends Component {
                 }
             });
 
-        eventObj.on('startday', (status) => {
-            this.setState({ startDay: status});
+        eventObj.on('startday', (id, status) => {
+            console.log("status", id, status);
+            _id = id;
+            this.setState({ startDay: status });
         });
 
     }
@@ -66,6 +68,7 @@ export default class Home extends Component {
 
     render() {
         let dayTitle = (this.state.startDay === 'true') ? "Stop Day" : "Start Day";
+        let visitTitle = (this.state.startVist === 'true')? "End Visit" :"Start Visit";
         return (
             <View style={styles.container}>
                 {/* <View style={styles.innerContainer}> */}
@@ -75,11 +78,13 @@ export default class Home extends Component {
                         {dayTitle} {this.state.token ? this.state.token.toString() : null}
                     </Text>
                 </TouchableOpacity>
-                {/* <TouchableOpacity style={styles.button} title={dayTitle} onPress={() => { this.setState({ token: token }) }}>
+                <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.navigate('StartVisit')}>
                     <Text style={styles.textInsideButton}>
-                        Stop Day
-                        </Text>
-                </TouchableOpacity> */}
+                        {/* Start Day {this.state.token} */}
+                        {visitTitle} {this.state.token ? this.state.token.toString() : null}
+                    </Text>
+                </TouchableOpacity>
+
             </View>
             // </View>
         )

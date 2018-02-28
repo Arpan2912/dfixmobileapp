@@ -23,50 +23,42 @@ import Validation from '../../provider/validation';
 import StartDayProvider from '../../provider/startday-provider';
 import EventSingleton from '../../event/eventSingleton';
 import UserProvider from '../../provider/user-provider';
+// import { Marker } from 'react-native-maps';
 
 var { height, width } = Dimensions.get('screen');
 let eventObj;
 let id = null;
 
 
-export default class StartDay extends Component {
+export default class StartVisit extends Component {
     title = 'Start'
     constructor(props) {
         super();
         console.log("constructor calls");
-        id = props.navigation.state.params._id;
         console.log("id", JSON.stringify(props));
     }
     state = {
         modalVisible: false,
         userId: null,
-        startday: null,
+        startVisit: null,
 
         base64: null,
         base64Error: true,
         base64ErrorMsg: null,
 
-        km: null,
-        kmError: true,
-        kmErrorMsg: null
+        orgName: null,
+        orgNameError: true,
+        orgNameErrorMsg: null
     }
 
     componentWillMount() {
         eventObj = EventSingleton.geteventEmitterObj();
-        UserProvider.getStartDayStatus()
-            .then(data => {
-                try {
-                    this.setState({ startday: data })
-                } catch (e) {
-
-                }
-            })
     }
 
     static navigationOptions = {};
 
     static navigationOptions = ({ navigation }) => ({
-        title: navigation.state.params.title,
+        //title: navigation.state.params.title,
         headerStyle: {
             backgroundColor: '#009688'
         },
@@ -90,59 +82,9 @@ export default class StartDay extends Component {
         }
     }
 
-    setKm(text) {
-        this.setState({ km: text });
-        let numberError = Validation.numberValidation(text);
-        if (numberError) {
-            this.setState({ kmError: numberError.error, kmErrorMsg: numberError.errorMsg });
-        } else {
-            this.setState({ kmError: false, kmErrorMsg: null });
-        }
+    setOrgName = (text) => {
+        this.state({ orgName: text });
     }
-
-    startDay() {
-        AsyncStorage.getItem('userId')
-            .then(data => {
-                this.setState({ userId: data });
-            })
-        StartDayProvider.startDay(this.state.km, this.state.base64, this.state.userId)
-            .then(data => {
-                if (data.success === true) {
-                    let status = {
-                        startDayId: data.data._id,
-                        status: 'true'
-                    }
-                    // this.setState({ startday: status });
-                    if (this.props.navigation.state.params.title === 'Start Day')
-                        eventObj.emit('startday', data.data._id, 'true');
-                    UserProvider.setStartDayStatus(JSON.stringify(status));
-                    this.props.navigation.goBack();
-                }
-            })
-    }
-
-    stopDay() {
-        Promise.all(UserProvider.getUserIdFromLocalStorage, UserProvider.getStartDayStatus)
-            // AsyncStorage.getItem('userId')
-            .then(data => {
-                this.setState({ userId: data[0] });
-            })
-        console.log("id", id);
-        StartDayProvider.stopDay(this.state.km, this.state.base64, this.state.userId, id)
-            .then(data => {
-                if (data.success === true) {
-                    let status = {
-                        startDayId: null,
-                        status: 'false'
-                    }
-                    if (this.props.navigation.state.params.title === 'Stop Day')
-                        eventObj.emit('startday', null, 'false');
-                    UserProvider.setStartDayStatus(JSON.stringify(status));
-                    this.props.navigation.goBack();
-                }
-            })
-    }
-
 
 
     render() {
@@ -153,10 +95,10 @@ export default class StartDay extends Component {
                 <View style={styles.container}>
                     {/* <View style={styles.innerContainer}> */}
                     <TextInput style={styles.TextInput}
-                        placeholder="Km"
+                        placeholder="Enter Organization Name"
                         underlineColorAndroid='#009688'
                         placeholderTextColor="#26A69A"
-                        onChangeText={(text) => this.setKm(text)}
+                        onChangeText={(text) => this.setOrgName(text)}
                     > </TextInput>
                     <CameraModal
                         modalVisible={this.state.modalVisible}
