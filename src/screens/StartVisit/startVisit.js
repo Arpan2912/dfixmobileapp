@@ -23,7 +23,11 @@ import Validation from '../../provider/validation';
 import StartDayProvider from '../../provider/startday-provider';
 import EventSingleton from '../../event/eventSingleton';
 import UserProvider from '../../provider/user-provider';
-// import { Marker } from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
+import MeetingProvider from '../../provider/meeting-provider';
+
+
+// import MapView from 'react-native-maps';
 
 var { height, width } = Dimensions.get('screen');
 let eventObj;
@@ -48,7 +52,10 @@ export default class StartVisit extends Component {
 
         orgName: null,
         orgNameError: true,
-        orgNameErrorMsg: null
+        orgNameErrorMsg: null,
+
+        latitude: null,
+        longitude: null
     }
 
     componentWillMount() {
@@ -83,16 +90,59 @@ export default class StartVisit extends Component {
     }
 
     setOrgName = (text) => {
-        this.state({ orgName: text });
+        this.setState({ orgName: text });
     }
 
+    getCurrentLocation = () => {
+        navigator.geolocation.getCurrentPosition(position => {
+            let coordinates = position.coords;
+            this.setState({ longitude: coordinates.longitude, latitude: coordinates.latitude })
+        }, err => {
+
+        });
+    }
+
+    startVisit = () => {
+        let userId = null;
+        UserProvider.getUserIdFromLocalStorage()
+            .then(data => {
+                this.userId = userId;
+
+                let startVisitObj = {
+                    base64: this.state.base64,
+                    location: {
+                        latitude: this.state.latitude,
+                        longitude: this.state.longitude
+                    },
+                    userId: userId,//get it from local storage
+                }
+
+                MeetingProvider.startMeeting(startVisitObj)
+                    .then(data => {
+                        if (data.success === true) {
+                            let status = {
+                                startVisitId: data.data._id,
+                                status: 'true'
+                            }
+                            UserProvider.setVisitStatus(JSON.stringify(status));
+                            eventObj.emit('startvisit', data.data._id, 'true');
+                            this.props.navigation.goBack();
+                        }
+                    })
+                    .catch(e => {
+                        console.error(e);
+                    })
+            })
+    }
 
     render() {
-        let title = this.props.navigation.state.params.title;
+        // let title = this.props.navigation.state.params.title;
+        let latitude = this.state.latitude;
+        let longitude = this.state.longitude;
         return (
             <Container>
 
-                <View style={styles.container}>
+                <ScrollView contentContainerStyle={styles.container}>
                     {/* <View style={styles.innerContainer}> */}
                     <TextInput style={styles.TextInput}
                         placeholder="Enter Organization Name"
@@ -113,21 +163,43 @@ export default class StartVisit extends Component {
                         </Text>
                     </TouchableOpacity>
                     {this.state.base64 !== '' &&
-                        <Image
-                            style={styles.ImageView}
+                        <Image style={this.state.base64 ? styles.ImageView : { height: 0, width: 0 }}
                             // source={{ uri: '/storage/emulated/0/DCIM/Camera/1518296786611.jpg' }}
                             source={{ uri: 'data:image/jpeg;base64,' + this.state.base64 }}
                         />
                     }
 
                     {/* </View> */}
-
-                    <Text>{JSON.stringify(this.state.startday)}   {(!!id) ? id.toString() : null}</Text>
-
-                </View>
+                    <TouchableOpacity style={styles.cameraButton}>
+                        <Text style={styles.textInsideButton}
+                            onPress={() => this.getCurrentLocation()}
+                        >
+                            Capture Location
+                        </Text>
+                    </TouchableOpacity>
+                    {latitude && longitude && <MapView style={styles.Map}
+                        initialRegion={{
+                            latitude: latitude,
+                            longitude: longitude,
+                            latitudeDelta: 0.001,
+                            longitudeDelta: 0.002,
+                        }}
+                        scrollEnabled={false}
+                    ><Marker
+                        coordinate={{
+                            latitude: latitude,
+                            longitude: longitude
+                        }}
+                    >
+                        </Marker>
+                    </MapView>}
+                </ScrollView>
 
                 <Footer style={styles.FooterDesign}>
-                    <TouchableOpacity disabled={this.state.kmError || this.state.base64Error} style={styles.FooterButton} onPress={() => (title === 'Start Day') ? this.startDay() : this.stopDay()}>
+                    <TouchableOpacity
+                        style={styles.FooterButton}
+                        onPress={() => this.startVisit()}
+                    >
                         <Text style={styles.FooterText}>
                             Save
                         </Text>
@@ -142,7 +214,7 @@ const styles = StyleSheet.create({
 
     container: {
         backgroundColor: "#fafafa",
-        flex: 1,
+        ///flex: 1,
         alignItems: 'center',
         //justifyContent: 'center'
     },
@@ -158,6 +230,7 @@ const styles = StyleSheet.create({
     cameraButton: {
         backgroundColor: "#009688",
         padding: 10,
+        margin: 10,
         width: width - 100,
         justifyContent: 'center',
         alignItems: 'center',
@@ -197,6 +270,10 @@ const styles = StyleSheet.create({
         color: '#fafafa',
         fontSize: 20,
         fontWeight: 'bold'
+    },
+    Map: {
+        height: 300,
+        width: 300
     }
 
 })

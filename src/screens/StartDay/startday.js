@@ -34,7 +34,7 @@ export default class StartDay extends Component {
     constructor(props) {
         super();
         console.log("constructor calls");
-        id = props.navigation.state.params._id;
+        id = props.navigation.state.params.startDayId;
         console.log("id", JSON.stringify(props));
     }
     state = {

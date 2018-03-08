@@ -65,7 +65,7 @@ export default class UserProvider {
     }
 
     static setStartDayStatus(status) {
-        console.log(status)
+        console.log(status);
         return AsyncStorage.setItem('startDay', status);
     }
 
@@ -79,5 +79,14 @@ export default class UserProvider {
 
     static removeAll() {
         return AsyncStorage.clear();
+    }
+
+    static setVisitStatus(status){
+        return AsyncStorage.setItem('visitStatus',status);
+    } 
+
+    static getVisitStatus(status){
+        console.log(status);
+        return AsyncStorage.getItem('visitStatus');
     }
 }

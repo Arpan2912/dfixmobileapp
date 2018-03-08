@@ -1,5 +1,6 @@
 rootProject.name = 'dfixmobileapp'
 include ':react-native-camera-kit'
+include ':react-native-maps'
 project(':react-native-camera-kit').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-camera-kit/android')
-
+project(':react-native-maps').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-maps/lib/android')
 include ':app'

@@ -15,23 +15,28 @@ import EventSingleton from '../../event/eventSingleton';
 
 let token;
 let eventObj;
-let _id = null;
+let startDayId = null;
+let startVisitId = null;
 
 export default class Home extends Component {
 
     state = {
         token: null,
-        startDay: 'false'
+        startDay: 'false',
+        startVisit:'false'
     }
 
     componentWillMount() {
         eventObj = EventSingleton.geteventEmitterObj();
-        UserProvider.getStartDayStatus()
+        Promise.all([UserProvider.getStartDayStatus(),UserProvider.getVisitStatus()])
             .then(status => {
                 try {
-                    status = JSON.parse(status);
-                    this.setState({ startDay: (!!status) ? status.status : null });
-                    _id = (!!status && status.startDayId) ? status.startDayId : null;
+                    startDayStatus = JSON.parse(status[0]);
+                    visitStatus = JSON.parse(status[1]);
+                    this.setState({ startDay: (!!startDayStatus) ? startDayStatus.status : null });
+                    startDayId = (!!startDayStatus && startDayStatus.startDayId) ? startDayStatus.startDayId : null;
+                    startVisitId = (!!visitStatus && visitStatus.startVisitId) ? visitStatus.startVisitId : null;
+                    this.setState({startVisit:visitStatus.status});
                 } catch (e) {
                     console.error(e);
                 }
@@ -39,8 +44,14 @@ export default class Home extends Component {
 
         eventObj.on('startday', (id, status) => {
             console.log("status", id, status);
-            _id = id;
+            startDayId = id;
             this.setState({ startDay: status });
+        });
+
+        eventObj.on('startvisit',(id,status)=>{
+            console.log("status", id, status);
+            startVisitId = id;
+            this.setState({ startVisit: status }); 
         });
 
     }
@@ -65,20 +76,28 @@ export default class Home extends Component {
         this.setState({ email: email });
     }
 
+    gotoStartOrStopVisitPage(){
+        visitStatus = this.state.startVisit || 'false';
+        if(visitStatus === 'true'){
+            this.props.navigation.navigate('StopVisit', { title: "End Visit", startVisitId: (!!startVisitId) ? startVisitId : null });
+        } else {
+            this.props.navigation.navigate('StartVisit', { title: "Start Visit", startVisitId: (!!startVisitId) ? startVisitId : null });
+        }
+    }
 
     render() {
         let dayTitle = (this.state.startDay === 'true') ? "Stop Day" : "Start Day";
-        let visitTitle = (this.state.startVist === 'true')? "End Visit" :"Start Visit";
+        let visitTitle = (this.state.startVisit === 'true')? "End Visit" :"Start Visit";
         return (
             <View style={styles.container}>
                 {/* <View style={styles.innerContainer}> */}
-                <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.navigate('StartDay', { title: dayTitle, _id: (!!_id) ? _id : null })}>
+                <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.navigate('StartDay', { title: dayTitle, startDayId: (!!startDayId) ? startDayId : null })}>
                     <Text style={styles.textInsideButton}>
                         {/* Start Day {this.state.token} */}
                         {dayTitle} {this.state.token ? this.state.token.toString() : null}
                     </Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.navigate('StartVisit')}>
+                <TouchableOpacity style={styles.button} onPress={() => this.gotoStartOrStopVisitPage()}>
                     <Text style={styles.textInsideButton}>
                         {/* Start Day {this.state.token} */}
                         {visitTitle} {this.state.token ? this.state.token.toString() : null}

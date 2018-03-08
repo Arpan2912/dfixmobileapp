@@ -7,8 +7,12 @@ import Password from '../screens/Password/password';
 import Home from '../screens/Home/home';
 import StartDay from '../screens/StartDay/startday';
 import StartVisit from '../screens/StartVisit/startVisit';
+import StopVisit from '../screens/StopVisit/stopVisit';
 
 export const routes = StackNavigator({
+    // StartVisit:{
+    //     screen:StartVisit
+    // },
     Login: {
         screen: Login
     },
@@ -26,6 +30,9 @@ export const routes = StackNavigator({
     },
     StartVisit:{
         screen:StartVisit
+    },
+    StopVisit:{
+        screen:StopVisit
     }
 },
 {

@@ -12,6 +12,7 @@
     "react": "16.2.0",
     "react-native": "0.53.0",
     "react-native-camera-kit": "^5.3.22",
+    "react-native-maps": "^0.20.1",
     "react-navigation": "^1.0.0"
   },
   "devDependencies": {
