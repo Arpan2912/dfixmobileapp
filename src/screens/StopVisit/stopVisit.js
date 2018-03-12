@@ -6,18 +6,27 @@ import {
     Text,
     View,
     Modal,
-    Button,
     TextInput,
     TouchableOpacity,
     Image,
     Dimensions,
     ScrollView,
-    AsyncStorage
+    AsyncStorage,
+    ListView
 } from 'react-native';
-import CameraModal from '../../modal/camera-modal';
+import OrderModal from '../../modal/order-modal';
 import {
     Container,
-    Footer
+    Footer,
+    Header,
+    Icon,
+    Button,
+    Body,
+    Left,
+    Right,
+    Title,
+    ListItem,
+    List
 } from 'native-base';
 import Validation from '../../provider/validation';
 import StartDayProvider from '../../provider/startday-provider';
@@ -26,7 +35,6 @@ import UserProvider from '../../provider/user-provider';
 import MapView, { Marker } from 'react-native-maps';
 import MeetingProvider from '../../provider/meeting-provider';
 
-
 // import MapView from 'react-native-maps';
 
 var { height, width } = Dimensions.get('screen');
@@ -34,10 +42,11 @@ let eventObj;
 let id = null;
 
 
-export default class StartVisit extends Component {
+export default class StopVisit extends Component {
     title = 'Start'
     constructor(props) {
         super();
+        this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         console.log("constructor calls");
         console.log("id", JSON.stringify(props));
     }
@@ -46,63 +55,63 @@ export default class StartVisit extends Component {
         userId: null,
         startVisit: null,
 
-        base64: null,
-        base64Error: true,
-        base64ErrorMsg: null,
-
-        orgName: null,
-        orgNameError: true,
-        orgNameErrorMsg: null,
-
-        latitude: null,
-        longitude: null
+        orderList: [],
+        itemIndex: null,
+        editItemData:null
     }
 
     componentWillMount() {
         eventObj = EventSingleton.geteventEmitterObj();
     }
 
+    componentDidMount() {
+        let arrList = [{
+            itemPrice: '10000',
+            itemName: 'pencil',
+            itemQuantity:'100'
+        }];
+        this.setState({ orderList: arrList });
+    }
+
     static navigationOptions = {};
 
     static navigationOptions = ({ navigation }) => ({
         //title: navigation.state.params.title,
+        header: null,
         headerStyle: {
             backgroundColor: '#009688'
         },
         headerTintColor: "#fafafa"
     });
 
-    openCameraModal = () => {
+    openOrderModal = () => {
         this.setState({ modalVisible: true });
     }
-    closeCameraModal = () => {
-        this.setState({ modalVisible: false });
+
+    closeOrderModal = () => {
+        this.setState({ modalVisible: false ,editItemData:null,itemIndex:null});
     }
 
-    saveImage = (base64) => {
-        this.setState({ modalVisible: false });
-        this.setState({ base64: base64 });
-        if (!base64) {
-            this.setState({ base64Error: true, base64ErrorMsg: "Please capture image" });
-        } else {
-            this.setState({ base64Error: false, base64ErrorMsg: null });
-        }
+    addOrder = (obj) => {
+        let arr = [];
+        arr = this.state.orderList;
+        arr.push(obj);
+        this.setState({ orderList: arr })
     }
 
-    setOrgName = (text) => {
-        this.setState({ orgName: text });
+    editOrder = (data,secId,rowId,rowMap) => {
+        
+        this.setState({itemIndex:rowId});
+        this.setState({editItemData:data});
+        // let arrList = this.state.orderList;
+        // let index = arrList.findIndex((index)=>{
+        //     return index === data;
+        // });
+        // this.setState({index:index})
+        this.setState({ modalVisible: true });
     }
 
-    getCurrentLocation = () => {
-        navigator.geolocation.getCurrentPosition(position => {
-            let coordinates = position.coords;
-            this.setState({ longitude: coordinates.longitude, latitude: coordinates.latitude })
-        }, err => {
-
-        });
-    }
-
-    startVisit = () => {
+    stopVisit() {
         let userId = null;
         UserProvider.getUserIdFromLocalStorage()
             .then(data => {
@@ -117,20 +126,20 @@ export default class StartVisit extends Component {
                     userId: userId,//get it from local storage
                 }
 
-                MeetingProvider.startMeeting(startVisitObj)
+                MeetingProvider.startMeeting()
                     .then(data => {
                         if (data.success === true) {
                             let status = {
                                 startVisitId: data.data._id,
                                 status: 'true'
                             }
-                            UserProvider.setVisitStatus(JSON.stringify(status));
+                            UserProvider.setVisitStatus(status);
                             eventObj.emit('startvisit', data.data._id, 'true');
                             this.props.navigation.goBack();
                         }
                     })
                     .catch(e => {
-                        console.error(e);
+
                     })
             })
     }
@@ -141,65 +150,70 @@ export default class StartVisit extends Component {
         let longitude = this.state.longitude;
         return (
             <Container>
-
+                <Header style={styles.Header}>
+                    <Left>
+                        <Button transparent>
+                            <Icon name='arrow-back' />
+                        </Button>
+                    </Left>
+                    <Body>
+                        <Title>Orders</Title>
+                    </Body>
+                    <Right>
+                        <Button transparent onPress={this.openOrderModal}>
+                            <Icon name='add' />
+                        </Button>
+                    </Right>
+                </Header>
                 <ScrollView contentContainerStyle={styles.container}>
                     {/* <View style={styles.innerContainer}> */}
-                    <TextInput style={styles.TextInput}
-                        placeholder="Enter Organization Name"
-                        underlineColorAndroid='#009688'
-                        placeholderTextColor="#26A69A"
-                        onChangeText={(text) => this.setOrgName(text)}
-                    > </TextInput>
-                    <CameraModal
+                    <OrderModal
                         modalVisible={this.state.modalVisible}
-                        closeCameraModal={this.closeCameraModal}
+                        closeOrderModal={this.closeOrderModal}
+                        addOrder={this.addOrder}
                         saveImage={this.saveImage}
+                        itemIndex={this.state.itemIndex}
+                        editItemData = {this.state.editItemData}
                     />
-                    <TouchableOpacity style={styles.cameraButton}>
-                        <Text style={styles.textInsideButton}
-                            onPress={this.openCameraModal}
-                        >
-                            Capture Image
-                        </Text>
-                    </TouchableOpacity>
-                    {this.state.base64 !== '' &&
-                        <Image style={this.state.base64 ? styles.ImageView : { height: 0, width: 0 }}
-                            // source={{ uri: '/storage/emulated/0/DCIM/Camera/1518296786611.jpg' }}
-                            source={{ uri: 'data:image/jpeg;base64,' + this.state.base64 }}
-                        />
-                    }
+                    {/* <Text>{JSON.stringify(this.state.orderList)}</Text> */}
+
+
+                    <List style={{ width: width }}
+                        dataSource={this.ds.cloneWithRows(this.state.orderList)}
+                        renderRow={data =>
+                            <ListItem style={{ paddingTop: 10, paddingBottom: 10 }}>
+                                <Body style={{ paddingLeft: 15, paddingRight: 15 }}>
+                                    <Text style={{ color: '#009688', fontWeight: 'bold' }}>{data.itemName}</Text>
+
+                                </Body>
+                                <Right>
+                                    <Text style={{ fontWeight: 'bold' }}>{data.itemQuantity} </Text>
+                                </Right>
+                                <Body style={{ alignContent: 'flex-end', alignItems: 'flex-end' }}>
+                                    <Text note style={{ fontWeight: 'bold' }}>{data.itemPrice} Rs</Text>
+                                </Body>
+                            </ListItem>}
+                        renderLeftHiddenRow={data =>
+                            <Button full danger onPress={() => alert(data)}>
+                                <Text style={{ color: '#fafafa' }}>Delete</Text>
+                            </Button>}
+                        renderRightHiddenRow={(data, secId, rowId, rowMap) =>
+                            <Button full onPress={_ => this.editOrder(data,secId, rowId, rowMap)}>
+                                <Text style={{ color: '#fafafa' }}>Edit</Text>
+                            </Button>}
+                        leftOpenValue={75}
+                        rightOpenValue={-75}
+                    />
+
 
                     {/* </View> */}
-                    <TouchableOpacity style={styles.cameraButton}>
-                        <Text style={styles.textInsideButton}
-                            onPress={() => this.getCurrentLocation()}
-                        >
-                            Capture Location
-                        </Text>
-                    </TouchableOpacity>
-                    {latitude && longitude && <MapView style={styles.Map}
-                        initialRegion={{
-                            latitude: latitude,
-                            longitude: longitude,
-                            latitudeDelta: 0.001,
-                            longitudeDelta: 0.002,
-                        }}
-                        scrollEnabled={false}
-                    ><Marker
-                        coordinate={{
-                            latitude: latitude,
-                            longitude: longitude
-                        }}
-                    >
-                        </Marker>
-                    </MapView>}
+
+
                 </ScrollView>
 
                 <Footer style={styles.FooterDesign}>
                     <TouchableOpacity
-                        style={styles.FooterButton}
-                        onPress={() => this.startVisit()}
-                    >
+                        style={styles.FooterButton}>
                         <Text style={styles.FooterText}>
                             Save
                         </Text>
@@ -218,7 +232,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         //justifyContent: 'center'
     },
-
+    Header: {
+        backgroundColor: '#009688'
+    },
     button: {
         backgroundColor: "#009688",
         padding: 10,
@@ -249,11 +265,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         textAlign: 'center'
     },
-    ImageView: {
-        marginTop: 10,
-        height: 200,
-        width: 200
-    },
+
     FooterDesign: {
         backgroundColor: '#009688',
         justifyContent: 'center',
@@ -270,10 +282,5 @@ const styles = StyleSheet.create({
         color: '#fafafa',
         fontSize: 20,
         fontWeight: 'bold'
-    },
-    Map: {
-        height: 300,
-        width: 300
     }
-
 })
