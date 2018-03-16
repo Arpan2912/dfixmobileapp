@@ -98,6 +98,9 @@ export default class OrderModal extends Component {
         this.closeModal();
     }
 
+    editOrder = ()=>{
+
+    }
 
     render() {
         orderData = this.props.editItemData;

@@ -15,7 +15,7 @@ export default class MeetingProvider {
 
                     fetch('http://192.168.43.72:3333/api/start-visit', {
                         method: 'POST',
-                        body: JSON.stringify({ location:startMeetingOj.location, base64:startMeetingOj.base64, userId: userId }),
+                        body: JSON.stringify({ location: startMeetingOj.location, base64: startMeetingOj.base64, userId: userId, orgName: startMeetingOj.orgName }),
                         headers: {
                             Accept: 'application/json',
                             'Content-Type': 'application/json',
@@ -30,29 +30,60 @@ export default class MeetingProvider {
         })
     }
 
-    static stopDay(km, base64, userId,id) {
+    static stopVisit(obj) {
+        console.log("obj in Stop visit pro", JSON.stringify(obj))
+        let token = null;
         return new Promise((resolve, reject) => {
-            Promise.all([AsyncStorage.getItem('userId'), AsyncStorage.getItem('token')])
-                // AsyncStorage.getItem("token")
-                .then((data => {
-                    let userId = data[0];
-                    let token = data[1];
+            AsyncStorage.getItem('token')
+                .then(data => {
+                    token = data;
 
-                    fetch('http://192.168.43.72:3333/api/stop-day', {
+                    fetch('http://192.168.43.72:3333/api/stop-visit', {
                         method: 'POST',
-                        body: JSON.stringify({ id:id,km: km, base64: base64, userId: userId }),
+                        body: JSON.stringify(obj),
                         headers: {
                             Accept: 'application/json',
                             'Content-Type': 'application/json',
                             Authorization: 'Bearer ' + token
                         }
-                    }).then((response) => response.json())
+                    })
+                        .then((response) => response.json())
                         .then(data => {
-                            resolve(data);
+                            return resolve(data);
                         })
+                        .catch(e => {
+                            console.log("error", e);
+                            reject(e);
+                        })
+                })
+        })
+    }
 
-                })).catch(e=>{
-                    
+    static getTodayVisits(obj) {
+        // console.log("obj in Stop visit pro", JSON.stringify(obj))
+        let token = null;
+        return new Promise((resolve, reject) => {
+            AsyncStorage.getItem('token')
+                .then(data => {
+                    token = data;
+
+                    fetch('http://192.168.43.72:3333/api/get-today-visits', {
+                        method: 'POST',
+                        body: JSON.stringify({ userId: obj }),
+                        headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                            Authorization: 'Bearer ' + token
+                        }
+                    })
+                        .then((response) => response.json())
+                        .then(data => {
+                            return resolve(data);
+                        })
+                        .catch(e => {
+                            console.log("error", e);
+                            reject(e);
+                        })
                 })
         })
     }

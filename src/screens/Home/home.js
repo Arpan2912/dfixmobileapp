@@ -23,12 +23,12 @@ export default class Home extends Component {
     state = {
         token: null,
         startDay: 'false',
-        startVisit:'false'
+        startVisit: 'false'
     }
 
     componentWillMount() {
         eventObj = EventSingleton.geteventEmitterObj();
-        Promise.all([UserProvider.getStartDayStatus(),UserProvider.getVisitStatus()])
+        Promise.all([UserProvider.getStartDayStatus(), UserProvider.getVisitStatus()])
             .then(status => {
                 try {
                     startDayStatus = JSON.parse(status[0]);
@@ -36,7 +36,7 @@ export default class Home extends Component {
                     this.setState({ startDay: (!!startDayStatus) ? startDayStatus.status : null });
                     startDayId = (!!startDayStatus && startDayStatus.startDayId) ? startDayStatus.startDayId : null;
                     startVisitId = (!!visitStatus && visitStatus.startVisitId) ? visitStatus.startVisitId : null;
-                    this.setState({startVisit:visitStatus.status});
+                    this.setState({ startVisit: visitStatus.status });
                 } catch (e) {
                     console.error(e);
                 }
@@ -48,11 +48,15 @@ export default class Home extends Component {
             this.setState({ startDay: status });
         });
 
-        eventObj.on('startvisit',(id,status)=>{
+        eventObj.on('startvisit', (id, status) => {
             console.log("status", id, status);
             startVisitId = id;
-            this.setState({ startVisit: status }); 
+            this.setState({ startVisit: status });
         });
+
+        eventObj.on('stopVisit', () => {
+            this.setState({ startVisit: 'false' })
+        })
 
     }
 
@@ -76,18 +80,22 @@ export default class Home extends Component {
         this.setState({ email: email });
     }
 
-    gotoStartOrStopVisitPage(){
+    gotoStartOrStopVisitPage() {
         visitStatus = this.state.startVisit || 'false';
-        if(visitStatus === 'true'){
+        if (visitStatus === 'true') {
             this.props.navigation.navigate('StopVisit', { title: "End Visit", startVisitId: (!!startVisitId) ? startVisitId : null });
         } else {
             this.props.navigation.navigate('StartVisit', { title: "Start Visit", startVisitId: (!!startVisitId) ? startVisitId : null });
         }
     }
 
+    gotoTodayVisitsPage() {
+
+    }
+
     render() {
         let dayTitle = (this.state.startDay === 'true') ? "Stop Day" : "Start Day";
-        let visitTitle = (this.state.startVisit === 'true')? "End Visit" :"Start Visit";
+        let visitTitle = (this.state.startVisit === 'true') ? "End Visit" : "Start Visit";
         return (
             <View style={styles.container}>
                 {/* <View style={styles.innerContainer}> */}
@@ -101,6 +109,13 @@ export default class Home extends Component {
                     <Text style={styles.textInsideButton}>
                         {/* Start Day {this.state.token} */}
                         {visitTitle} {this.state.token ? this.state.token.toString() : null}
+                    </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.button} onPress={() => this.gotoTodayVisitsPage()}>
+                    <Text style={styles.textInsideButton}>
+                        {/* Start Day {this.state.token} */}
+                        Today Visits
                     </Text>
                 </TouchableOpacity>
 

@@ -114,6 +114,7 @@ export default class StartVisit extends Component {
                         latitude: this.state.latitude,
                         longitude: this.state.longitude
                     },
+                    orgName: this.state.orgName,
                     userId: userId,//get it from local storage
                 }
 
