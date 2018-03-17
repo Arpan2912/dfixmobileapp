@@ -87,4 +87,62 @@ export default class MeetingProvider {
                 })
         })
     }
+
+    static updateOrder(obj) {
+        // console.log("obj in Stop visit pro", JSON.stringify(obj))
+        let token = null;
+        return new Promise((resolve, reject) => {
+            AsyncStorage.getItem('token')
+                .then(data => {
+                    token = data;
+
+                    fetch('http://192.168.43.72:3333/api/update-order', {
+                        method: 'POST',
+                        body: JSON.stringify(obj),
+                        headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                            Authorization: 'Bearer ' + token
+                        }
+                    })
+                        .then((response) => response.json())
+                        .then(data => {
+                            return resolve(data);
+                        })
+                        .catch(e => {
+                            console.log("error", e);
+                            reject(e);
+                        })
+                })
+        })
+    }
+
+    static addOrder(obj) {
+        // console.log("obj in Stop visit pro", JSON.stringify(obj))
+        let token = null;
+        return new Promise((resolve, reject) => {
+            AsyncStorage.getItem('token')
+                .then(data => {
+                    token = data;
+
+                    fetch('http://192.168.43.72:3333/api/add-order', {
+                        method: 'POST',
+                        body: JSON.stringify(obj),
+                        headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                            Authorization: 'Bearer ' + token
+                        }
+                    })
+                        .then((response) => response.json())
+                        .then(data => {
+                            return resolve(data);
+                        })
+                        .catch(e => {
+                            console.log("error", e);
+                            reject(e);
+                        })
+                })
+        })
+    }
 }

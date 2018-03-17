@@ -34,14 +34,15 @@ import EventSingleton from '../../event/eventSingleton';
 import UserProvider from '../../provider/user-provider';
 import MapView, { Marker } from 'react-native-maps';
 import MeetingProvider from '../../provider/meeting-provider';
-import moment from 'moment';
+
 // import MapView from 'react-native-maps';
 
 var { height, width } = Dimensions.get('screen');
 let eventObj;
 let startVisitId = null;
 let userId = null;
-export default class TodayVisits extends Component {
+let meetingId = null;
+export default class OrderList extends Component {
     title = 'Start'
     constructor(props) {
         super();
@@ -52,27 +53,53 @@ export default class TodayVisits extends Component {
     state = {
         modalVisible: false,
         userId: null,
+        startVisit: null,
+
+        orderList: [],
         itemIndex: null,
-        editItemData: null,
-        visitList: []
+        editItemData: null
     }
 
     componentWillMount() {
         eventObj = EventSingleton.geteventEmitterObj();
-        eventObj.on("updateOrder", this.getTodayVisits);
+        meetingId = this.props.navigation.state.params.meetingId;
+
+        eventObj.on('updateOrder', this.updateOrderListener);
         Promise.all([
+            UserProvider.getVisitStatus(),
             UserProvider.getUserIdFromLocalStorage()
         ]).then(data => {
+            let visitStatus = null;
+            let visitStatusString = data[0];
             let usersId = data[1];
-            userId = usersId;
+            try {
+                console.log("obj", visitStatusString);
+                visitStatus = JSON.parse(visitStatusString);
+                startVisitId = visitStatus.startVisitId;
+                userId = usersId;
+                console.log("\n\n userId : ", userId, "\n StartVisitId: ", startVisitId);
+            } catch (e) {
+                console.log("error while parsing visit status", e);
+            }
         })
     }
 
-    componentDidUpdate() {
-        //this.getTodayVisits();
-    }
     componentDidMount() {
-        this.getTodayVisits();
+        let orders = this.props.navigation.state.params.orders;
+        this.setState({ orderList: orders });
+        //"orders": [
+        //         {
+        //             "_id": "5aa8184c018c4120845ad103",
+        //             "user_id": "5a8da717c283f71ec44f41e2",
+        //             "item_name": "pencil",
+        //             "item_quantity": "100",
+        //             "item_price": "10000",
+        //             "meeting_id": "5aa8183f018c4120845ad102",
+        //             "created_at": "2018-03-13T18:28:28.804Z",
+        //             "updated_at": "2018-03-13T18:28:28.804Z",
+        //             "__v": 0
+        //         }
+        //     ]
     }
 
     static navigationOptions = {};
@@ -94,67 +121,23 @@ export default class TodayVisits extends Component {
         this.setState({ modalVisible: false, editItemData: null, itemIndex: null });
     }
 
-    updateOrder = (obj) => {
-        let arr = [];
-        arr = this.state.orderList;
-        console.log("item index", this.state.itemIndex !== null, this.state.itemIndex !== -1);
-        if (this.state.itemIndex == null || this.state.itemIndex == -1) {
-            console.log("add order obj");
-            arr.push(obj);
-            this.setState({ orderList: arr });
-        } else {
-            console.log("update order obj");
-            let index = this.state.itemIndex;
-            arr[index] = obj;
-            this.setState({ orderList: arr, itemIndex: null, editItemData: null });
-        }
+    addOrder = (obj) => {
+        this.props.navigation.push('UpdateOrder', { title: "add", orderDetail: null,meetingId:meetingId });
+        // let arr = [];
+        // arr = this.state.orderList;
+        // console.log("item index", this.state.itemIndex !== null, this.state.itemIndex !== -1);
+        // if (this.state.itemIndex == null || this.state.itemIndex == -1) {
+        //     console.log("add order obj");
+        //     arr.push(obj);
+        //     this.setState({ orderList: arr });
+        // } else {
+        //     console.log("update order obj");
+        //     let index = this.state.itemIndex;
+        //     arr[index] = obj;
+        //     this.setState({ orderList: arr, itemIndex: null, editItemData: null });
+        // }
 
     }
-
-    getTodayVisits = () => {
-        UserProvider.getUserIdFromLocalStorage()
-            .then(data => {
-                userId = data;
-                return MeetingProvider.getTodayVisits(userId)
-            })
-            .then(data => {
-                console.log("data", data);
-                this.setState({ visitList: data.data });
-            })
-    }
-
-    // {
-    //     "todayMeeting": {
-    //         "_id": "5aa8183f018c4120845ad102",
-    //         "user_id": "5a8da717c283f71ec44f41e2",
-    //         "start_time": "2018-03-13T18:28:15.687Z",
-    //         "org_image": "5a8da717c283f71ec44f41e2/startVisit.jpg",
-    //         "org_name": " hello",
-    //         "org_location": {
-    //             "latitude": 23.006486,
-    //             "longitude": 72.5621458
-    //         },
-    //         "end_time": "2018-03-13T18:28:28.794Z",
-    //         "created_at": "2018-03-13T18:28:15.687Z",
-    //         "updated_at": "2018-03-13T18:28:28.794Z",
-    //         "__v": 0
-    //     },
-    //     "orders": [
-    //         {
-    //             "_id": "5aa8184c018c4120845ad103",
-    //             "user_id": "5a8da717c283f71ec44f41e2",
-    //             "item_name": "pencil",
-    //             "item_quantity": "100",
-    //             "item_price": "10000",
-    //             "meeting_id": "5aa8183f018c4120845ad102",
-    //             "created_at": "2018-03-13T18:28:28.804Z",
-    //             "updated_at": "2018-03-13T18:28:28.804Z",
-    //             "__v": 0
-    //         }
-    //     ]
-    // "orderAmount": 10000,
-    // "numberOfOrders": 1
-    // }
 
     deleteOrder = (data, secId, rowId) => {
         let arr = this.state.orderList;
@@ -164,8 +147,9 @@ export default class TodayVisits extends Component {
     }
 
     editOrder = (data, secId, rowId, rowMap) => {
-
-        this.setState({ itemIndex: rowId, editItemData: data, modalVisible: true });
+        // this.setState({ itemIndex: rowId });
+        this.props.navigation.push('UpdateOrder', { title: "update", orderDetail: data });
+        // this.setState({ itemIndex: rowId, editItemData: data, modalVisible: true });
 
         // let arrList = this.state.orderList;
         // let index = arrList.findIndex((index)=>{
@@ -174,13 +158,16 @@ export default class TodayVisits extends Component {
         // this.setState({index:index})
     }
 
-    goToOrderListPage = (meetingData) => {
-        let orders = meetingData.orders;
-        let meetingId = meetingData.todayMeeting._id;
-        this.props.navigation.navigate('OrderList', { title: "Orders List", orders: orders,meetingId:meetingId });
+    updateOrderListener = (updatedOrder) => {
+        if (updatedOrder) {
+            index = this.state.orderList.findIndex(x => x._id === updatedOrder._id);
+            let obj = this.state.orderList;
+            obj[index] = updatedOrder;
+            this.setState({ orderList: obj });
+        } else {
+            console.log("nothing to update");
+        }
     }
-
-
     render() {
         // let title = this.props.navigation.state.params.title;
         let latitude = this.state.latitude;
@@ -194,49 +181,41 @@ export default class TodayVisits extends Component {
                         </Button>
                     </Left>
                     <Body>
-                        <Title>Today Visits</Title>
+                        <Title>Orders</Title>
                     </Body>
                     <Right>
-                        <Button transparent onPress={this.openOrderModal}>
+                        <Button transparent onPress={this.addOrder}>
                             <Icon name='add' />
                         </Button>
                     </Right>
                 </Header>
                 <ScrollView contentContainerStyle={styles.container}>
                     {/* <View style={styles.innerContainer}> */}
-                    <OrderModal
+                    {/* <OrderModal
                         modalVisible={this.state.modalVisible}
                         closeOrderModal={this.closeOrderModal}
                         addOrder={this.addOrder}
                         saveImage={this.saveImage}
                         itemIndex={this.state.itemIndex}
                         editItemData={this.state.editItemData}
-                    />
+                    /> */}
                     {/* <Text>{JSON.stringify(this.state.orderList)}</Text> */}
 
 
-                    {this.state.visitList.length > 0 && <List style={{ width: width }}
-                        dataSource={this.ds.cloneWithRows(this.state.visitList)}
+                    <List style={{ width: width }}
+                        dataSource={this.ds.cloneWithRows(this.state.orderList)}
                         renderRow={data =>
                             <ListItem style={{ paddingTop: 10, paddingBottom: 10 }}>
-                                <Right style={{ alignContent: 'center', alignItems: 'center' }}>
-                                    {/* <Body style={{width:width/100 * 10}}> */}
-                                    <Text>{moment(data.todayMeeting.start_time).format("HH:mm").toString()}</Text>
-                                    <Text>To</Text>
-                                    <Text>{moment(data.todayMeeting.end_time).format("HH:mm").toString()}</Text>
-                                    {/* </Body> */}
-                                </Right>
-                                <Body style={{ paddingLeft: 15 }}>
-                                    <Text style={{ color: '#009688', fontWeight: 'bold' }}>{data.todayMeeting.org_name}</Text>
-                                    <Text>Orders : {data.numberOfOrders}</Text>
-                                    <Text>Amount : {data.orderAmount}</Text>
+                                <Body style={{ paddingLeft: 15, paddingRight: 15 }}>
+                                    <Text style={{ color: '#009688', fontWeight: 'bold' }}>{data.item_name}</Text>
+
                                 </Body>
                                 <Right>
-                                    <Text
-                                        style={{ fontWeight: 'bold' }}
-                                        onPress={() => this.goToOrderListPage(data)}
-                                    >View Orders</Text>
+                                    <Text style={{ fontWeight: 'bold' }}>{data.item_quantity} </Text>
                                 </Right>
+                                <Body style={{ alignContent: 'flex-end', alignItems: 'flex-end' }}>
+                                    <Text note style={{ fontWeight: 'bold' }}>{data.item_price} Rs</Text>
+                                </Body>
                             </ListItem>}
                         renderLeftHiddenRow={(data, secId, rowId) =>
                             <Button full danger onPress={() => this.deleteOrder(data, secId, rowId)}>
@@ -249,7 +228,6 @@ export default class TodayVisits extends Component {
                         leftOpenValue={75}
                         rightOpenValue={-75}
                     />
-                    }
 
 
                     {/* </View> */}
@@ -302,15 +280,15 @@ const styles = StyleSheet.create({
     textInsideButton: {
         color: "#fafafa"
     },
-    // TextInput: {
-    //     width: 300,
-    //     height: 50,
-    //     fontSize: 10,
-    //     color: '#009688',
-    //     margin: 20,
-    //     alignItems: 'center',
-    //     textAlign: 'center'
-    // },
+    TextInput: {
+        width: 300,
+        height: 50,
+        fontSize: 10,
+        color: '#009688',
+        margin: 20,
+        alignItems: 'center',
+        textAlign: 'center'
+    },
 
     FooterDesign: {
         backgroundColor: '#009688',

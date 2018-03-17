@@ -8,10 +8,14 @@ import Home from '../screens/Home/home';
 import StartDay from '../screens/StartDay/startday';
 import StartVisit from '../screens/StartVisit/startVisit';
 import StopVisit from '../screens/StopVisit/stopVisit';
+import TodayVisits from '../screens/TodayVisits/TodayVisits';
+import OrderList from '../screens/OrderList/OrderList';
+import UpdateOrder from '../screens/UpdateOrder/UpdateOrder';
+
 
 export const routes = StackNavigator({
-    StopVisit:{
-        screen:StopVisit,
+    TodayVisits :{
+        screen: TodayVisits,
     },
     Login: {
         screen: Login
@@ -19,22 +23,31 @@ export const routes = StackNavigator({
     Signup: {
         screen: Signup
     },
-    Password:{
-        screen:Password
+    Password: {
+        screen: Password
     },
-    Home:{
-        screen:Home
+    Home: {
+        screen: Home
     },
-    StartDay:{
-        screen:StartDay
+    StartDay: {
+        screen: StartDay
     },
-    StartVisit:{
-        screen:StartVisit
+    StartVisit: {
+        screen: StartVisit
     },
-    // StopVisit:{
-    //     screen:StopVisit,
+    StopVisit: {
+        screen: StopVisit,
+    },
+    OrderList:{
+        screen:OrderList
+    },
+    UpdateOrder:{
+        screen:UpdateOrder
+    }
+    // TodayVisits :{
+    //     screen: TodayVisits,
     // }
 },
-{
-    headerMode:'screen',
-});
+    {
+        headerMode: 'screen',
+    });
