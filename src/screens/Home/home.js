@@ -9,6 +9,7 @@ import {
     Button,
     TextInput,
     TouchableOpacity,
+    ToastAndroid
 } from 'react-native';
 import UserProvider from '../../provider/user-provider';
 import EventSingleton from '../../event/eventSingleton';
@@ -28,19 +29,20 @@ export default class Home extends Component {
 
     componentWillMount() {
         eventObj = EventSingleton.geteventEmitterObj();
-        Promise.all([UserProvider.getStartDayStatus(), UserProvider.getVisitStatus()])
-            .then(status => {
-                try {
-                    startDayStatus = JSON.parse(status[0]);
-                    visitStatus = JSON.parse(status[1]);
-                    this.setState({ startDay: (!!startDayStatus) ? startDayStatus.status : null });
-                    startDayId = (!!startDayStatus && startDayStatus.startDayId) ? startDayStatus.startDayId : null;
-                    startVisitId = (!!visitStatus && visitStatus.startVisitId) ? visitStatus.startVisitId : null;
-                    this.setState({ startVisit: visitStatus.status });
-                } catch (e) {
-                    console.error(e);
-                }
-            });
+        // Promise.all([UserProvider.getStartDayStatus(), UserProvider.getVisitStatus()])
+        //     .then(status => {
+        //         try {
+        //             startDayStatus = JSON.parse(status[0]);
+        //             visitStatus = JSON.parse(status[1]);
+        //             this.setState({ startDay: (!!startDayStatus) ? startDayStatus.status : null });
+        //             startDayId = (!!startDayStatus && startDayStatus.startDayId) ? startDayStatus.startDayId : null;
+        //             startVisitId = (!!visitStatus && visitStatus.startVisitId) ? visitStatus.startVisitId : null;
+        //             this.setState({ startVisit: visitStatus.status });
+        //         } catch (e) {
+        //             console.error(e);
+        //         }
+        //     });
+
 
         eventObj.on('startday', (id, status) => {
             console.log("status", id, status);
@@ -59,7 +61,22 @@ export default class Home extends Component {
         })
 
     }
-
+    componentDidMount() {
+        Promise.all([UserProvider.getStartDayStatus(), UserProvider.getVisitStatus()])
+            .then(status => {
+                try {
+                    startDayStatus = JSON.parse(status[0]);
+                    visitStatus = JSON.parse(status[1]);
+                    this.setState({ startDay: (!!startDayStatus) ? startDayStatus.status : null });
+                    startDayId = (!!startDayStatus && startDayStatus.startDayId) ? startDayStatus.startDayId : null;
+                    startVisitId = (!!visitStatus && visitStatus.startVisitId) ? visitStatus.startVisitId : null;
+                    this.setState({ startVisit: (!!visitStatus)?visitStatus.status:null });
+                    ToastAndroid.show(status[1],5000);
+                } catch (e) {
+                    console.error(e);
+                }
+            });
+    }
     constructor() {
         super();
         UserProvider.getUserTokenFromLocalStorage()
@@ -90,7 +107,11 @@ export default class Home extends Component {
     }
 
     gotoTodayVisitsPage() {
+        this.props.navigation.navigate('TodayVisits');
+    }
 
+    gotoTodayExpensePage() {
+        this.props.navigation.navigate('ExpenseList');
     }
 
     render() {
@@ -116,6 +137,13 @@ export default class Home extends Component {
                     <Text style={styles.textInsideButton}>
                         {/* Start Day {this.state.token} */}
                         Today Visits
+                    </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.button} onPress={() => this.gotoTodayExpensePage()}>
+                    <Text style={styles.textInsideButton}>
+                        {/* Start Day {this.state.token} */}
+                        Today Expense
                     </Text>
                 </TouchableOpacity>
 

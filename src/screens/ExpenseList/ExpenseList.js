@@ -33,7 +33,7 @@ import StartDayProvider from '../../provider/startday-provider';
 import EventSingleton from '../../event/eventSingleton';
 import UserProvider from '../../provider/user-provider';
 import MapView, { Marker } from 'react-native-maps';
-import MeetingProvider from '../../provider/meeting-provider';
+import ExpenseProvider from '../../provider/expense-provider';
 
 // import MapView from 'react-native-maps';
 
@@ -41,8 +41,8 @@ var { height, width } = Dimensions.get('screen');
 let eventObj;
 let startVisitId = null;
 let userId = null;
-let meetingId = null;
-export default class OrderList extends Component {
+let expenseId = null;
+export default class ExpenseList extends Component {
     title = 'Start'
     constructor(props) {
         super();
@@ -55,51 +55,37 @@ export default class OrderList extends Component {
         userId: null,
         startVisit: null,
 
-        orderList: [],
+        expenseList: [],
         itemIndex: null,
         editItemData: null
     }
 
     componentWillMount() {
         eventObj = EventSingleton.geteventEmitterObj();
-        meetingId = this.props.navigation.state.params.meetingId;
+        eventObj.on('updateExpense', this.updateExpenseListener);
+        eventObj.on('addExpense', this.addEventListener);
+        UserProvider.getUserIdFromLocalStorage()
+            .then(data => {
+                userId = data;
+            })
+            .catch(e => {
 
-        eventObj.on('updateOrder', this.updateOrderListener);
-        Promise.all([
-            UserProvider.getVisitStatus(),
-            UserProvider.getUserIdFromLocalStorage()
-        ]).then(data => {
-            let visitStatus = null;
-            let visitStatusString = data[0];
-            let usersId = data[1];
-            try {
-                console.log("obj", visitStatusString);
-                visitStatus = JSON.parse(visitStatusString);
-                startVisitId = visitStatus.startVisitId;
-                userId = usersId;
-                console.log("\n\n userId : ", userId, "\n StartVisitId: ", startVisitId);
-            } catch (e) {
-                console.log("error while parsing visit status", e);
-            }
-        })
+            })
+
     }
 
     componentDidMount() {
-        let orders = this.props.navigation.state.params.orders;
-        this.setState({ orderList: orders });
-        //"orders": [
-        //         {
-        //             "_id": "5aa8184c018c4120845ad103",
-        //             "user_id": "5a8da717c283f71ec44f41e2",
-        //             "item_name": "pencil",
-        //             "item_quantity": "100",
-        //             "item_price": "10000",
-        //             "meeting_id": "5aa8183f018c4120845ad102",
-        //             "created_at": "2018-03-13T18:28:28.804Z",
-        //             "updated_at": "2018-03-13T18:28:28.804Z",
-        //             "__v": 0
-        //         }
-        //     ]
+        UserProvider.getUserIdFromLocalStorage()
+            .then(data => {
+                userId = data;
+                return ExpenseProvider.getTodayExpense(userId);
+            })
+            .then(data => {
+                this.setState({ expenseList: data.data });
+            })
+            .catch(e => {
+
+            })
     }
 
     static navigationOptions = {};
@@ -113,47 +99,59 @@ export default class OrderList extends Component {
         headerTintColor: "#fafafa"
     });
 
-    addOrder = (obj) => {
-        this.props.navigation.push('UpdateOrder', { title: "add", orderDetail: null, meetingId: meetingId });
+    addExpense = (obj) => {
+        this.props.navigation.push('UpdateExpense', { title: "add", expenseDetail: null, expenseId: expenseId });
     }
 
-    editOrder = (data, secId, rowId, rowMap) => {
-        this.props.navigation.push('UpdateOrder', { title: "update", orderDetail: data });
+    editExpense = (data, secId, rowId, rowMap) => {
+        this.props.navigation.push('UpdateExpense', { title: "update", expenseDetail: data });
     }
 
 
-    deleteOrder = (data, secId, rowId) => {
-        let arr = this.state.orderList;
-        let orderId = data._id;
-        // console.log("row Id", rowId);
+    deleteExpense = (data, secId, rowId) => {
+        let arr = this.state.expenseList;
+        let expenseId = data._id;
+        console.log("row Id", rowId);
         let obj = {
-            orderId: orderId
+            expenseId: expenseId
         }
-        MeetingProvider.deleteOrder(obj)
+        ExpenseProvider.deleteExpense(obj)
             .then(data => {
                 if (data.success === true) {
-                    eventObj.emit("updateOrder");
+                    // eventObj.emit("updateExpense");
+                    arr.splice(rowId, 1);
+                    console.log("arr",JSON.stringify(arr));
+                    this.setState({ expenseList: arr });
+
                 } else {
 
                 }
             })
-        arr.splice(rowId, 1);
-        this.setState({ orderList: arr });
+
     }
 
 
-    updateOrderListener = (updatedOrder) => {
-        if (updatedOrder) {
-            index = this.state.orderList.findIndex(x => x._id === updatedOrder._id);
-            let obj = this.state.orderList;
-            obj[index] = updatedOrder;
-            this.setState({ orderList: obj });
+    updateExpenseListener = (updateExpense) => {
+        if (updateExpense) {
+            index = this.state.expenseList.findIndex(x => x._id === updateExpense._id);
+            let obj = this.state.expenseList;
+            obj[index] = updateExpense;
+            this.setState({ expenseList: obj });
         } else {
             console.log("nothing to update");
         }
     }
+
+    addEventListener = (addExpense)=>{
+        if(addExpense){
+            let obj =this.state.expenseList;
+            obj.push(addExpense);
+            this.setState({expenseList:obj});
+        }
+    }
+
     render() {
-        
+
         return (
             <Container>
                 <Header style={styles.Header}>
@@ -163,37 +161,37 @@ export default class OrderList extends Component {
                         </Button>
                     </Left>
                     <Body>
-                        <Title>Orders</Title>
+                        <Title>Today Expenses</Title>
                     </Body>
                     <Right>
-                        <Button transparent onPress={this.addOrder}>
+                        <Button transparent onPress={this.addExpense}>
                             <Icon name='add' />
                         </Button>
                     </Right>
                 </Header>
                 <ScrollView contentContainerStyle={styles.container}>
-                   
+
                     <List style={{ width: width }}
-                        dataSource={this.ds.cloneWithRows(this.state.orderList)}
+                        dataSource={this.ds.cloneWithRows(this.state.expenseList)}
                         renderRow={data =>
                             <ListItem style={{ paddingTop: 10, paddingBottom: 10 }}>
                                 <Body style={{ paddingLeft: 15, paddingRight: 15 }}>
                                     <Text style={{ color: '#009688', fontWeight: 'bold' }}>{data.item_name}</Text>
-
                                 </Body>
                                 <Right>
-                                    <Text style={{ fontWeight: 'bold' }}>{data.item_quantity} </Text>
+                                    <Text style={{ fontWeight: 'bold' }}>{data.expense_amount} </Text>
                                 </Right>
-                                <Body style={{ alignContent: 'flex-end', alignItems: 'flex-end' }}>
+                                {/* <Body style={{ alignContent: 'flex-end', alignItems: 'flex-end' }}>
                                     <Text note style={{ fontWeight: 'bold' }}>{data.item_price} Rs</Text>
-                                </Body>
-                            </ListItem>}
+                                </Body> */}
+                            </ListItem>
+                            }
                         renderLeftHiddenRow={(data, secId, rowId) =>
-                            <Button full danger onPress={() => this.deleteOrder(data, secId, rowId)}>
+                            <Button full danger onPress={() => this.deleteExpense(data, secId, rowId)}>
                                 <Text style={{ color: '#fafafa' }}>Delete</Text>
                             </Button>}
                         renderRightHiddenRow={(data, secId, rowId, rowMap) =>
-                            <Button full onPress={() => this.editOrder(data, secId, rowId, rowMap)}>
+                            <Button full onPress={() => this.editExpense(data, secId, rowId, rowMap)}>
                                 <Text style={{ color: '#fafafa' }}>Edit</Text>
                             </Button>}
                         leftOpenValue={75}
@@ -225,7 +223,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#009688",
         padding: 10,
         marginTop: 10,
-        width: 100,  
+        width: 100,
         justifyContent: 'center',
         alignItems: 'center'
     },

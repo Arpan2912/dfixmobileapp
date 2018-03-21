@@ -91,6 +91,6 @@ export default class UserProvider {
     }
 
     static resetVisitStatus(status) {
-        return AsyncStorage.setItem('visitStatus', null);
+        return AsyncStorage.setItem('visitStatus',JSON.stringify(null));
     }
 }

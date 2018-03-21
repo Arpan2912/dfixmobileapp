@@ -7,7 +7,9 @@ import {
     View,
     Modal,
     Button,
-    TextInput, TouchableOpacity
+    TextInput, 
+    TouchableOpacity,
+    ToastAndroid
 } from 'react-native';
 import UserProvider from '../../provider/user-provider';
 
@@ -25,6 +27,18 @@ export default class Login extends Component {
 
     setEmail(email) {
         this.setState({ email: email });
+    }
+
+    componentWillMount() {
+        ToastAndroid.show("hello",5000);
+        UserProvider.getUserIdFromLocalStorage()
+            .then(data => {
+                userId = data;
+                ToastAndroid.show(userId,5000);
+                if (userId) {
+                    this.props.navigation.navigate('Home');
+                }
+            })
     }
 
     verifyEmailExistOrNot = () => {

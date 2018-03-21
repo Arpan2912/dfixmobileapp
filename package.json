@@ -9,7 +9,7 @@
   "dependencies": {
     "events": "^2.0.0",
     "moment": "^2.21.0",
-    "native-base": "^2.3.8",
+    "native-base": "^2.3.10",
     "react": "16.2.0",
     "react-native": "0.53.0",
     "react-native-camera-kit": "^5.3.22",

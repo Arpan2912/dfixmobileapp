@@ -9,7 +9,8 @@ import {
     View,
     Modal,
     Image,
-    TextInput
+    TextInput,
+    ToastAndroid
 } from 'react-native';
 import Validation from '../../provider/validation';
 import {
@@ -23,17 +24,17 @@ import {
     Right,
     Title
 } from 'native-base';
-import MeetingProvider from '../../provider/meeting-provider';
+import ExpenseProvider from '../../provider/expense-provider';
 import UserProvider from '../../provider/user-provider';
 import EventSingleton from '../../event/eventSingleton';
 
 var { height, width } = Dimensions.get('screen');
-let orderData = null;
+let expenseData = null;
 let eventObj = null;
 let userId = null;
-let meetingId = null;
+let expenseId = null;
 
-export default class UpdateOrder extends Component {
+export default class UpdateExpense extends Component {
     state = {
         image: null,
         text: null,
@@ -42,13 +43,13 @@ export default class UpdateOrder extends Component {
         itemNameError: true,
         itemNameErrorMsg: null,
 
-        itemQuantity: null,
-        itemQuantityError: true,
-        itemQuantityErrorMsg: null,
+        // itemQuantity: null,
+        // itemQuantityError: true,
+        // itemQuantityErrorMsg: null,
 
-        itemPrice: null,
-        itemPriceError: true,
-        itemPriceErrorMsg: null,
+        expenseAmount: null,
+        expenseAmountError: true,
+        expenseAmountErrorMsg: null,
     }
 
     constructor(props) {
@@ -67,21 +68,21 @@ export default class UpdateOrder extends Component {
 
     componentWillMount() {
         eventObj = EventSingleton.geteventEmitterObj();
-        meetingId = this.props.navigation.state.params.meetingId;
+        expenseId = this.props.navigation.state.params.expenseId;
         UserProvider.getUserIdFromLocalStorage()
             .then(data => {
                 userId = data;
             })
     }
 
+    //@Description should be add
     componentDidMount() {
-        let orderDetail = this.props.navigation.state.params.orderDetail;
-        this.orderData = orderDetail;
-        if (orderDetail) {
+        let expenseDetail = this.props.navigation.state.params.expenseDetail;
+        this.expenseData = expenseDetail;
+        if (expenseDetail) {
             this.setState({
-                itemName: orderDetail.item_name,
-                itemPrice: orderDetail.item_price,
-                itemQuantity: orderDetail.item_quantity
+                itemName: expenseDetail.item_name,
+                expenseAmount: expenseDetail.expense_amount
             });
         }
     }
@@ -107,28 +108,28 @@ export default class UpdateOrder extends Component {
         }
     }
 
-    setItemPrice = (price) => {
-        this.setState({ itemPrice: price })
+    setExpenseAmount = (price) => {
+        this.setState({ expenseAmount: price })
         let priceError = Validation.noWhiteSpaceAllowed(price);  //@NOTE :: add number validation here 
         if (priceError) {
-            this.setState({ itemPriceError: priceError.error, itemPriceErrorMsg: priceError.errorMsg });
+            this.setState({ expenseAmountError: priceError.error, expenseAmountErrorMsg: priceError.errorMsg });
         } else {
-            this.setState({ itemPriceError: false, itemPriceErrorMsg: null });
+            this.setState({ expenseAmountError: false, expenseAmountErrorMsg: null });
         }
     }
 
-    updateOrder = () => {
-        let order = {};
-        // order = Object.assign(order, orderData);
-        order.itemName = this.state.itemName;
-        order.itemPrice = this.state.itemPrice;
-        order.itemQuantity = this.state.itemQuantity;
-        order._id = this.orderData._id;
-        MeetingProvider.updateOrder(order)
+    updateExpense = () => {
+        let expense = {};
+        // expense = Object.assign(expense, expenseData);
+        expense.itemName = this.state.itemName;
+        expense.expenseAmount = this.state.expenseAmount;
+        // expense.itemQuantity = this.state.itemQuantity;
+        expense._id = this.expenseData._id;
+        ExpenseProvider.updateExpense(expense)
             .then(data => {
                 if (data.success === true) {
                     if (eventObj) {
-                        eventObj.emit('updateOrder', data.data);
+                        eventObj.emit('updateExpense', data.data);
                     }
                     this.props.navigation.pop();
                 }
@@ -138,26 +139,27 @@ export default class UpdateOrder extends Component {
             })
     }
 
-    addOrder = () => {
-        let order = {};
-        // order = Object.assign(order, orderData);
-        order.userId = userId;
-        order.itemName = this.state.itemName;
-        order.itemPrice = this.state.itemPrice;
-        order.itemQuantity = this.state.itemQuantity;
-        order.meetingId = meetingId;
-        //order._id = this.orderData._id;
-        MeetingProvider.addOrder(order)
+    addExpense = () => {
+        let expense = {};
+        // expense = Object.assign(expense, expenseData);
+        expense.userId = userId;
+        expense.itemName = this.state.itemName;
+        expense.expenseAmount = this.state.expenseAmount;
+        // expense.itemQuantity = this.state.itemQuantity;
+        expense.expenseId = expenseId;
+        //expense._id = this.expenseData._id;
+        ExpenseProvider.addExpense(expense)
             .then(data => {
                 if (data.success === true) {
                     if (eventObj) {
-                        eventObj.emit('updateOrder', data.data);
+                        eventObj.emit('addExpense', data.data);
                     }
                     this.props.navigation.pop();
                 }
             })
             .catch(e => {
-
+                ToastAndroid.show(e.toString(),5000);
+                this.props.navigation.pop();
             })
     }
 
@@ -173,7 +175,7 @@ export default class UpdateOrder extends Component {
                         </Button>
                     </Left>
                     <Body>
-                        <Title>{title} Order</Title>
+                        <Title>{title} Expense</Title>
                     </Body>
                     <Right>
                         <Button transparent>
@@ -191,30 +193,30 @@ export default class UpdateOrder extends Component {
                     </TextInput>
                     {this.state.itemNameErrorMsg && <Text>{this.state.itemNameErrorMsg}</Text>}
 
-                    <TextInput style={styles.TextInput}
+                    {/* <TextInput style={styles.TextInput}
                         placeholder="Item Quantity"
                         underlineColorAndroid='#009688'
                         placeholderTextColor="#26A69A"
                         onChangeText={(txt) => { this.setItemQuantity(txt) }}
                     >{this.state.itemQuantity}
                     </TextInput>
-                    {this.state.itemQuantityErrorMsg && <Text>{this.state.itemQuantityErrorMsg}</Text>}
+                    {this.state.itemQuantityErrorMsg && <Text>{this.state.itemQuantityErrorMsg}</Text>} */}
 
                     <TextInput style={styles.TextInput}
                         placeholder="Item Price"
                         underlineColorAndroid='#009688'
                         placeholderTextColor="#26A69A"
-                        onChangeText={(txt) => { this.setItemPrice(txt) }}
-                    >{this.state.itemPrice}
+                        onChangeText={(txt) => { this.setExpenseAmount(txt) }}
+                    >{this.state.expenseAmount}
                     </TextInput>
-                    {this.state.itemPriceErrorMsg && <Text>{this.state.itemPriceErrorMsg}</Text>}
+                    {this.state.expenseAmountErrorMsg && <Text>{this.state.expenseAmountErrorMsg}</Text>}
 
-                    {title === 'update' && <TouchableHighlight style={styles.addButton} onPress={this.updateOrder}>
+                    {title === 'update' && <TouchableHighlight style={styles.addButton} onPress={this.updateExpense}>
                         <Text style={styles.textInsideButton}>
                             Update
                     </Text>
                     </TouchableHighlight>}
-                    {title === 'add' && <TouchableHighlight style={styles.addButton} onPress={this.addOrder}>
+                    {title === 'add' && <TouchableHighlight style={styles.addButton} onPress={this.addExpense}>
                         <Text style={styles.textInsideButton}>
                             Add
                     </Text>

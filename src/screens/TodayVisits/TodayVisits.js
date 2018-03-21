@@ -12,7 +12,8 @@ import {
     Dimensions,
     ScrollView,
     AsyncStorage,
-    ListView
+    ListView,
+    ToastAndroid
 } from 'react-native';
 import OrderModal from '../../modal/order-modal';
 import {
@@ -41,6 +42,7 @@ var { height, width } = Dimensions.get('screen');
 let eventObj;
 let startVisitId = null;
 let userId = null;
+let loading = true;
 export default class TodayVisits extends Component {
     title = 'Start'
     constructor(props) {
@@ -86,39 +88,17 @@ export default class TodayVisits extends Component {
         headerTintColor: "#fafafa"
     });
 
-    openOrderModal = () => {
-        this.setState({ modalVisible: true });
-    }
-
-    closeOrderModal = () => {
-        this.setState({ modalVisible: false, editItemData: null, itemIndex: null });
-    }
-
-    updateOrder = (obj) => {
-        let arr = [];
-        arr = this.state.orderList;
-        console.log("item index", this.state.itemIndex !== null, this.state.itemIndex !== -1);
-        if (this.state.itemIndex == null || this.state.itemIndex == -1) {
-            console.log("add order obj");
-            arr.push(obj);
-            this.setState({ orderList: arr });
-        } else {
-            console.log("update order obj");
-            let index = this.state.itemIndex;
-            arr[index] = obj;
-            this.setState({ orderList: arr, itemIndex: null, editItemData: null });
-        }
-
-    }
 
     getTodayVisits = () => {
+        loading === true;
         UserProvider.getUserIdFromLocalStorage()
             .then(data => {
                 userId = data;
                 return MeetingProvider.getTodayVisits(userId)
             })
             .then(data => {
-                console.log("data", data);
+                loading = false;
+                // console.log("data", data);
                 this.setState({ visitList: data.data });
             })
     }
@@ -156,28 +136,11 @@ export default class TodayVisits extends Component {
     // "numberOfOrders": 1
     // }
 
-    deleteOrder = (data, secId, rowId) => {
-        let arr = this.state.orderList;
-        console.log("row Id", rowId);
-        arr.splice(rowId, 1);
-        this.setState({ orderList: arr });
-    }
-
-    editOrder = (data, secId, rowId, rowMap) => {
-
-        this.setState({ itemIndex: rowId, editItemData: data, modalVisible: true });
-
-        // let arrList = this.state.orderList;
-        // let index = arrList.findIndex((index)=>{
-        //     return index === data;
-        // });
-        // this.setState({index:index})
-    }
 
     goToOrderListPage = (meetingData) => {
         let orders = meetingData.orders;
         let meetingId = meetingData.todayMeeting._id;
-        this.props.navigation.navigate('OrderList', { title: "Orders List", orders: orders,meetingId:meetingId });
+        this.props.navigation.navigate('OrderList', { title: "Orders List", orders: orders, meetingId: meetingId });
     }
 
 
@@ -212,8 +175,6 @@ export default class TodayVisits extends Component {
                         itemIndex={this.state.itemIndex}
                         editItemData={this.state.editItemData}
                     />
-                    {/* <Text>{JSON.stringify(this.state.orderList)}</Text> */}
-
 
                     {this.state.visitList.length > 0 && <List style={{ width: width }}
                         dataSource={this.ds.cloneWithRows(this.state.visitList)}
@@ -237,19 +198,25 @@ export default class TodayVisits extends Component {
                                         onPress={() => this.goToOrderListPage(data)}
                                     >View Orders</Text>
                                 </Right>
-                            </ListItem>}
+                            </ListItem>
+                            }
                         renderLeftHiddenRow={(data, secId, rowId) =>
-                            <Button full danger onPress={() => this.deleteOrder(data, secId, rowId)}>
+                            {/* <Button full danger onPress={() => this.deleteExpense(data, secId, rowId)}>
                                 <Text style={{ color: '#fafafa' }}>Delete</Text>
-                            </Button>}
+                            </Button> */}
+                            }
                         renderRightHiddenRow={(data, secId, rowId, rowMap) =>
-                            <Button full onPress={() => this.editOrder(data, secId, rowId, rowMap)}>
+                            {/* <Button full onPress={() => this.editExpense(data, secId, rowId, rowMap)}>
                                 <Text style={{ color: '#fafafa' }}>Edit</Text>
-                            </Button>}
-                        leftOpenValue={75}
-                        rightOpenValue={-75}
+                            </Button> */}
+                            }
+                        leftOpenValue={0}
+                        rightOpenValue={0}
                     />
+
                     }
+
+                    {loading === true && <Text>loading...</Text>}
 
 
                     {/* </View> */}
