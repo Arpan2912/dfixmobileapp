@@ -93,4 +93,18 @@ export default class UserProvider {
     static resetVisitStatus(status) {
         return AsyncStorage.setItem('visitStatus',JSON.stringify(null));
     }
+
+    static setLocationToLocalStorage(status){
+        return AsyncStorage.setItem('location',status);
+    }
+
+    static getLocationFromLocalStorage(){
+        return AsyncStorage.getItem('location');
+    }
+
+    static resetLocationFromLocalStorage(){
+        return AsyncStorage.removeItem('location');
+    }
+
+    
 }

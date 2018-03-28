@@ -1,11 +1,12 @@
-import { AsyncStorage } from 'react-native';
-export default class MeetingProvider {
+import { AsyncStorage,ToastAndroid } from 'react-native';
+export default class LocationProvider {
     static token;
     constructor() {
 
     }
 
-    static startMeeting(startMeetingOj) {
+    static addOrUpdateLocation(locationObj) {
+        ToastAndroid.show(JSON.stringify(locationObj),2000);
         return new Promise((resolve, reject) => {
             Promise.all([AsyncStorage.getItem('userId'), AsyncStorage.getItem('token')])
                 // AsyncStorage.getItem("token")
@@ -13,9 +14,9 @@ export default class MeetingProvider {
                     let userId = data[0];
                     let token = data[1];
 
-                    fetch('http://192.168.43.72:3333/api/start-visit', {
+                    fetch('http://192.168.43.72:3333/api/add-user-location', {
                         method: 'POST',
-                        body: JSON.stringify({ location: startMeetingOj.location, base64: startMeetingOj.base64, userId: userId, orgName: startMeetingOj.orgName }),
+                        body: JSON.stringify({ id:locationObj.id,location: locationObj.location, userId: userId, currentLocation: locationObj.currentLocation }),
                         headers: {
                             Accept: 'application/json',
                             'Content-Type': 'application/json',

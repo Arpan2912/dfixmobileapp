@@ -30,7 +30,7 @@ export default class StartDayProvider {
         })
     }
 
-    static stopDay(km, base64, userId,id) {
+    static stopDay(km, base64, userId, id) {
         return new Promise((resolve, reject) => {
             Promise.all([AsyncStorage.getItem('userId'), AsyncStorage.getItem('token')])
                 // AsyncStorage.getItem("token")
@@ -40,7 +40,7 @@ export default class StartDayProvider {
 
                     fetch('http://192.168.43.72:3333/api/stop-day', {
                         method: 'POST',
-                        body: JSON.stringify({ id:id,km: km, base64: base64, userId: userId }),
+                        body: JSON.stringify({ id: id, km: km, base64: base64, userId: userId }),
                         headers: {
                             Accept: 'application/json',
                             'Content-Type': 'application/json',
@@ -51,8 +51,35 @@ export default class StartDayProvider {
                             resolve(data);
                         })
 
-                })).catch(e=>{
-                    
+                })).catch(e => {
+
+                })
+        })
+    }
+
+    static getStartDayDetails(userId) {
+        return new Promise((resolve, reject) => {
+            AsyncStorage.getItem('token')
+                // AsyncStorage.getItem("token")
+                .then((data => {
+                    // let userId = userId;
+                    let token = data;
+
+                    fetch(`http://192.168.43.72:3333/api/get-start-day-details/${userId}`, {
+                        method: 'GET',
+                        // body: JSON.stringify({ userId: userId }),
+                        headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                            Authorization: 'Bearer ' + token
+                        }
+                    }).then((response) => response.json())
+                        .then(data => {
+                            resolve(data);
+                        })
+
+                })).catch(e => {
+
                 })
         })
     }

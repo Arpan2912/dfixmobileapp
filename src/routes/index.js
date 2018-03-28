@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text,ToastAndroid } from 'react-native';
 import { StackNavigator, DrawerNavigator } from 'react-navigation';
 import Login from '../screens/Login/login';
 import Signup from '../screens/SignUp/signup';
@@ -13,8 +13,8 @@ import OrderList from '../screens/OrderList/OrderList';
 import UpdateOrder from '../screens/UpdateOrder/UpdateOrder';
 import ExpenseList from '../screens/ExpenseList/ExpenseList';
 import UpdateExpense from '../screens/UpdateExpense/UpdateExpense';
-
-
+import UserProvider from '../provider/user-provider';
+import Logout from '../screens/Logout/Logout';
 
 const stack = StackNavigator({
     Login: {
@@ -73,6 +73,9 @@ export const routes = DrawerNavigator({
         // }
 
     },
+    Logout: {
+        screen: Logout
+    }
 },
     {
         drawerPosition: 'left',

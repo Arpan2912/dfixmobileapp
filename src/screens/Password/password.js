@@ -9,9 +9,14 @@ import {
     Button,
     TextInput,
     TouchableOpacity,
-    AsyncStorage
+    AsyncStorage,
+    ToastAndroid,
+    AppState
 } from 'react-native';
 import UserProvider from '../../provider/user-provider';
+import StartDayProvider from '../../provider/startday-provider';
+import MeetingProvider from '../../provider/meeting-provider';
+let userId = null;
 
 export default class Password extends Component {
     static navigationOptions = {
@@ -30,13 +35,67 @@ export default class Password extends Component {
                 if (data.success === true) {
                     Promise.all([
                         UserProvider.setUserIdToLocalStorage(data.data.userId),
-                        UserProvider.setUserTokenToLocalStorage(data.data.token)
+                        UserProvider.setUserTokenToLocalStorage(data.data.token),
                     ])
                         // AsyncStorage.setItem('userId', data.data.userId);
                         // AsyncStorage.setItem('token', data.data.token)
-                        .then(data => {
+                        .then(result => {
+                            userId = data.data.userId;
+                            ToastAndroid.show(data.data.userId, 5000);
                             this.props.navigation.navigate('Home');
+                            // return Promise.all([
+                            //     StartDayProvider.getStartDayDetails(data.data.userId),
+                            //     MeetingProvider.getTodayLastRiunningVisit(data.data.userId)
+                            // ])
+                            //return StartDayProvider.getStartDayDetails(data.data.userId)
                         })
+                        // .then(data => {
+                        //     let startDayData = data;
+                        //     // let runningVisitData = data[1];
+
+                        //     if (startDayData.success === true) {
+                        //         if (startDayData.data && !startDayData.data.end_time) {
+                        //             let status = {
+                        //                 startDayId: startDayData.data._id,
+                        //                 status: 'true'
+                        //             }
+                        //             UserProvider.setStartDayStatus(JSON.stringify(status));
+                        //         } else {
+                        //             let status = {
+                        //                 startDayId: null,
+                        //                 status: 'false'
+                        //             }
+                        //             UserProvider.setStartDayStatus(JSON.stringify(status));
+                        //         }
+                        //     } else if (startDayData.success === false) {
+                        //         let status = {
+                        //             startDayId: null,
+                        //             status: 'false'
+                        //         }
+                        //         UserProvider.setStartDayStatus(JSON.stringify(status));
+                        //     }
+
+                        //     return MeetingProvider.getTodayLastRiunningVisit(userId)
+                        // })
+                        // .then(data => {
+                        //     let runningVisitData = data;
+                        //     if (runningVisitData.success === true) {
+                        //         if (runningVisitData.data && !runningVisitData.data.end_time) {
+                        //             let status = {
+                        //                 startVisitId: data.data._id,
+                        //                 status: 'true'
+                        //             }
+                        //             UserProvider.setVisitStatus(JSON.stringify(status));
+
+                        //         } else {
+                        //             UserProvider.resetVisitStatus();
+                        //         }
+                        //     } else if (runningVisitData.success === false) {
+                        //         UserProvider.resetVisitStatus();
+                        //     }
+                        //     ToastAndroid.show(JSON.stringify(data), 5000);
+                        //     this.props.navigation.navigate('Home');
+                        // })
                         .catch(e => {
 
                         })
