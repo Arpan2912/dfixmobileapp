@@ -32,9 +32,14 @@ export default class Password extends Component {
         UserProvider.authenticateUser(email, password)
             .then(data => {
                 this.setState({ title: JSON.stringify(data) })
-                if (data.success === true) {
+                if (data.success === true) {  
+                    // UserProvider.setUserNameToLocalStorage(data.data.userName)
+                    // .then(data=>{
+                        // ToastAndroid.show("user name is stored",5000);
+                    // })
                     Promise.all([
                         UserProvider.setUserIdToLocalStorage(data.data.userId),
+                        UserProvider.setUserNameToLocalStorage(data.data.userName),
                         UserProvider.setUserTokenToLocalStorage(data.data.token),
                     ])
                         // AsyncStorage.setItem('userId', data.data.userId);

@@ -176,7 +176,7 @@ export default class ExpenseList extends Component {
                         renderRow={data =>
                             <ListItem style={{ paddingTop: 10, paddingBottom: 10 }}>
                                 <Body style={{ paddingLeft: 15, paddingRight: 15 }}>
-                                    <Text style={{ color: '#009688', fontWeight: 'bold' }}>{data.item_name}</Text>
+                                    <Text style={{ color: '#009688', fontWeight: 'bold' }}>{data.description}</Text>
                                 </Body>
                                 <Right>
                                     <Text style={{ fontWeight: 'bold' }}>{data.expense_amount} </Text>

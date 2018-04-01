@@ -10,7 +10,8 @@ import {
     Modal,
     Image,
     TextInput,
-    ToastAndroid
+    ToastAndroid,
+    TouchableOpacity
 } from 'react-native';
 import Validation from '../../provider/validation';
 import {
@@ -27,6 +28,8 @@ import {
 import ExpenseProvider from '../../provider/expense-provider';
 import UserProvider from '../../provider/user-provider';
 import EventSingleton from '../../event/eventSingleton';
+import CameraModal from '../../modal/camera-modal';
+
 
 var { height, width } = Dimensions.get('screen');
 let expenseData = null;
@@ -39,10 +42,17 @@ export default class UpdateExpense extends Component {
         image: null,
         text: null,
 
-        itemName: null,
-        itemNameError: true,
-        itemNameErrorMsg: null,
+        description: null,
+        descriptionError: true,
+        descriptionErrorMsg: null,
 
+        base64: null,
+        base64Error: true,
+        base64ErrorMsg: null,
+
+        imgUrl: null,
+
+        modalVisible: false,
         // itemQuantity: null,
         // itemQuantityError: true,
         // itemQuantityErrorMsg: null,
@@ -81,19 +91,20 @@ export default class UpdateExpense extends Component {
         this.expenseData = expenseDetail;
         if (expenseDetail) {
             this.setState({
-                itemName: expenseDetail.item_name,
-                expenseAmount: expenseDetail.expense_amount
+                description: expenseDetail.description,
+                expenseAmount: expenseDetail.expense_amount,
+                imgUrl: expenseDetail.image_url
             });
         }
     }
 
     setItemName = (iname) => {
-        this.setState({ itemName: iname })
+        this.setState({ description: iname })
         let inameError = Validation.noWhiteSpaceAllowed(iname);
         if (inameError) {
-            this.setState({ itemNameError: inameError.error, itemNameErrorMsg: inameError.errorMsg });
+            this.setState({ descriptionError: inameError.error, descriptionErrorMsg: inameError.errorMsg });
         } else {
-            this.setState({ itemNameError: false, itemNameErrorMsg: null });
+            this.setState({ descriptionError: false, descriptionErrorMsg: null });
 
         }
     }
@@ -118,11 +129,22 @@ export default class UpdateExpense extends Component {
         }
     }
 
+    saveImage = (base64) => {
+        // this.setState({ modalVisible: false });
+        this.setState({ base64: base64 });
+        if (!base64) {
+            this.setState({ base64Error: true, base64ErrorMsg: "Please capture image" });
+        } else {
+            this.setState({ base64Error: false, base64ErrorMsg: null, imgUrl: null });
+        }
+    }
+
     updateExpense = () => {
         let expense = {};
         // expense = Object.assign(expense, expenseData);
-        expense.itemName = this.state.itemName;
+        expense.description = this.state.description;
         expense.expenseAmount = this.state.expenseAmount;
+        // expense.base64 = this.state.base64;
         // expense.itemQuantity = this.state.itemQuantity;
         expense._id = this.expenseData._id;
         ExpenseProvider.updateExpense(expense)
@@ -143,8 +165,9 @@ export default class UpdateExpense extends Component {
         let expense = {};
         // expense = Object.assign(expense, expenseData);
         expense.userId = userId;
-        expense.itemName = this.state.itemName;
+        expense.description = this.state.description;
         expense.expenseAmount = this.state.expenseAmount;
+        expense.base64 = this.state.base64;
         // expense.itemQuantity = this.state.itemQuantity;
         expense.expenseId = expenseId;
         //expense._id = this.expenseData._id;
@@ -158,9 +181,26 @@ export default class UpdateExpense extends Component {
                 }
             })
             .catch(e => {
-                ToastAndroid.show(e.toString(),5000);
+                ToastAndroid.show(e.toString(), 5000);
                 this.props.navigation.pop();
             })
+    }
+
+    openCameraModal = () => {
+        this.setState({ modalVisible: true });
+    }
+    closeCameraModal = () => {
+        this.setState({ modalVisible: false });
+    }
+
+    saveImage = (base64) => {
+        this.setState({ modalVisible: false });
+        this.setState({ base64: base64 });
+        if (!base64) {
+            this.setState({ base64Error: true, base64ErrorMsg: "Please capture image" });
+        } else {
+            this.setState({ base64Error: false, base64ErrorMsg: null, imgUrl: null });
+        }
     }
 
     render() {
@@ -184,14 +224,19 @@ export default class UpdateExpense extends Component {
                     </Right>
                 </Header>
                 <View style={styles.container}>
+                    <CameraModal
+                        modalVisible={this.state.modalVisible}
+                        closeCameraModal={this.closeCameraModal}
+                        saveImage={this.saveImage}
+                    />
                     <TextInput style={styles.TextInput}
                         placeholder="Item Name"
                         underlineColorAndroid='#009688'
                         placeholderTextColor="#26A69A"
                         onChangeText={(txt) => { this.setItemName(txt) }}
-                    >{this.state.itemName}
+                    >{this.state.description}
                     </TextInput>
-                    {this.state.itemNameErrorMsg && <Text>{this.state.itemNameErrorMsg}</Text>}
+                    {this.state.descriptionErrorMsg && <Text>{this.state.descriptionErrorMsg}</Text>}
 
                     {/* <TextInput style={styles.TextInput}
                         placeholder="Item Quantity"
@@ -202,6 +247,7 @@ export default class UpdateExpense extends Component {
                     </TextInput>
                     {this.state.itemQuantityErrorMsg && <Text>{this.state.itemQuantityErrorMsg}</Text>} */}
 
+
                     <TextInput style={styles.TextInput}
                         placeholder="Item Price"
                         underlineColorAndroid='#009688'
@@ -211,17 +257,54 @@ export default class UpdateExpense extends Component {
                     </TextInput>
                     {this.state.expenseAmountErrorMsg && <Text>{this.state.expenseAmountErrorMsg}</Text>}
 
-                    {title === 'update' && <TouchableHighlight style={styles.addButton} onPress={this.updateExpense}>
+
+                    <TouchableHighlight style={styles.addButton}>
+                        <Text style={styles.textInsideButton}
+                            onPress={this.openCameraModal}
+                        >
+                            Capture Image
+                        </Text>
+                    </TouchableHighlight>
+                    {this.state.base64 !== null &&
+                        <Image
+                            style={styles.ImageView}
+                            // source={{ uri: '/storage/emulated/0/DCIM/Camera/1518296786611.jpg' }}
+                            source={{ uri: 'data:image/jpeg;base64,' + this.state.base64 }}
+                        />
+                    }
+
+                    {this.state.imgUrl !== null &&
+                        <Image
+                            style={styles.ImageView}
+                            // source={{ uri: '/storage/emulated/0/DCIM/Camera/1518296786611.jpg' }}
+                            source={{ uri: 'http://192.168.43.72:3333/' + this.state.imgUrl }}
+                        />
+                    }
+
+
+                    {/* {title === 'update' && <TouchableHighlight style={styles.addButton} onPress={this.updateExpense}>
                         <Text style={styles.textInsideButton}>
                             Update
                     </Text>
-                    </TouchableHighlight>}
-                    {title === 'add' && <TouchableHighlight style={styles.addButton} onPress={this.addExpense}>
+                    </TouchableHighlight>} */}
+                    {/* {title === 'add' && <TouchableHighlight style={styles.addButton} onPress={this.addExpense}>
                         <Text style={styles.textInsideButton}>
                             Add
                     </Text>
-                    </TouchableHighlight>}
+                    </TouchableHighlight>} */}
                 </View>
+                <Footer style={styles.FooterDesign}>
+                {title === 'update' && <TouchableHighlight style={styles.FooterButton} onPress={this.updateExpense}>
+                <Text style={styles.FooterText}>
+                    Update Expense
+            </Text>
+            </TouchableHighlight>}
+            {title === 'add' && <TouchableHighlight style={styles.FooterButton} onPress={this.addExpense}>
+                <Text style={styles.FooterText}>
+                    Add Expense
+            </Text>
+            </TouchableHighlight>}
+            </Footer>
             </Container>
 
         );
@@ -234,6 +317,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#fafafa",
         flex: 1,
         alignItems: 'center',
+        paddingTop: 20
         //justifyContent: 'center'
     },
     Header: {
@@ -250,7 +334,10 @@ const styles = StyleSheet.create({
     addButton: {
         backgroundColor: "#009688",
         padding: 10,
-        width: width - 100,
+        marginTop: 20,
+        // width: width - 100,
+        width: 300,
+        
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 0
@@ -262,16 +349,16 @@ const styles = StyleSheet.create({
     TextInput: {
         width: 300,
         height: 50,
-        fontSize: 10,
+        fontSize: 15,
         color: '#009688',
         margin: 5,
         alignItems: 'center',
-        textAlign: 'center'
+        // textAlign: 'center'
     },
     ImageView: {
-        marginTop: 10,
+        marginTop: 20,
         height: 200,
-        width: 200
+        width: 300
     },
     FooterDesign: {
         backgroundColor: '#009688',

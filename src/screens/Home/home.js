@@ -10,13 +10,14 @@ import {
     TextInput,
     TouchableOpacity,
     ToastAndroid,
-    AppState
+    AppState,
+    Dimensions
 } from 'react-native';
 import UserProvider from '../../provider/user-provider';
 import EventSingleton from '../../event/eventSingleton';
 import MeetingProvider from '../../provider/meeting-provider';
 import StartDayProvider from '../../provider/startday-provider';
-
+var { height, width } = Dimensions.get('screen');
 
 
 let token;
@@ -36,26 +37,6 @@ export default class Home extends Component {
     componentWillMount() {
         AppState.addEventListener('change', this._handleAppStateChange);
         eventObj = EventSingleton.geteventEmitterObj();
-        UserProvider.getUserIdFromLocalStorage()
-            .then(data => {
-                userId = data;
-            })
-
-
-        // Promise.all([UserProvider.getStartDayStatus(), UserProvider.getVisitStatus()])
-        //     .then(status => {
-        //         try {
-        //             startDayStatus = JSON.parse(status[0]);
-        //             visitStatus = JSON.parse(status[1]);
-        //             this.setState({ startDay: (!!startDayStatus) ? startDayStatus.status : null });
-        //             startDayId = (!!startDayStatus && startDayStatus.startDayId) ? startDayStatus.startDayId : null;
-        //             startVisitId = (!!visitStatus && visitStatus.startVisitId) ? visitStatus.startVisitId : null;
-        //             this.setState({ startVisit: visitStatus.status });
-        //         } catch (e) {
-        //             console.error(e);
-        //         }
-        //     });
-
 
         eventObj.on('startday', (id, status) => {
             console.log("status", id, status);
@@ -81,7 +62,8 @@ export default class Home extends Component {
 
     _handleAppStateChange = (nextAppState) => {
         if (nextAppState === 'active') {
-            this.setTodayStatus().then(data => {
+            this.resetStatus().then(data => {
+                ToastAndroid.show("reset status promise resolved",5000);
                 this.setLocalVaribles();
             })
                 .catch(e => {
@@ -92,13 +74,18 @@ export default class Home extends Component {
 
 
     componentDidMount() {
-        this.setTodayStatus()
+        UserProvider.getUserIdFromLocalStorage()
             .then(data => {
-                this.setLocalVaribles()
-            })
-            .catch(e => {
-                this.setLocalVaribles();
-            })
+                userId = data;
+                this.resetStatus()
+                    .then(data => {
+                        ToastAndroid.show("reset status promise resolved",5000);
+                        this.setLocalVaribles()
+                    })
+                    .catch(e => {
+                        this.setLocalVaribles();
+                    })
+            });
         // StartDayProvider.getStartDayDetails(userId)
         //     .then(data => {
         //         let startDayData = data;
@@ -188,12 +175,13 @@ export default class Home extends Component {
 
             StartDayProvider.getStartDayDetails(userId)
                 .then(data => {
-                    let startDayData = data;
-                    // let runningVisitData = data[1];
 
+                    let startDayData = data;
+                    // ToastAndroid.show("start" + JSON.stringify(data), 5000);
+                    // let runningVisitData = data[1];
                     if (startDayData.success === true) {
                         if (startDayData.data && !startDayData.data.end_time) {
-                            ToastAndroid.show("inside end time null");
+                            // ToastAndroid.show("inside end time null");
                             let status = {
                                 startDayId: startDayData.data._id,
                                 status: 'true'
@@ -217,6 +205,7 @@ export default class Home extends Component {
                     return MeetingProvider.getTodayLastRiunningVisit(userId)
                 })
                 .then(data => {
+                    // ToastAndroid.show("today visit" + JSON.stringify(data), 5000);
                     let runningVisitData = data;
                     if (runningVisitData.success === true) {
                         if (runningVisitData.data && !runningVisitData.data.end_time) {
@@ -236,8 +225,53 @@ export default class Home extends Component {
                     // ToastAndroid.show(JSON.stringify(data), 5000);
                 })
                 .catch(e => {
+                    this.resetStatus();
                     resolve(true);
                 })
+        })
+    }
+
+    resetStatus() {
+        let date = new Date();
+        let dateString;
+        date.setHours(0, 0, 0, 0);
+        date = new Date(date);
+        dateString = date.toString();
+        return new Promise((resolve, reject) => {
+            UserProvider.getTodayDateFromLocalStorage()
+                .then(data => {
+                    if (data) {
+                        let storedDate = new Date(data);
+                        ToastAndroid.show("stored date"+data,5000);
+                        if (storedDate < date) {
+                            let startDatStatus = {
+                                startDayId: null,
+                                status: 'false'
+                            }
+                            UserProvider.setTodayDateToLocalStorage(dateString);
+                            UserProvider.setStartDayStatus(JSON.stringify(startDatStatus));
+                            UserProvider.resetVisitStatus();
+                            return resolve(true);
+                        } else {
+                            // do nothing
+                            this.setTodayStatus().then(data=>resolve(true));
+
+                        }
+                    } else {
+                        UserProvider.setTodayDateToLocalStorage(dateString);
+                        UserProvider.setStartDayStatus(JSON.stringify(startDatStatus));
+                        UserProvider.resetVisitStatus();
+                        return resolve(true);
+                    }
+                })
+                .catch(e => {
+                    return resolve(true);
+                    // UserProvider.setTodayDateToLocalStorage(dateString);
+                    // UserProvider.setStartDayStatus(JSON.stringify(startDatStatus));
+                    // UserProvider.resetVisitStatus();
+                })
+
+
         })
     }
 
@@ -245,8 +279,9 @@ export default class Home extends Component {
         Promise.all([UserProvider.getStartDayStatus(), UserProvider.getVisitStatus()])
             .then(status => {
                 try {
-                    startDayStatus = JSON.parse(status[0]);
-                    visitStatus = JSON.parse(status[1]);
+                    ToastAndroid.show("set local", 1000);
+                    let startDayStatus = JSON.parse(status[0]);
+                    let visitStatus = JSON.parse(status[1]);
                     this.setState({ startDay: (!!startDayStatus) ? startDayStatus.status : null });
                     startDayId = (!!startDayStatus && startDayStatus.startDayId) ? startDayStatus.startDayId : null;
                     startVisitId = (!!visitStatus && visitStatus.startVisitId) ? visitStatus.startVisitId : null;
@@ -287,6 +322,7 @@ export default class Home extends Component {
                         {dayTitle} {this.state.token ? this.state.token.toString() : null}
                     </Text>
                 </TouchableOpacity>
+
                 <TouchableOpacity style={styles.button} onPress={() => this.gotoStartOrStopVisitPage()}>
                     <Text style={styles.textInsideButton}>
                         {/* Start Day {this.state.token} */}
@@ -326,8 +362,9 @@ const styles = StyleSheet.create({
 
     button: {
         backgroundColor: "#009688",
+        margin: 10,
         padding: 10,
-        width: 100,
+        width: width * 4 / 5,
         justifyContent: 'center',
         alignItems: 'center'
     },

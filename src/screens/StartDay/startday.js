@@ -14,7 +14,7 @@ import {
     ScrollView,
     AsyncStorage
 } from 'react-native';
-import CameraModal from '../../modal/camera-modal'
+import CameraModal from '../../modal/camera-modal';
 import {
     Container,
     Footer
@@ -152,17 +152,20 @@ export default class StartDay extends Component {
 
                 <View style={styles.container}>
                     {/* <View style={styles.innerContainer}> */}
-                    <TextInput style={styles.TextInput}
-                        placeholder="Km"
-                        underlineColorAndroid='#009688'
-                        placeholderTextColor="#26A69A"
-                        onChangeText={(text) => this.setKm(text)}
-                    > </TextInput>
+                   
                     <CameraModal
                         modalVisible={this.state.modalVisible}
                         closeCameraModal={this.closeCameraModal}
                         saveImage={this.saveImage}
                     />
+                    <TextInput style={styles.TextInput}
+                        placeholder="Enter Km"
+                        underlineColorAndroid='#009688'
+                        placeholderTextColor="#26A69A"
+                        onChangeText={(text) => this.setKm(text)}
+                    > 
+                    {this.state.km}
+                    </TextInput>
                     <TouchableOpacity style={styles.cameraButton}>
                         <Text style={styles.textInsideButton}
                             onPress={this.openCameraModal}
@@ -216,10 +219,11 @@ const styles = StyleSheet.create({
     cameraButton: {
         backgroundColor: "#009688",
         padding: 10,
-        width: width - 100,
+        // width: width - 100,
+        width: 300,
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 20
+        // borderRadius: 20
 
     },
     textInsideButton: {
@@ -228,16 +232,16 @@ const styles = StyleSheet.create({
     TextInput: {
         width: 300,
         height: 50,
-        fontSize: 10,
+        fontSize: 15,
         color: '#009688',
         margin: 20,
         alignItems: 'center',
-        textAlign: 'center'
+        // textAlign: 'center'
     },
     ImageView: {
-        marginTop: 10,
+        marginTop: 15,
         height: 200,
-        width: 200
+        width: 300
     },
     FooterDesign: {
         backgroundColor: '#009688',

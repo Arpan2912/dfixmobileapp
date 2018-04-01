@@ -15,6 +15,7 @@ import ExpenseList from '../screens/ExpenseList/ExpenseList';
 import UpdateExpense from '../screens/UpdateExpense/UpdateExpense';
 import UserProvider from '../provider/user-provider';
 import Logout from '../screens/Logout/Logout';
+import CameraPage from '../screens/CameraPage/CameraPage';
 
 const stack = StackNavigator({
     Login: {
@@ -52,6 +53,9 @@ const stack = StackNavigator({
     },
     ExpenseList: {
         screen: ExpenseList,
+    },
+    CameraPage: {
+        screen: CameraPage,
     },
 
 },

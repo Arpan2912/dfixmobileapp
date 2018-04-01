@@ -145,17 +145,19 @@ export default class StartVisit extends Component {
 
                 <ScrollView contentContainerStyle={styles.container}>
                     {/* <View style={styles.innerContainer}> */}
-                    <TextInput style={styles.TextInput}
-                        placeholder="Enter Organization Name"
-                        underlineColorAndroid='#009688'
-                        placeholderTextColor="#26A69A"
-                        onChangeText={(text) => this.setOrgName(text)}
-                    > </TextInput>
                     <CameraModal
                         modalVisible={this.state.modalVisible}
                         closeCameraModal={this.closeCameraModal}
                         saveImage={this.saveImage}
                     />
+                    <TextInput style={styles.TextInput}
+                        placeholder="Enter Organization Name"
+                        underlineColorAndroid='#009688'
+                        placeholderTextColor="#26A69A"
+                        onChangeText={(text) => this.setOrgName(text)}
+                    >{this.state.orgName}
+                    </TextInput>
+                   
                     <TouchableOpacity style={styles.cameraButton}>
                         <Text style={styles.textInsideButton}
                             onPress={this.openCameraModal}
@@ -232,28 +234,30 @@ const styles = StyleSheet.create({
         backgroundColor: "#009688",
         padding: 10,
         margin: 10,
-        width: width - 100,
+        // width: width - 100,
+        width:300,
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 20
+        // borderRadius: 20
 
     },
     textInsideButton: {
         color: "#fafafa"
     },
+    
     TextInput: {
         width: 300,
         height: 50,
-        fontSize: 10,
+        fontSize: 15,
         color: '#009688',
         margin: 20,
         alignItems: 'center',
-        textAlign: 'center'
+        // textAlign: 'center'
     },
     ImageView: {
         marginTop: 10,
         height: 200,
-        width: 200
+        width: 300
     },
     FooterDesign: {
         backgroundColor: '#009688',

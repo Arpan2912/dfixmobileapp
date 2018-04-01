@@ -67,10 +67,14 @@ export default class ExpenseProvider {
         // console.log("obj in Stop visit pro", JSON.stringify(obj))
         let token = null;
         return new Promise((resolve, reject) => {
-            AsyncStorage.getItem('token')
+            Promise.all([
+                AsyncStorage.getItem('token'),
+                AsyncStorage.getItem('userName')
+            ])
                 .then(data => {
-                    token = data;
-
+                    token = data[0];
+                    let userName = data[1];
+                    obj.userName= userName;
                     fetch('http://192.168.43.72:3333/api/add-expense', {
                         method: 'POST',
                         body: JSON.stringify(obj),

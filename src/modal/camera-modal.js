@@ -10,11 +10,24 @@ import {
     Modal,
     Image
 } from 'react-native';
+import {
+    Container,
+    Footer,
+    Header,
+    Icon,
+    Button,
+    Body,
+    Left,
+    Right,
+    Title
+} from 'native-base';
 import { CameraKitCamera } from 'react-native-camera-kit';
+var { height, width } = Dimensions.get('screen');
+
 
 export default class CameraModal extends Component {
     state = {
-        image:null,
+        image: null,
         text: null
     }
     // onBottomButtonPressed(event) {
@@ -62,33 +75,36 @@ export default class CameraModal extends Component {
                 animationType={'slide'}
                 onRequestClose={() => this.closeModal()}
             >
-                <CameraKitCamera
-                    ref={(cam) => {
-                        this.camera = cam;
-                        //console.log("cam",JSON.stringify(cam));
-                    }
-                    }
-                    style={{
-                        flex: 1,
-                        backgroundColor: 'transparent'
-                    }}
-                    cameraOptions={{
-                        flashMode: 'auto',             // on/off/auto(default)
-                        focusMode: 'on',               // off/on(default)
-                        zoomMode: 'on',                // off/on(default)
-                        ratioOverlay: '1:1',            // optional, ratio overlay on the camera and crop the image seamlessly
-                        ratioOverlayColor: '#00000077' // optional
-                    }}
-                />
-                {/* {this.state.image !== '' &&
+                    <CameraKitCamera
+                        ref={(cam) => {
+                            this.camera = cam;
+                            //console.log("cam",JSON.stringify(cam));
+                        }
+                        }
+                        style={{
+                            flex: 10,
+                            backgroundColor: 'transparent',
+                        }}
+                        cameraOptions={{
+                            flashMode: 'auto',             // on/off/auto(default)
+                            focusMode: 'on',               // off/on(default)
+                            zoomMode: 'on',                // off/on(default)
+                            ratioOverlay: '1:1',            // optional, ratio overlay on the camera and crop the image seamlessly
+                            ratioOverlayColor: '#00000077' // optional
+                        }}
+                    />
+                    {/* {this.state.image !== '' &&
                     <Image
                         style={{ width: 400, height: 600 }}
                         // source={{ uri: '/storage/emulated/0/DCIM/Camera/1518296786611.jpg' }}
                         source={{ uri: 'data:image/jpeg;base64,' + this.state.image }}
                     />
                 } */}
-                <Text onPress={this.takePicture}>Capture {this.state.text}</Text>
-                <Text onPress={this.saveImage}>save Image </Text>
+                    <TouchableHighlight onPress={this.takePicture} style={{ flex: 1 ,justifyContent:'center',alignContent:'center',alignItems:'center'}}>
+                    <Icon name='camera' style={{fontSize: 30, color: '#009688'}}/>
+                    </TouchableHighlight>
+                    {/* <Text onPress={this.takePicture}>Capture {this.state.text}</Text>
+                <Text onPress={this.saveImage}>save Image </Text> */}
             </Modal>
         );
     }
@@ -142,22 +158,22 @@ export default class CameraModal extends Component {
 //     }
 // }
 
-// const styles = StyleSheet.create({
-//     container: {
-//         flex: 1,
-//         flexDirection: 'row',
-//     },
-//     preview: {
-//         flex: 1,
-//         justifyContent: 'flex-end',
-//         alignItems: 'center'
-//     },
-//     capture: {
-//         flex: 0,
-//         backgroundColor: '#fff',
-//         borderRadius: 5,
-//         color: '#000',
-//         padding: 10,
-//         margin: 40
-//     }
-// });
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        flexDirection: 'row',
+    },
+    preview: {
+        flex: 1,
+        justifyContent: 'flex-end',
+        alignItems: 'center'
+    },
+    capture: {
+        flex: 1,
+        backgroundColor: '#fff',
+        borderRadius: 5,
+        //color: '#000',
+        //padding: 10,
+        //margin: 40
+    }
+});

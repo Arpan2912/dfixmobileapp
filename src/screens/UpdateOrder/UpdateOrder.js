@@ -175,11 +175,11 @@ export default class UpdateOrder extends Component {
                     <Body>
                         <Title>{title} Order</Title>
                     </Body>
-                    <Right>
+                    {/* <Right>
                         <Button transparent>
                             <Icon name='add' />
                         </Button>
-                    </Right>
+                    </Right> */}
                 </Header>
                 <View style={styles.container}>
                     <TextInput style={styles.TextInput}
@@ -248,7 +248,8 @@ const styles = StyleSheet.create({
     addButton: {
         backgroundColor: "#009688",
         padding: 10,
-        width: width - 100,
+        // width: width - 100,
+        width:300,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 0
@@ -260,11 +261,11 @@ const styles = StyleSheet.create({
     TextInput: {
         width: 300,
         height: 50,
-        fontSize: 10,
+        fontSize: 15,
         color: '#009688',
         margin: 5,
         alignItems: 'center',
-        textAlign: 'center'
+        // textAlign: 'center'
     },
     ImageView: {
         marginTop: 10,

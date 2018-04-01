@@ -64,6 +64,14 @@ export default class UserProvider {
         return AsyncStorage.getItem('userId');
     }
 
+    static setUserNameToLocalStorage(userName) {
+        return AsyncStorage.setItem('userName', userName);
+    }
+
+    static getUserNameFromLocalStorage() {
+        return AsyncStorage.getItem('userName');
+    }
+
     static setStartDayStatus(status) {
         console.log(status);
         return AsyncStorage.setItem('startDay', status);
@@ -106,5 +114,12 @@ export default class UserProvider {
         return AsyncStorage.removeItem('location');
     }
 
+    static setTodayDateToLocalStorage(date){
+        return AsyncStorage.setItem('date',date);
+    }
+
+    static getTodayDateFromLocalStorage(date){
+        return AsyncStorage.getItem('date');
+    }
     
 }
