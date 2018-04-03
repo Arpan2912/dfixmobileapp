@@ -13,7 +13,8 @@ import {
     ScrollView,
     AsyncStorage,
     ListView,
-    ToastAndroid
+    ToastAndroid,
+    ActivityIndicator
 } from 'react-native';
 import OrderModal from '../../modal/order-modal';
 import {
@@ -60,6 +61,7 @@ export default class TodayVisits extends Component {
     }
 
     componentWillMount() {
+        loading = true;
         eventObj = EventSingleton.geteventEmitterObj();
         eventObj.on("updateOrder", this.getTodayVisits);
         Promise.all([
@@ -216,7 +218,7 @@ export default class TodayVisits extends Component {
 
                     }
 
-                    {loading === true && <Text>loading...</Text>}
+                    {loading === true &&  <ActivityIndicator size="small" color="#00ff00" />}
 
 
                     {/* </View> */}

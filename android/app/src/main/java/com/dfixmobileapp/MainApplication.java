@@ -2,6 +2,7 @@ package com.dfixmobileapp;
 
 import android.app.Application;
 
+import com.dfixmobileapp.newtoast.AnExampleReactPackage;
 import com.facebook.react.ReactApplication;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.wix.RNCameraKit.RNCameraKitPackage;
@@ -28,7 +29,8 @@ public class MainApplication extends Application implements ReactApplication {
           new MainReactPackage(),
             new VectorIconsPackage(),
             new RNCameraKitPackage(),
-            new MapsPackage()
+            new MapsPackage(),
+              new AnExampleReactPackage()
             
       );
     }

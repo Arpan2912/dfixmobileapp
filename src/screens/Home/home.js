@@ -11,12 +11,14 @@ import {
     TouchableOpacity,
     ToastAndroid,
     AppState,
-    Dimensions
+    Dimensions,
+    ActivityIndicator
 } from 'react-native';
 import UserProvider from '../../provider/user-provider';
 import EventSingleton from '../../event/eventSingleton';
 import MeetingProvider from '../../provider/meeting-provider';
 import StartDayProvider from '../../provider/startday-provider';
+import Custom from '../../components/Custom';
 var { height, width } = Dimensions.get('screen');
 
 
@@ -31,10 +33,12 @@ export default class Home extends Component {
     state = {
         token: null,
         startDay: 'false',
-        startVisit: 'false'
+        startVisit: 'false',
+        isLoading: true
     }
 
     componentWillMount() {
+        this.setState({ isLoading: true });
         AppState.addEventListener('change', this._handleAppStateChange);
         eventObj = EventSingleton.geteventEmitterObj();
 
@@ -62,28 +66,37 @@ export default class Home extends Component {
 
     _handleAppStateChange = (nextAppState) => {
         if (nextAppState === 'active') {
+            this.setState({ isLoading: true });
             this.resetStatus().then(data => {
-                ToastAndroid.show("reset status promise resolved",5000);
+                ToastAndroid.show("reset status promise resolved", 5000);
                 this.setLocalVaribles();
+                this.setState({ isLoading: false });
             })
                 .catch(e => {
                     this.setLocalVaribles();
+                    this.setState({ isLoading: false });
+
                 })
         }
     }
 
 
     componentDidMount() {
+        this.setState({ isLoading: true });
         UserProvider.getUserIdFromLocalStorage()
             .then(data => {
                 userId = data;
                 this.resetStatus()
                     .then(data => {
-                        ToastAndroid.show("reset status promise resolved",5000);
-                        this.setLocalVaribles()
+                        ToastAndroid.show("reset status promise resolved", 5000);
+                        this.setLocalVaribles();
+                        this.setState({ isLoading: false });
+
                     })
                     .catch(e => {
                         this.setLocalVaribles();
+                        this.setState({ isLoading: false });
+
                     })
             });
         // StartDayProvider.getStartDayDetails(userId)
@@ -242,7 +255,7 @@ export default class Home extends Component {
                 .then(data => {
                     if (data) {
                         let storedDate = new Date(data);
-                        ToastAndroid.show("stored date"+data,5000);
+                        ToastAndroid.show("stored date" + data, 5000);
                         if (storedDate < date) {
                             let startDatStatus = {
                                 startDayId: null,
@@ -254,7 +267,7 @@ export default class Home extends Component {
                             return resolve(true);
                         } else {
                             // do nothing
-                            this.setTodayStatus().then(data=>resolve(true));
+                            this.setTodayStatus().then(data => resolve(true));
 
                         }
                     } else {
@@ -311,40 +324,47 @@ export default class Home extends Component {
     }
 
     render() {
+        Custom.show("background is running", 2000);
         let dayTitle = (this.state.startDay === 'true') ? "Stop Day" : "Start Day";
         let visitTitle = (this.state.startVisit === 'true') ? "End Visit" : "Start Visit";
         return (
             <View style={styles.container}>
                 {/* <View style={styles.innerContainer}> */}
-                <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.navigate('StartDay', { title: dayTitle, startDayId: (!!startDayId) ? startDayId : null })}>
-                    <Text style={styles.textInsideButton}>
-                        {/* Start Day {this.state.token} */}
-                        {dayTitle} {this.state.token ? this.state.token.toString() : null}
-                    </Text>
-                </TouchableOpacity>
+                {this.state.isLoading === false && <View>
+                    <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.navigate('StartDay', { title: dayTitle, startDayId: (!!startDayId) ? startDayId : null })}>
+                        <Text style={styles.textInsideButton}>
+                            {/* Start Day {this.state.token} */}
+                            {dayTitle} {this.state.token ? this.state.token.toString() : null}
+                        </Text>
+                    </TouchableOpacity>
 
-                <TouchableOpacity style={styles.button} onPress={() => this.gotoStartOrStopVisitPage()}>
-                    <Text style={styles.textInsideButton}>
-                        {/* Start Day {this.state.token} */}
-                        {visitTitle} {this.state.token ? this.state.token.toString() : null}
-                    </Text>
-                </TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={() => this.gotoStartOrStopVisitPage()}>
+                        <Text style={styles.textInsideButton}>
+                            {/* Start Day {this.state.token} */}
+                            {visitTitle} {this.state.token ? this.state.token.toString() : null}
+                        </Text>
+                    </TouchableOpacity>
 
-                <TouchableOpacity style={styles.button} onPress={() => this.gotoTodayVisitsPage()}>
-                    <Text style={styles.textInsideButton}>
-                        {/* Start Day {this.state.token} */}
-                        Today Visits
+                    <TouchableOpacity style={styles.button} onPress={() => this.gotoTodayVisitsPage()}>
+                        <Text style={styles.textInsideButton}>
+                            {/* Start Day {this.state.token} */}
+                            Today Visits
                     </Text>
-                </TouchableOpacity>
+                    </TouchableOpacity>
 
-                <TouchableOpacity style={styles.button} onPress={() => this.gotoTodayExpensePage()}>
-                    <Text style={styles.textInsideButton}>
-                        {/* Start Day {this.state.token} */}
-                        Today Expense
+                    <TouchableOpacity style={styles.button} onPress={() => this.gotoTodayExpensePage()}>
+                        <Text style={styles.textInsideButton}>
+                            {/* Start Day {this.state.token} */}
+                            Today Expense
                     </Text>
-                </TouchableOpacity>
+                    </TouchableOpacity>
+                </View>}
+                {this.state.isLoading===true && <View>
+                    <ActivityIndicator size="small" color="#00ff00" />
+                </View>}
 
             </View>
+
             // </View>
         )
     }

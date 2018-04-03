@@ -48,7 +48,7 @@ export default class StartDay extends Component {
 
         km: null,
         kmError: true,
-        kmErrorMsg: null
+        kmErrorMsg: null      
     }
 
     componentWillMount() {
@@ -104,19 +104,23 @@ export default class StartDay extends Component {
         AsyncStorage.getItem('userId')
             .then(data => {
                 this.setState({ userId: data });
-            })
-        StartDayProvider.startDay(this.state.km, this.state.base64, this.state.userId)
-            .then(data => {
-                if (data.success === true) {
-                    let status = {
-                        startDayId: data.data._id,
-                        status: 'true'
-                    }
-                    // this.setState({ startday: status });
-                    if (this.props.navigation.state.params.title === 'Start Day')
-                        eventObj.emit('startday', data.data._id, 'true');
-                    UserProvider.setStartDayStatus(JSON.stringify(status));
-                    this.props.navigation.goBack();
+                if (this.state.userId) {
+                    StartDayProvider.startDay(this.state.km, this.state.base64, this.state.userId)
+                        .then(data => {
+                            if (data.success === true) {
+                                let status = {
+                                    startDayId: data.data._id,
+                                    status: 'true'
+                                }
+                                // this.setState({ startday: status });
+                                if (this.props.navigation.state.params.title === 'Start Day')
+                                    eventObj.emit('startday', data.data._id, 'true');
+                                UserProvider.setStartDayStatus(JSON.stringify(status));
+                                this.props.navigation.goBack();
+                            }
+                        })
+                } else {
+                    
                 }
             })
     }
@@ -152,7 +156,7 @@ export default class StartDay extends Component {
 
                 <View style={styles.container}>
                     {/* <View style={styles.innerContainer}> */}
-                   
+
                     <CameraModal
                         modalVisible={this.state.modalVisible}
                         closeCameraModal={this.closeCameraModal}
@@ -163,8 +167,8 @@ export default class StartDay extends Component {
                         underlineColorAndroid='#009688'
                         placeholderTextColor="#26A69A"
                         onChangeText={(text) => this.setKm(text)}
-                    > 
-                    {this.state.km}
+                    >
+                        {this.state.km}
                     </TextInput>
                     <TouchableOpacity style={styles.cameraButton}>
                         <Text style={styles.textInsideButton}
