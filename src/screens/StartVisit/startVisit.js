@@ -91,6 +91,14 @@ export default class StartVisit extends Component {
 
     setOrgName = (text) => {
         this.setState({ orgName: text });
+        let orgError = Validation.onlyWhiteSpaceNotAllowed(text);
+        if (orgError) {
+            this.setState({ orgError: orgError.error });
+            this.setState({ orgErrorMsg: orgError.errorMsg });
+        } else {
+            this.setState({ orgError: false });
+            this.setState({ orgErrorMsg: null });
+        }
     }
 
     getCurrentLocation = () => {

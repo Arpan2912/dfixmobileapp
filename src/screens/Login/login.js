@@ -7,17 +7,20 @@ import {
     View,
     Modal,
     Button,
-    TextInput, 
+    TextInput,
     TouchableOpacity,
     ToastAndroid
 } from 'react-native';
 import UserProvider from '../../provider/user-provider';
+import commonCss from '../../css/commonCss';
+import Validation from '../../provider/validation';
 
 export default class Login extends Component {
 
     state = {
         email: null,
-
+        emailError: true,
+        emailErrorMsg: null,
     }
 
     static navigationOptions = {
@@ -27,16 +30,24 @@ export default class Login extends Component {
 
     setEmail(email) {
         this.setState({ email: email });
+        let emailError = Validation.emailValidator(email);
+        if (emailError) {
+            this.setState({ emailError: emailError.error });
+            this.setState({ emailErrorMsg: emailError.errorMsg });
+        } else {
+            this.setState({ emailError: false });
+            this.setState({ emailErrorMsg: null });
+        }
     }
 
     componentWillMount() {
-        ToastAndroid.show("hello",5000);
+        ToastAndroid.show("hello", 5000);
         UserProvider.getUserIdFromLocalStorage()
             .then(data => {
                 userId = data;
-                ToastAndroid.show(userId,5000);
+                ToastAndroid.show(userId, 5000);
                 if (userId) {
-                    this.props.navigation.navigate('Home');
+                    this.props.navigation.replace('Home');
                 }
             })
     }
@@ -88,9 +99,12 @@ export default class Login extends Component {
                         placeholderTextColor="#26A69A"
                         onChangeText={(text) => this.setState({ email: text })}
                     >
-
                     </TextInput>
-                    <TouchableOpacity style={styles.button} onPress={this.verifyEmailExistOrNot}>
+                        {this.state.emailErrorMsg && <Text style={commonCss.error}>{this.state.emailErrorMsg}</Text>}
+                    
+                    <TouchableOpacity
+                        disabled={this.state.emailErrorMsg}
+                        style={styles.button} onPress={this.verifyEmailExistOrNot}>
                         <Text style={styles.textInsideButton}>
                             Next {this.state.email ? this.state.email : ''}
                         </Text>
@@ -134,6 +148,9 @@ const styles = StyleSheet.create({
     },
     textInsideButton: {
         color: "#009688"
+    },
+    error:{
+        color:"red"
     }
 
 

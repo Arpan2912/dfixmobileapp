@@ -2,6 +2,8 @@ package com.dfixmobileapp.restpackage;
 
 import com.google.gson.JsonObject;
 
+import org.json.JSONObject;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -17,8 +19,8 @@ import retrofit2.http.Query;
  */
 
 public interface RequestDemo {
-    @POST("/new")
-    Call<ResponseBody> setLocation(@Body JsonObject jsonObject);
+    @POST("/api/add-user-location")
+    Call<ResponseBody> addOrUpdateLocation(@Header("Authorization") String token,@Body JsonObject jsonObject);
 
     @GET("/")
     Call<ResponseBody> startServer();

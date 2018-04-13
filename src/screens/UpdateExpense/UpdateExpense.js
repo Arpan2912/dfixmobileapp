@@ -29,7 +29,7 @@ import ExpenseProvider from '../../provider/expense-provider';
 import UserProvider from '../../provider/user-provider';
 import EventSingleton from '../../event/eventSingleton';
 import CameraModal from '../../modal/camera-modal';
-
+import commonCss from '../../css/commonCss';
 
 var { height, width } = Dimensions.get('screen');
 let expenseData = null;
@@ -100,7 +100,7 @@ export default class UpdateExpense extends Component {
 
     setItemName = (iname) => {
         this.setState({ description: iname })
-        let inameError = Validation.noWhiteSpaceAllowed(iname);
+        let inameError = Validation.onlyWhiteSpaceNotAllowed(iname);
         if (inameError) {
             this.setState({ descriptionError: inameError.error, descriptionErrorMsg: inameError.errorMsg });
         } else {
@@ -111,7 +111,7 @@ export default class UpdateExpense extends Component {
 
     setItemQuantity = (qty) => {
         this.setState({ itemQuantity: qty })
-        let qtyError = Validation.noWhiteSpaceAllowed(qty);  //@NOTE :: add number validation here 
+        let qtyError = Validation.numberValidator(qty);  //@NOTE :: add number validation here 
         if (qtyError) {
             this.setState({ itemQuantityError: qtyError.error, itemQuantityErrorMsg: qtyError.errorMsg });
         } else {
@@ -121,7 +121,7 @@ export default class UpdateExpense extends Component {
 
     setExpenseAmount = (price) => {
         this.setState({ expenseAmount: price })
-        let priceError = Validation.noWhiteSpaceAllowed(price);  //@NOTE :: add number validation here 
+        let priceError = Validation.numberValidator(price);  //@NOTE :: add number validation here 
         if (priceError) {
             this.setState({ expenseAmountError: priceError.error, expenseAmountErrorMsg: priceError.errorMsg });
         } else {
@@ -236,7 +236,7 @@ export default class UpdateExpense extends Component {
                         onChangeText={(txt) => { this.setItemName(txt) }}
                     >{this.state.description}
                     </TextInput>
-                    {this.state.descriptionErrorMsg && <Text>{this.state.descriptionErrorMsg}</Text>}
+                    {this.state.descriptionErrorMsg && <Text style={commonCss.error}>{this.state.descriptionErrorMsg}</Text>}
 
                     {/* <TextInput style={styles.TextInput}
                         placeholder="Item Quantity"
@@ -255,7 +255,7 @@ export default class UpdateExpense extends Component {
                         onChangeText={(txt) => { this.setExpenseAmount(txt) }}
                     >{this.state.expenseAmount}
                     </TextInput>
-                    {this.state.expenseAmountErrorMsg && <Text>{this.state.expenseAmountErrorMsg}</Text>}
+                    {this.state.expenseAmountErrorMsg && <Text style={commonCss.error}>{this.state.expenseAmountErrorMsg}</Text>}
 
 
                     <TouchableHighlight style={styles.addButton}>

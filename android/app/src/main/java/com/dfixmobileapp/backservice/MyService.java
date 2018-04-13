@@ -2,8 +2,11 @@ package com.dfixmobileapp.backservice;
 
 import android.app.IntentService;
 import android.app.Service;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -18,9 +21,12 @@ import android.widget.Toast;
 
 import com.dfixmobileapp.restpackage.APIClient;
 import com.dfixmobileapp.restpackage.RequestDemo;
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -33,9 +39,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import com.facebook.react.modules.storage.ReactDatabaseSupplier;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
+
 public class MyService extends Service implements LocationListener{
 
-
+    ReactDatabaseSupplier reactDatabaseSupplier;
     // flag for GPS status
     boolean isGPSEnabled = false;
 
@@ -59,6 +69,10 @@ public class MyService extends Service implements LocationListener{
     protected LocationManager locationManager;
     private Handler handler;
     private RequestDemo reqDemo;
+    private @javax.annotation.Nullable
+
+    SQLiteDatabase mDb;
+
 
     @Nullable
     @Override
@@ -69,77 +83,83 @@ public class MyService extends Service implements LocationListener{
 
     @Override
     public void onCreate() {
-
- handler = new Handler();
-
-        getLocation();
-        reqDemo = APIClient.getClient().create(RequestDemo.class);
         super.onCreate();
+        handler = new Handler();
+        reactDatabaseSupplier = ReactDatabaseSupplier.getInstance(this);
+        mDb = reactDatabaseSupplier.get();
+        reqDemo = APIClient.getClient().create(RequestDemo.class);
+        getAllDataFromLocalStorage();
+
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         int count = 100; //Declare as inatance variable
-        MyService m = new MyService();
-        m.getLocation();
+//        MyService m = new MyService();
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
 
 
             @Override
             public void run() {
-
+                // getLocation();
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        JsonObject jsonObject = new JsonObject();
-
-//                        jsonObject.addProperty("user_id",name);
-
-                        JsonArray jsonArray = new JsonArray();
-
-
-                        JsonObject jsonObjectLocation = new JsonObject();
-                        jsonObjectLocation.addProperty("lat",latitude);
-                        jsonObjectLocation.addProperty("long",longitude);
-                        jsonArray.add(jsonObjectLocation);
-                        jsonObject.add("location" , jsonArray);
-
-                        Log.i("+++","++"+jsonObject.toString());
-//                        Call<ResponseBody> call = reqDemo.setLocation(jsonObject)
-                         Call<ResponseBody> call = reqDemo.startServer();
-
-
-                        call.enqueue(new Callback<ResponseBody>() {
-                            @Override
-                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                if(response.isSuccessful()){
-                                    try {
-                                        String resp = response.body().string();
-                                        Log.i("++++++++++","+++ resp +++"+resp);
-                                        JSONObject jsonObjectResp = new JSONObject(resp);
-
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-
-                            }
-                        });
-
-
-                        Toast.makeText(MyService.this, "+"+getLatitude(), Toast.LENGTH_SHORT).show();
+                        setAndStoreLocationObj();
                     }
                 });
+//                handler.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        JsonObject jsonObject = new JsonObject();
+//
+////                        jsonObject.addProperty("user_id",name);
+//
+//                        JsonArray jsonArray = new JsonArray();
+//
+//
+//                        JsonObject jsonObjectLocation = new JsonObject();
+//                        jsonObjectLocation.addProperty("lat",latitude);
+//                        jsonObjectLocation.addProperty("long",longitude);
+//                        jsonArray.add(jsonObjectLocation);
+//                        jsonObject.add("location" , jsonArray);
+//
+//                        Log.i("+++","++"+jsonObject.toString());
+////                        Call<ResponseBody> call = reqDemo.setLocation(jsonObject)
+//                         Call<ResponseBody> call = reqDemo.startServer();
+//
+//
+//                        call.enqueue(new Callback<ResponseBody>() {
+//                            @Override
+//                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                                if(response.isSuccessful()){
+//                                    try {
+//                                        String resp = response.body().string();
+//                                        Log.i("++++++++++","+++ resp +++"+resp);
+//                                        JSONObject jsonObjectResp = new JSONObject(resp);
+//
+//                                    } catch (IOException e) {
+//                                        e.printStackTrace();
+//                                    } catch (JSONException e) {
+//                                        e.printStackTrace();
+//                                    }
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onFailure(Call<ResponseBody> call, Throwable t) {
+//
+//                            }
+//                        });
+//
+//
+//                        Toast.makeText(MyService.this, "+"+getLatitude(), Toast.LENGTH_SHORT).show();
+//                    }
+//                });
 
             }
-        }, 0, 5000);
+        }, 0, 1000 * 60);
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -187,6 +207,7 @@ public class MyService extends Service implements LocationListener{
                         if (locationManager != null) {
                             location = locationManager
                                     .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
                             if (location != null) {
                                 latitude = location.getLatitude();
                                 longitude = location.getLongitude();
@@ -228,9 +249,166 @@ public class MyService extends Service implements LocationListener{
         return longitude;
     }
 
+    public void getAllDataFromLocalStorage(){
+
+        Cursor catalystLocalStorage = mDb.query("catalystLocalStorage", new String[]{"key", "value"}, null, null, null, null, null);
+        if (catalystLocalStorage.moveToFirst()) {
+            do {
+                // JSONObject will ask for try catch
+                try {
+                    String key = new String(catalystLocalStorage.getString(catalystLocalStorage.getColumnIndex("key")));
+                    String value = new String(catalystLocalStorage.getString(catalystLocalStorage.getColumnIndex("value")));
+                    Log.i("+++++++++++++++++ key",key);
+                    Log.i("+++++++++++++++++ value",value);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } while(catalystLocalStorage.moveToNext());
+        }
+    }
+
+    public String getDataFromKey(String searchKey){
+        String value =null;
+        String KEY_COLUMN="key";
+        Cursor cursor = mDb.query("catalystLocalStorage",
+                new String[]{"key", "value"},
+                KEY_COLUMN + "=?",
+                new String[]{searchKey}, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                // JSONObject will ask for try catch
+                try {
+                    String key = new String(cursor.getString(cursor.getColumnIndex("key")));
+                    value = new String(cursor.getString(cursor.getColumnIndex("value")));                    Log.i("++++ key +++",key);                    Log.i("++++ value +++",value);                } catch (Exception e) {                    e.printStackTrace();
+                }
+            } while(cursor.moveToNext());
+        }
+        return value;
+    }
+
+    public void insertValueToDb(String KeyColumn,String ValueColumn,SQLiteDatabase mDb){
+        String KEY_COLUMN ="key";
+        String VALUE_COLUMN ="value";
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(KEY_COLUMN, KeyColumn);
+        contentValues.put(VALUE_COLUMN, ValueColumn);
+
+        long inserted = mDb.insertWithOnConflict("catalystLocalStorage",null,contentValues,SQLiteDatabase.CONFLICT_REPLACE);
+        Log.i("inserted",inserted+"");
+    }
+
+    public void setAndStoreLocationObj(){
+        Location l = this.getLocation();
+        if(l != null){
+            Log.i("location obj", String.valueOf(l));
+            Double latitude = l.getLatitude();
+            Double longitude =l.getLongitude();
+            String lat = latitude.toString();
+            String lon =longitude.toString();
+            String id = null;
+
+            String userId = this.getDataFromKey("userId");
+            String token = "Bearer "+this.getDataFromKey("token");
+            String location = this.getDataFromKey("location");
+            String userName = this.getDataFromKey("userName");
+            Log.i("userId",userId+"   token "+token+" location "+location+" userName "+userName);
+            try{
+                JsonObject locationObj1 = new JsonObject();
+                locationObj1.addProperty("latitude",lat);
+                locationObj1.addProperty("longitude",lon);
+
+                Log.i("location obj", location+"gson"+locationObj1.toString());
+                JsonObject  localLocationObj;
+
+                JsonArray localLocationArray =new JsonArray();
+                if(location != null){
+                    JsonParser jp =new JsonParser();
+                    localLocationObj=(JsonObject)jp.parse(location);
+                    Log.i("location obj gson",localLocationObj.toString());
+                    localLocationObj.has("location");
+                    Log.i("location", String.valueOf(localLocationObj));
+                    localLocationArray =localLocationObj.getAsJsonArray("location");
+                    Log.i("location array gson",localLocationArray.toString());
+
+                    if(localLocationObj.has("id")){
+                        id = localLocationObj.get("id").getAsString();
+                        Log.i("id",id);
+                    }
+                    Log.i("++++msg+++", String.valueOf(localLocationObj)+"id"+id);
+                } else {
+                localLocationObj = new JsonObject();
+                }
+                Log.i("location before", String.valueOf(localLocationArray));
+
+                localLocationArray.add(locationObj1);
+                final JsonArray locationFinalArray = localLocationArray;
+
+                Log.i("location after", String.valueOf(localLocationArray));
+
+
+                Log.i("location id",""+id);
+                JsonObject prepareObj1 = new JsonObject();
+                prepareObj1.addProperty("id",id);
+                prepareObj1.addProperty("userId",userId);
+                prepareObj1.add("location",localLocationArray);
+                prepareObj1.add("currentLocation",locationObj1);
+                prepareObj1.addProperty("userName",userName);
+
+                Log.i("prepared obj",prepareObj1.toString());
+
+//            jsonObject2.add("location",jsonArray);
+                Call<ResponseBody> call = reqDemo.addOrUpdateLocation(token,prepareObj1);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if(response.isSuccessful()){
+                                try {
+                                    String resp = response.body().string();
+                                    Log.i("++++++++++","+++ resp +++"+resp);
+                                    JSONObject jsonObjectResp = new JSONObject(resp);
+                                    if(jsonObjectResp.has("success")){
+                                        if(jsonObjectResp.getBoolean("success")==true){
+                                                if (jsonObjectResp.has("data") && jsonObjectResp.getString("data")!=null) {
+                                                    JSONObject res = jsonObjectResp.getJSONObject("data");
+                                                    if (res.has("_id")) {
+                                                        String respId = res.getString("_id");
+                                                        JsonObject objToStoreLocationToLocalStorage = new JsonObject();
+                                                        objToStoreLocationToLocalStorage.addProperty("id",respId);
+                                                        objToStoreLocationToLocalStorage.add("location",locationFinalArray);
+                                                        Log.i("local obj", String.valueOf(objToStoreLocationToLocalStorage));
+                                                        new MyService().insertValueToDb("location",objToStoreLocationToLocalStorage.toString(),mDb);
+                                                    }
+                                                }
+                                        } else {
+
+                                        }
+                                    }
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                        }
+                    }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.i("request error",t.toString());
+                }
+            });
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        } else {
+            System.out.println("location not working");
+            // Toast.makeText(t, "Location Not Found", Toast.LENGTH_SHORT).show();
+            Log.i("location","location not found");
+        }
+    }
+
     @Override
     public void onLocationChanged(Location location) {
-
+        
     }
 
     @Override

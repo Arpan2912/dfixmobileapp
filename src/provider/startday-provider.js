@@ -1,4 +1,7 @@
 import { AsyncStorage } from 'react-native';
+import constants from '../config/constant';
+let API_URL = constants.API_URL;
+
 export default class StartDayProvider {
     static token;
     constructor() {
@@ -17,7 +20,7 @@ export default class StartDayProvider {
                     let userId = data[0];
                     let token = data[1];
                     let userName = data[2];
-                    fetch('http://192.168.43.72:3333/api/start-day', {
+                    fetch(`${API_URL}api/start-day`, {
                         method: 'POST',
                         body: JSON.stringify({ km: km, base64: base64, userId: userId,userName:userName }),
                         headers: {
@@ -42,7 +45,7 @@ export default class StartDayProvider {
                     let userId = data[0];
                     let token = data[1];
 
-                    fetch('http://192.168.43.72:3333/api/stop-day', {
+                    fetch(`${API_URL}api/stop-day`, {
                         method: 'POST',
                         body: JSON.stringify({ id: id, km: km, base64: base64, userId: userId }),
                         headers: {
@@ -69,7 +72,7 @@ export default class StartDayProvider {
                     // let userId = userId;
                     let token = data;
 
-                    fetch(`http://192.168.43.72:3333/api/get-start-day-details/${userId}`, {
+                    fetch(`${API_URL}api/get-start-day-details/${userId}`, {
                         method: 'GET',
                         // body: JSON.stringify({ userId: userId }),
                         headers: {

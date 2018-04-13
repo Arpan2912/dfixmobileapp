@@ -26,6 +26,7 @@ import {
 import MeetingProvider from '../../provider/meeting-provider';
 import UserProvider from '../../provider/user-provider';
 import EventSingleton from '../../event/eventSingleton';
+import commonCss from '../../css/commonCss';
 
 var { height, width } = Dimensions.get('screen');
 let orderData = null;
@@ -88,7 +89,7 @@ export default class UpdateOrder extends Component {
 
     setItemName = (iname) => {
         this.setState({ itemName: iname })
-        let inameError = Validation.noWhiteSpaceAllowed(iname);
+        let inameError = Validation.onlyWhiteSpaceNotAllowed(iname);
         if (inameError) {
             this.setState({ itemNameError: inameError.error, itemNameErrorMsg: inameError.errorMsg });
         } else {
@@ -99,7 +100,7 @@ export default class UpdateOrder extends Component {
 
     setItemQuantity = (qty) => {
         this.setState({ itemQuantity: qty })
-        let qtyError = Validation.noWhiteSpaceAllowed(qty);  //@NOTE :: add number validation here 
+        let qtyError = Validation.numberValidator(qty);  //@NOTE :: add number validation here 
         if (qtyError) {
             this.setState({ itemQuantityError: qtyError.error, itemQuantityErrorMsg: qtyError.errorMsg });
         } else {
@@ -109,7 +110,7 @@ export default class UpdateOrder extends Component {
 
     setItemPrice = (price) => {
         this.setState({ itemPrice: price })
-        let priceError = Validation.noWhiteSpaceAllowed(price);  //@NOTE :: add number validation here 
+        let priceError = Validation.numberValidator(price);  //@NOTE :: add number validation here 
         if (priceError) {
             this.setState({ itemPriceError: priceError.error, itemPriceErrorMsg: priceError.errorMsg });
         } else {
@@ -189,7 +190,7 @@ export default class UpdateOrder extends Component {
                         onChangeText={(txt) => { this.setItemName(txt) }}
                     >{this.state.itemName}
                     </TextInput>
-                    {this.state.itemNameErrorMsg && <Text>{this.state.itemNameErrorMsg}</Text>}
+                    {this.state.itemNameErrorMsg && <Text style={commonCss.error}>{this.state.itemNameErrorMsg}</Text>}
 
                     <TextInput style={styles.TextInput}
                         placeholder="Item Quantity"
@@ -198,7 +199,7 @@ export default class UpdateOrder extends Component {
                         onChangeText={(txt) => { this.setItemQuantity(txt) }}
                     >{this.state.itemQuantity}
                     </TextInput>
-                    {this.state.itemQuantityErrorMsg && <Text>{this.state.itemQuantityErrorMsg}</Text>}
+                    {this.state.itemQuantityErrorMsg && <Text style={commonCss.error}>{this.state.itemQuantityErrorMsg}</Text>}
 
                     <TextInput style={styles.TextInput}
                         placeholder="Item Price"
@@ -207,7 +208,7 @@ export default class UpdateOrder extends Component {
                         onChangeText={(txt) => { this.setItemPrice(txt) }}
                     >{this.state.itemPrice}
                     </TextInput>
-                    {this.state.itemPriceErrorMsg && <Text>{this.state.itemPriceErrorMsg}</Text>}
+                    {this.state.itemPriceErrorMsg && <Text style={commonCss.error}>{this.state.itemPriceErrorMsg}</Text>}
 
                     {title === 'update' && <TouchableHighlight style={styles.addButton} onPress={this.updateOrder}>
                         <Text style={styles.textInsideButton}>

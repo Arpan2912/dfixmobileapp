@@ -23,6 +23,7 @@ import Validation from '../../provider/validation';
 import StartDayProvider from '../../provider/startday-provider';
 import EventSingleton from '../../event/eventSingleton';
 import UserProvider from '../../provider/user-provider';
+import commonCss from '../../css/commonCss';
 
 var { height, width } = Dimensions.get('screen');
 let eventObj;
@@ -92,7 +93,7 @@ export default class StartDay extends Component {
 
     setKm(text) {
         this.setState({ km: text });
-        let numberError = Validation.numberValidation(text);
+        let numberError = Validation.numberValidator(text);
         if (numberError) {
             this.setState({ kmError: numberError.error, kmErrorMsg: numberError.errorMsg });
         } else {
@@ -170,6 +171,7 @@ export default class StartDay extends Component {
                     >
                         {this.state.km}
                     </TextInput>
+                    {this.state.kmErrorMsg && <Text style={commonCss.error}>{this.state.kmErrorMsg}</Text>}
                     <TouchableOpacity style={styles.cameraButton}>
                         <Text style={styles.textInsideButton}
                             onPress={this.openCameraModal}
@@ -184,6 +186,8 @@ export default class StartDay extends Component {
                             source={{ uri: 'data:image/jpeg;base64,' + this.state.base64 }}
                         />
                     }
+                    {this.state.base64ErrorMsg && <Text style={commonCss.error}>{this.state.base64ErrorMsg}</Text>}
+                    
 
                     {/* </View> */}
 

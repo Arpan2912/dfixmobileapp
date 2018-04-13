@@ -1,4 +1,7 @@
 import { AsyncStorage } from 'react-native';
+import constants from '../config/constant';
+let API_URL = constants.API_URL;
+
 export default class ExpenseProvider {
     static token;
     constructor() {
@@ -13,7 +16,7 @@ export default class ExpenseProvider {
                 .then(data => {
                     token = data;
 
-                    fetch('http://192.168.43.72:3333/api/get-today-expense', {
+                    fetch(`${API_URL}api/get-today-expense`, {
                         method: 'POST',
                         body: JSON.stringify({ userId: obj }),
                         headers: {
@@ -42,7 +45,7 @@ export default class ExpenseProvider {
                 .then(data => {
                     token = data;
 
-                    fetch('http://192.168.43.72:3333/api/update-expense', {
+                    fetch(`${API_URL}api/update-expense`, {
                         method: 'POST',
                         body: JSON.stringify(obj),
                         headers: {
@@ -75,7 +78,7 @@ export default class ExpenseProvider {
                     token = data[0];
                     let userName = data[1];
                     obj.userName= userName;
-                    fetch('http://192.168.43.72:3333/api/add-expense', {
+                    fetch(`${API_URL}api/add-expense`, {
                         method: 'POST',
                         body: JSON.stringify(obj),
                         headers: {
@@ -104,7 +107,7 @@ export default class ExpenseProvider {
                 .then(data => {
                     token = data;
 
-                    fetch('http://192.168.43.72:3333/api/delete-expense', {
+                    fetch(`${API_URL}api/delete-expense`, {
                         method: 'POST',
                         body: JSON.stringify(obj),
                         headers: {

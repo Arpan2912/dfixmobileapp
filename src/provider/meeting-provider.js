@@ -1,4 +1,7 @@
 import { AsyncStorage } from 'react-native';
+import constants from '../config/constant';
+let API_URL = constants.API_URL;
+
 export default class MeetingProvider {
     static token;
     constructor() {
@@ -17,7 +20,7 @@ export default class MeetingProvider {
                     let userId = data[0];
                     let token = data[1];
                     let userName = data[2];
-                    fetch('http://192.168.43.72:3333/api/start-visit', {
+                    fetch(`${API_URL}api/start-visit`, {
                         method: 'POST',
                         body: JSON.stringify({ location: startMeetingOj.location, base64: startMeetingOj.base64, userId: userId, orgName: startMeetingOj.orgName,userName:userName }),
                         headers: {
@@ -42,7 +45,7 @@ export default class MeetingProvider {
                 .then(data => {
                     token = data;
 
-                    fetch('http://192.168.43.72:3333/api/stop-visit', {
+                    fetch(`${API_URL}api/stop-visit`, {
                         method: 'POST',
                         body: JSON.stringify(obj),
                         headers: {
@@ -71,7 +74,7 @@ export default class MeetingProvider {
                 .then(data => {
                     token = data;
 
-                    fetch('http://192.168.43.72:3333/api/get-today-visits', {
+                    fetch(`${API_URL}api/get-today-visits`, {
                         method: 'POST',
                         body: JSON.stringify({ userId: obj }),
                         headers: {
@@ -100,7 +103,7 @@ export default class MeetingProvider {
                 .then(data => {
                     token = data;
 
-                    fetch('http://192.168.43.72:3333/api/update-order', {
+                    fetch(`${API_URL}api/update-order`, {
                         method: 'POST',
                         body: JSON.stringify(obj),
                         headers: {
@@ -129,7 +132,7 @@ export default class MeetingProvider {
                 .then(data => {
                     token = data;
 
-                    fetch('http://192.168.43.72:3333/api/add-order', {
+                    fetch(`${API_URL}api/add-order`, {
                         method: 'POST',
                         body: JSON.stringify(obj),
                         headers: {
@@ -158,7 +161,7 @@ export default class MeetingProvider {
                 .then(data => {
                     token = data;
 
-                    fetch('http://192.168.43.72:3333/api/delete-order', {
+                    fetch(`${API_URL}api/delete-order`, {
                         method: 'POST',
                         body: JSON.stringify(obj),
                         headers: {
@@ -187,7 +190,7 @@ export default class MeetingProvider {
                     // let userId = userId;
                     let token = data;
 
-                    fetch(`http://192.168.43.72:3333/api/get-today-last-running-meeting/${userId}`, {
+                    fetch(`${API_URL}api/get-today-last-running-meeting/${userId}`, {
                         method: 'GET',
                         // body: JSON.stringify({ userId: userId }),
                         headers: {

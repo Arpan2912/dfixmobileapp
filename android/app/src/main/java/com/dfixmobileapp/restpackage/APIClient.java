@@ -6,7 +6,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class APIClient {
-    public static final String BASE_URL = "http://192.168.43.72:3334/";
+    public static final String BASE_URL = "http://6df09d3e.ngrok.io/";
 
     private static Retrofit retrofit = null;
 

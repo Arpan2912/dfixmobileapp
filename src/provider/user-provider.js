@@ -1,8 +1,12 @@
 import { AsyncStorage } from 'react-native';
+import constants from '../config/constant';
+let API_URL = constants.API_URL;
+
+
 export default class UserProvider {
     static getUserDetailsByEmail(email) {
         return new Promise((resolve, reject) => {
-            fetch('http://192.168.43.72:3333/api/get-user-by-email', {
+            fetch(`${API_URL}api/get-user-by-email`, {
                 method: 'POST',
                 body: JSON.stringify({ email: email }),
                 headers: {
@@ -18,7 +22,7 @@ export default class UserProvider {
 
     static authenticateUser(email, password) {
         return new Promise((resolve, reject) => {
-            fetch('http://192.168.43.72:3333/api/login', {
+            fetch(`${API_URL}api/login`, {
                 method: 'POST',
                 body: JSON.stringify({ email: email, password: password }),
                 headers: {
@@ -34,7 +38,7 @@ export default class UserProvider {
 
     static updateUserDetail(usrObj) {
         return new Promise((resolve, reject) => {
-            fetch('http://192.168.43.72:3333/api/update-user', {
+            fetch(`${API_URL}api/update-user`, {
                 method: 'POST',
                 body: JSON.stringify(usrObj),
                 headers: {

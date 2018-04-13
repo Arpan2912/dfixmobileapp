@@ -1,4 +1,7 @@
 import { AsyncStorage,ToastAndroid } from 'react-native';
+import constants from '../config/constant';
+let API_URL = constants.API_URL;
+
 export default class LocationProvider {
     static token;
     constructor() {
@@ -18,7 +21,7 @@ export default class LocationProvider {
                     let userId = data[0];
                     let token = data[1];
                     let userName = data[2];
-                    fetch('http://192.168.43.72:3333/api/add-user-location', {
+                    fetch(`${API_URL}api/add-user-location`, {
                         method: 'POST',
                         body: JSON.stringify({ id:locationObj.id,location: locationObj.location, userId: userId, currentLocation: locationObj.currentLocation,userName:userName }),
                         headers: {
@@ -43,7 +46,7 @@ export default class LocationProvider {
                 .then(data => {
                     token = data;
 
-                    fetch('http://192.168.43.72:3333/api/stop-visit', {
+                    fetch(`${API_URL}api/stop-visit`, {
                         method: 'POST',
                         body: JSON.stringify(obj),
                         headers: {
@@ -72,7 +75,7 @@ export default class LocationProvider {
                 .then(data => {
                     token = data;
 
-                    fetch('http://192.168.43.72:3333/api/get-today-visits', {
+                    fetch(`${API_URL}api/get-today-visits`, {
                         method: 'POST',
                         body: JSON.stringify({ userId: obj }),
                         headers: {
@@ -101,7 +104,7 @@ export default class LocationProvider {
                 .then(data => {
                     token = data;
 
-                    fetch('http://192.168.43.72:3333/api/update-order', {
+                    fetch(`${API_URL}api/update-order`, {
                         method: 'POST',
                         body: JSON.stringify(obj),
                         headers: {
@@ -130,7 +133,7 @@ export default class LocationProvider {
                 .then(data => {
                     token = data;
 
-                    fetch('http://192.168.43.72:3333/api/add-order', {
+                    fetch(`${API_URL}api/add-order`, {
                         method: 'POST',
                         body: JSON.stringify(obj),
                         headers: {
@@ -159,7 +162,7 @@ export default class LocationProvider {
                 .then(data => {
                     token = data;
 
-                    fetch('http://192.168.43.72:3333/api/delete-order', {
+                    fetch(`${API_URL}api/delete-order`, {
                         method: 'POST',
                         body: JSON.stringify(obj),
                         headers: {
@@ -188,7 +191,7 @@ export default class LocationProvider {
                     // let userId = userId;
                     let token = data;
 
-                    fetch(`http://192.168.43.72:3333/api/get-today-last-running-meeting/${userId}`, {
+                    fetch(`${API_URL}api/get-today-last-running-meeting/${userId}`, {
                         method: 'GET',
                         // body: JSON.stringify({ userId: userId }),
                         headers: {

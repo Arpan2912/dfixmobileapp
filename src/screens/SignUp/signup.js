@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import UserProvider from '../../provider/user-provider';
 import Validation from '../../provider/validation';
+import commonCss from '../../css/commonCss';
 
 export default class Signup extends Component {
     state = {
@@ -41,7 +42,7 @@ export default class Signup extends Component {
 
     setFirstName = (fname) => {
         this.setState({ firstName: fname })
-        let fnameError = Validation.noWhiteSpaceAllowed(fname);
+        let fnameError = Validation.onlyWhiteSpaceNotAllowed(fname);
         if (fnameError) {
             this.setState({ firstNameError: fnameError.error });
             this.setState({ firstNameErrorMsg: fnameError.errorMsg });
@@ -53,7 +54,7 @@ export default class Signup extends Component {
 
     setLastName = (lname) => {
         this.setState({ lastName: lname });
-        let lnameError = Validation.noWhiteSpaceAllowed(lname);
+        let lnameError = Validation.onlyWhiteSpaceNotAllowed(lname);
         if (lnameError) {
             this.setState({ lastNameError: lnameError.error });
             this.setState({ lastNameErrorMsg: lnameError.errorMsg });
@@ -65,7 +66,7 @@ export default class Signup extends Component {
 
     setAddress = (add) => {
         this.setState({ address: add });
-        let addError = Validation.noWhiteSpaceAllowed(add);
+        let addError = Validation.onlyWhiteSpaceNotAllowed(add);
         if (addError) {
             this.setState({ addressError: addError.error });
             this.setState({ addressErrorMsg: addError.errorMsg });
@@ -77,7 +78,7 @@ export default class Signup extends Component {
 
     setPhone = (phone) => {
         this.setState({ phone: phone })
-        let phoneError = Validation.noWhiteSpaceAllowed(phone);
+        let phoneError = Validation.mobileNumberValidator(phone);
         if (phoneError) {
             this.setState({ phoneError: phoneError.error });
             this.setState({ phoneErrorMsg: phoneError.errorMsg });
@@ -89,7 +90,7 @@ export default class Signup extends Component {
 
     setPassword = (password) => {
         this.setState({ confirmPassword: password });
-        let passwordError = Validation.passwordValidator(this.state.password, password);
+        let passwordError = Validation.passwordMatchValidator(this.state.password, password);
         if (passwordError) {
             this.setState({ passwordError: passwordError.error });
             this.setState({ passwordErrorMsg: passwordError.errorMsg });
@@ -135,7 +136,7 @@ export default class Signup extends Component {
                     onChangeText={(txt) => { this.setFirstName(txt) }}
                 >
                 </TextInput>
-                {this.state.firstNameErrorMsg && <Text>{this.state.firstNameErrorMsg}</Text>}
+                {this.state.firstNameErrorMsg && <Text style={commonCss.error}>{this.state.firstNameErrorMsg}</Text>}
 
                 <TextInput style={styles.TextInput}
                     placeholder="Last Name"
@@ -144,7 +145,7 @@ export default class Signup extends Component {
                     onChangeText={(txt) => { this.setLastName(txt) }}
                 >{global.val}
                 </TextInput>
-                {this.state.lastNameErrorMsg && <Text>{this.state.lastNameErrorMsg}</Text>}
+                {this.state.lastNameErrorMsg && <Text style={commonCss.error}>{this.state.lastNameErrorMsg}</Text>}
 
                 <TextInput style={styles.TextInput}
                     placeholder="Address"
@@ -153,7 +154,7 @@ export default class Signup extends Component {
                     onChangeText={(txt) => { this.setAddress(txt) }}
                 >
                 </TextInput>
-                {this.state.addressErrorMsg && <Text>{this.state.addressErrorMsg}</Text>}
+                {this.state.addressErrorMsg && <Text style={commonCss.error}>{this.state.addressErrorMsg}</Text>}
 
                 <TextInput style={styles.TextInput}
                     placeholder="Phone No"
@@ -162,7 +163,7 @@ export default class Signup extends Component {
                     onChangeText={(txt) => { this.setPhone(txt) }}
                 >
                 </TextInput>
-                {this.state.phoneErrorMsg && <Text>{this.state.phoneErrorMsg}</Text>}
+                {this.state.phoneErrorMsg && <Text style={commonCss.error}>{this.state.phoneErrorMsg}</Text>}
 
                 <TextInput style={styles.TextInput}
                     placeholder="Password"
@@ -179,7 +180,7 @@ export default class Signup extends Component {
                     onChangeText={(txt) => { this.setPassword(txt) }}
                 >
                 </TextInput>
-                {this.state.passwordErrorMsg && <Text>{this.state.passwordErrorMsg}</Text>}
+                {this.state.passwordErrorMsg && <Text style={commonCss.error}>{this.state.passwordErrorMsg}</Text>}
 
                 <TouchableOpacity
                     disabled={this.state.firstNameError || this.state.lastNameError || this.state.addressError || this.state.phoneError || this.state.passwordError}
