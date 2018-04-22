@@ -154,18 +154,18 @@ export default class TodayVisits extends Component {
             <Container>
                 <Header style={styles.Header}>
                     <Left>
-                        <Button transparent>
+                        <Button transparent >
                             <Icon name='arrow-back' />
                         </Button>
                     </Left>
                     <Body>
                         <Title>Today Visits</Title>
                     </Body>
-                    <Right>
+                    {/* <Right>
                         <Button transparent onPress={this.openOrderModal}>
                             <Icon name='add' />
                         </Button>
-                    </Right>
+                    </Right> */}
                 </Header>
                 <ScrollView contentContainerStyle={styles.container}>
                     {/* <View style={styles.innerContainer}> */}

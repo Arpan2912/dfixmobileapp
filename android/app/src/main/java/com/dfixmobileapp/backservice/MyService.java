@@ -303,6 +303,12 @@ public class MyService extends Service implements LocationListener{
             Log.i("location obj", String.valueOf(l));
             Double latitude = l.getLatitude();
             Double longitude =l.getLongitude();
+
+            Float speed = l.getSpeed();
+            if(speed > 5){
+
+            }
+            System.out.print("Speed "+speed.toString());
             String lat = latitude.toString();
             String lon =longitude.toString();
             String id = null;
@@ -329,6 +335,15 @@ public class MyService extends Service implements LocationListener{
                     Log.i("location", String.valueOf(localLocationObj));
                     localLocationArray =localLocationObj.getAsJsonArray("location");
                     Log.i("location array gson",localLocationArray.toString());
+                    JsonObject lobj = null;
+                    if(localLocationArray.size()>0) {
+                         lobj = (JsonObject) localLocationArray.get(localLocationArray.size() - 1);
+                    }
+                    System.out.print("equal"+lobj.equals(locationObj1));
+                    if(lobj.equals(locationObj1)){
+                        System.out.print("inside if");
+                        return;
+                    }
 
                     if(localLocationObj.has("id")){
                         id = localLocationObj.get("id").getAsString();

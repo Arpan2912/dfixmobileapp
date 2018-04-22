@@ -292,8 +292,12 @@ export default class Home extends Component {
         Promise.all([UserProvider.getStartDayStatus(), UserProvider.getVisitStatus()])
             .then(status => {
                 try {
+                    Custom.stopService();
                     ToastAndroid.show("set local", 1000);
                     let startDayStatus = JSON.parse(status[0]);
+                    if(startDayStatus.status == 'true' || startDayStatus.status == true){
+                        Custom.show("Start Service",1000);
+                    }
                     let visitStatus = JSON.parse(status[1]);
                     this.setState({ startDay: (!!startDayStatus) ? startDayStatus.status : null });
                     startDayId = (!!startDayStatus && startDayStatus.startDayId) ? startDayStatus.startDayId : null;
@@ -324,7 +328,7 @@ export default class Home extends Component {
     }
 
     render() {
-        Custom.show("background is running", 2000);
+        // Custom.show("background is running", 2000);
         let dayTitle = (this.state.startDay === 'true') ? "Stop Day" : "Start Day";
         let visitTitle = (this.state.startVisit === 'true') ? "End Visit" : "Start Visit";
         return (

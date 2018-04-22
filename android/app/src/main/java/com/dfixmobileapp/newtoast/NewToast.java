@@ -36,4 +36,15 @@ public class NewToast extends ReactContextBaseJavaModule {
     getReactApplicationContext().startService(i);
 //    getReactApplicationContext().startService(new Intent(getReactApplicationContext(), MyService.class));
   }
+
+    @ReactMethod
+    public void stopService() {
+        Toast.makeText(getReactApplicationContext(), "Background service stoped", Toast.LENGTH_SHORT).show();
+
+        Intent i = new Intent(getReactApplicationContext(), MyService.class);
+//    i.putExtra("foo", "bar");
+        getReactApplicationContext().stopService(i);
+//    getReactApplicationContext().startService(new Intent(getReactApplicationContext(), MyService.class));
+    }
+
 }

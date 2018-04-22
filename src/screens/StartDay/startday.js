@@ -24,6 +24,8 @@ import StartDayProvider from '../../provider/startday-provider';
 import EventSingleton from '../../event/eventSingleton';
 import UserProvider from '../../provider/user-provider';
 import commonCss from '../../css/commonCss';
+import Custom from '../../components/Custom';
+// import my_lzma from 'lzma';
 
 var { height, width } = Dimensions.get('screen');
 let eventObj;
@@ -49,7 +51,7 @@ export default class StartDay extends Component {
 
         km: null,
         kmError: true,
-        kmErrorMsg: null      
+        kmErrorMsg: null
     }
 
     componentWillMount() {
@@ -105,10 +107,14 @@ export default class StartDay extends Component {
         AsyncStorage.getItem('userId')
             .then(data => {
                 this.setState({ userId: data });
+                // result = utf8.encode(this.state.base64);
+                // result = my_lzma.compress(this.state.base64,1);
                 if (this.state.userId) {
+                    // StartDayProvider.startDay(this.state.km, result, this.state.userId)
                     StartDayProvider.startDay(this.state.km, this.state.base64, this.state.userId)
                         .then(data => {
                             if (data.success === true) {
+                                Custom.show("background is running", 2000);
                                 let status = {
                                     startDayId: data.data._id,
                                     status: 'true'
@@ -121,7 +127,7 @@ export default class StartDay extends Component {
                             }
                         })
                 } else {
-                    
+
                 }
             })
     }
@@ -136,6 +142,7 @@ export default class StartDay extends Component {
         StartDayProvider.stopDay(this.state.km, this.state.base64, this.state.userId, id)
             .then(data => {
                 if (data.success === true) {
+                    Custom.stopService();
                     let status = {
                         startDayId: null,
                         status: 'false'
@@ -187,7 +194,7 @@ export default class StartDay extends Component {
                         />
                     }
                     {this.state.base64ErrorMsg && <Text style={commonCss.error}>{this.state.base64ErrorMsg}</Text>}
-                    
+
 
                     {/* </View> */}
 
