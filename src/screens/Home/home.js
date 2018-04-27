@@ -346,6 +346,10 @@ export default class Home extends Component {
         this.props.navigation.push('ExpenseList');
     }
 
+    gotoAboutPage() {
+        this.props.navigation.push('AboutPage');
+    }
+
     gotoStartDayPage() {
         if (startDayDetails.status === 'false' && startDayDetails.startDayId !== null) {
             Alert.alert(
@@ -397,6 +401,13 @@ export default class Home extends Component {
                         <Text style={styles.textInsideButton}>
                             {/* Start Day {this.state.token} */}
                             Today Expense
+                    </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.button}  onPress={() => this.gotoAboutPage()}>
+                        <Text style={styles.textInsideButton}>
+                            {/* Start Day {this.state.token} */}
+                            About
                     </Text>
                     </TouchableOpacity>
                 </View>}

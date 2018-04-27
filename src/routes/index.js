@@ -16,6 +16,7 @@ import UpdateExpense from '../screens/UpdateExpense/UpdateExpense';
 import UserProvider from '../provider/user-provider';
 import Logout from '../screens/Logout/Logout';
 import CameraPage from '../screens/CameraPage/CameraPage';
+import AboutPage from '../screens/About/About';
 
 const stack = StackNavigator({
     Login: {
@@ -57,6 +58,9 @@ const stack = StackNavigator({
     CameraPage: {
         screen: CameraPage,
     },
+    AboutPage:{
+        screen:AboutPage
+    }
 
 },
     {

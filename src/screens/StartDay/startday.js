@@ -202,8 +202,8 @@ export default class StartDay extends Component {
 
                 </View>
 
-                <Footer style={styles.FooterDesign}>
-                    <TouchableOpacity disabled={this.state.kmError || this.state.base64Error} style={styles.FooterButton} onPress={() => (title === 'Start Day') ? this.startDay() : this.stopDay()}>
+                <Footer style={this.state.kmError || this.state.base64Error ? styles.FooterDesignDisabled : styles.FooterDesign}>
+                    <TouchableOpacity disabled={this.state.kmError || this.state.base64Error} style={this.state.kmError || this.state.base64Error ? styles.FooterButtonDisabled : styles.FooterButton}  onPress={() => (title === 'Start Day') ? this.startDay() : this.stopDay()}>
                         <Text style={styles.FooterText}>
                             Save
                         </Text>
@@ -274,6 +274,19 @@ const styles = StyleSheet.create({
         color: '#fafafa',
         fontSize: 20,
         fontWeight: 'bold'
-    }
+    },
+    FooterDesignDisabled: {
+        backgroundColor: '#B2DFDB',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+
+    FooterButtonDisabled: {
+        width: width,
+        backgroundColor: "#B2DFDB",
+        padding: 10,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
 
 })

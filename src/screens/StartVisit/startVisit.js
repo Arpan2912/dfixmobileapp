@@ -165,7 +165,7 @@ export default class StartVisit extends Component {
                         onChangeText={(text) => this.setOrgName(text)}
                     >{this.state.orgName}
                     </TextInput>
-                   
+
                     <TouchableOpacity style={styles.cameraButton}>
                         <Text style={styles.textInsideButton}
                             onPress={this.openCameraModal}
@@ -206,9 +206,10 @@ export default class StartVisit extends Component {
                     </MapView>}
                 </ScrollView>
 
-                <Footer style={styles.FooterDesign}>
+                <Footer style={this.state.base64Error || this.state.orgNameError ?styles.FooterDesignDisabled :styles.FooterDesign}>
                     <TouchableOpacity
-                        style={styles.FooterButton}
+                        disabled={this.state.base64Error || this.state.orgNameError}
+                        style={this.state.base64Error || this.state.orgNameError ? styles.FooterButtonDisabled :styles.FooterButton}
                         onPress={() => this.startVisit()}
                     >
                         <Text style={styles.FooterText}>
@@ -243,7 +244,7 @@ const styles = StyleSheet.create({
         padding: 10,
         margin: 10,
         // width: width - 100,
-        width:300,
+        width: 300,
         justifyContent: 'center',
         alignItems: 'center',
         // borderRadius: 20
@@ -252,7 +253,7 @@ const styles = StyleSheet.create({
     textInsideButton: {
         color: "#fafafa"
     },
-    
+
     TextInput: {
         width: 300,
         height: 50,
@@ -287,6 +288,19 @@ const styles = StyleSheet.create({
     Map: {
         height: 300,
         width: 300
+    },
+    FooterDesignDisabled: {
+        backgroundColor: '#B2DFDB',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+
+    FooterButtonDisabled: {
+        width: width,
+        backgroundColor: "#B2DFDB",
+        padding: 10,
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 
 })
