@@ -58,12 +58,12 @@ public class MyService extends Service implements LocationListener{
     Location location; // location
     double latitude; // latitude
     double longitude; // longitude
-
+    int timeout = 1000 * 60;
     // The minimum distance to change Updates in meters
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 0; // 10 meters
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 100; // 10 meters
 
     // The minimum time between updates in milliseconds
-    private static final long MIN_TIME_BW_UPDATES = 0; // 1 minute
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 15; // 1 minute
 
     // Declaring a Location Manager
     protected LocationManager locationManager;
@@ -95,20 +95,21 @@ public class MyService extends Service implements LocationListener{
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         int count = 100; //Declare as inatance variable
-//        MyService m = new MyService();
+        getLocation();
+        MyService m = new MyService();
         Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
+        //timer.schedule(new TimerTask() {
 
 
-            @Override
-            public void run() {
-                // getLocation();
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        setAndStoreLocationObj();
-                    }
-                });
+//             @Override
+//             public void run() {
+//                 // getLocation();
+//                 handler.post(new Runnable() {
+//                     @Override
+//                     public void run() {
+// //                        setAndStoreLocationObj();
+//                     }
+//                 });
 //                handler.post(new Runnable() {
 //                    @Override
 //                    public void run() {
@@ -158,8 +159,8 @@ public class MyService extends Service implements LocationListener{
 //                    }
 //                });
 
-            }
-        }, 0, 1000 * 60);
+            // }
+        // }, 0, timeout);
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -297,8 +298,8 @@ public class MyService extends Service implements LocationListener{
         Log.i("inserted",inserted+"");
     }
 
-    public void setAndStoreLocationObj(){
-        Location l = this.getLocation();
+    public void setAndStoreLocationObj(Location l){
+//        Location l = this.getLocation();
         if(l != null){
             Log.i("location obj", String.valueOf(l));
             Double latitude = l.getLatitude();
@@ -383,8 +384,10 @@ public class MyService extends Service implements LocationListener{
                                     JSONObject jsonObjectResp = new JSONObject(resp);
                                     if(jsonObjectResp.has("success")){
                                         if(jsonObjectResp.getBoolean("success")==true){
-                                                if (jsonObjectResp.has("data") && jsonObjectResp.getString("data")!=null) {
-                                                    JSONObject res = jsonObjectResp.getJSONObject("data");
+                                            System.out.print("jsonObjectResp.getString(\"data\")!=null "+jsonObjectResp.getString("data")!=null);
+                                            if (jsonObjectResp.has("data") && jsonObjectResp.getString("data")!=null) {
+                                                    System.out.print("jsonObjectResp.getString(\"data\")!=null "+jsonObjectResp.getString("data")!=null);
+                                                    JSONObject res =  jsonObjectResp.getJSONObject("data");
                                                     if (res.has("_id")) {
                                                         String respId = res.getString("_id");
                                                         JsonObject objToStoreLocationToLocalStorage = new JsonObject();
@@ -423,7 +426,13 @@ public class MyService extends Service implements LocationListener{
 
     @Override
     public void onLocationChanged(Location location) {
-        
+        setAndStoreLocationObj(location);
+//        Float speed = location.getSpeed();
+//        if(speed >= 5){
+////            timeout = 1000 * 15;
+//        } else if(speed <= 5){
+////            timeout = 1000*60*5;
+//        }
     }
 
     @Override

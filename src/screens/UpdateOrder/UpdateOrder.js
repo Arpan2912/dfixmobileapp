@@ -169,7 +169,7 @@ export default class UpdateOrder extends Component {
             <Container>
                 <Header style={styles.Header}>
                     <Left>
-                        <Button transparent>
+                        <Button transparent onPress={() => this.props.navigation.pop()}>
                             <Icon name='arrow-back' />
                         </Button>
                     </Left>

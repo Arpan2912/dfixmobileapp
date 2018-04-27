@@ -142,7 +142,7 @@ export default class TodayVisits extends Component {
     goToOrderListPage = (meetingData) => {
         let orders = meetingData.orders;
         let meetingId = meetingData.todayMeeting._id;
-        this.props.navigation.navigate('OrderList', { title: "Orders List", orders: orders, meetingId: meetingId });
+        this.props.navigation.push('OrderList', { title: "Orders List", orders: orders, meetingId: meetingId });
     }
 
 
@@ -154,7 +154,7 @@ export default class TodayVisits extends Component {
             <Container>
                 <Header style={styles.Header}>
                     <Left>
-                        <Button transparent >
+                        <Button transparent onPress={() => this.props.navigation.pop()}>
                             <Icon name='arrow-back' />
                         </Button>
                     </Left>

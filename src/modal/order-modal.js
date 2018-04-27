@@ -121,7 +121,7 @@ export default class OrderModal extends Component {
                 <Container>
                     <Header style={styles.Header}>
                         <Left>
-                            <Button transparent>
+                            <Button transparent onPress={()=>{this.closeModal();}}>
                                 <Icon name='arrow-back' />
                             </Button>
                         </Left>

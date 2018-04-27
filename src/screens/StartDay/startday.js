@@ -133,18 +133,18 @@ export default class StartDay extends Component {
     }
 
     stopDay() {
-        Promise.all(UserProvider.getUserIdFromLocalStorage, UserProvider.getStartDayStatus)
+        Promise.all(UserProvider.getUserIdFromLocalStorage(), UserProvider.getStartDayStatus())
             // AsyncStorage.getItem('userId')
             .then(data => {
                 this.setState({ userId: data[0] });
             })
         console.log("id", id);
         StartDayProvider.stopDay(this.state.km, this.state.base64, this.state.userId, id)
-            .then(data => {
-                if (data.success === true) {
+            .then(res => {
+                if (res.success === true) {
                     Custom.stopService();
                     let status = {
-                        startDayId: null,
+                        startDayId: data[1] && data[1].startDayId ? data[1].startDayId : null,
                         status: 'false'
                     }
                     if (this.props.navigation.state.params.title === 'Stop Day')

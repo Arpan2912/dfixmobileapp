@@ -210,18 +210,18 @@ export default class UpdateExpense extends Component {
             <Container>
                 <Header style={styles.Header}>
                     <Left>
-                        <Button transparent>
+                        <Button transparent onPress={() => this.props.navigation.pop()}>
                             <Icon name='arrow-back' />
                         </Button>
                     </Left>
                     <Body>
                         <Title>{title} Expense</Title>
                     </Body>
-                    <Right>
+                    {/* <Right>
                         <Button transparent>
                             <Icon name='add' />
                         </Button>
-                    </Right>
+                    </Right> */}
                 </Header>
                 <View style={styles.container}>
                     <CameraModal
@@ -293,18 +293,24 @@ export default class UpdateExpense extends Component {
                     </Text>
                     </TouchableHighlight>} */}
                 </View>
-                <Footer style={styles.FooterDesign}>
-                {title === 'update' && <TouchableHighlight style={styles.FooterButton} onPress={this.updateExpense}>
-                <Text style={styles.FooterText}>
-                    Update Expense
+                <Footer style={!(this.state.base64 && this.state.expenseAmount && this.state.description) ? styles.FooterDesignDisabled :styles.FooterDesign}>
+                    {title === 'update' && <TouchableHighlight
+                        style={!(this.state.base64 && this.state.expenseAmount && this.state.description) ? styles.FooterButtonDisabled : styles.FooterButton}
+                        disabled={!(this.state.base64 && this.state.expenseAmount && this.state.description)}
+                        onPress={this.updateExpense}>
+                        <Text style={styles.FooterText}>
+                            Update Expense
             </Text>
-            </TouchableHighlight>}
-            {title === 'add' && <TouchableHighlight style={styles.FooterButton} onPress={this.addExpense}>
-                <Text style={styles.FooterText}>
-                    Add Expense
+                    </TouchableHighlight>}
+                    {title === 'add' && <TouchableHighlight
+                        style={!(this.state.base64 && this.state.expenseAmount && this.state.description) ? styles.FooterButtonDisabled : styles.FooterButton}
+                        disabled={!(this.state.base64 && this.state.expenseAmount && this.state.description)}
+                        onPress={this.addExpense}>
+                        <Text style={styles.FooterText}>
+                            Add Expense
             </Text>
-            </TouchableHighlight>}
-            </Footer>
+                    </TouchableHighlight>}
+                </Footer>
             </Container>
 
         );
@@ -337,7 +343,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
         // width: width - 100,
         width: 300,
-        
+
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 0
@@ -376,6 +382,18 @@ const styles = StyleSheet.create({
         color: '#fafafa',
         fontSize: 20,
         fontWeight: 'bold'
-    }
+    },
+    FooterButtonDisabled: {
+        width: width,
+        backgroundColor: "#B2DFDB",
+        padding: 10,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    FooterDesignDisabled: {
+        backgroundColor: '#B2DFDB',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
 
 })
