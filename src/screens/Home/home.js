@@ -29,7 +29,7 @@ let startDayId = null;
 let startVisitId = null;
 let userId = null;
 let startDayDetails = null;
-let dayTitle ="Start Day";
+let dayTitle = "Start Day";
 let visitTitle = null;
 
 export default class Home extends Component {
@@ -41,26 +41,44 @@ export default class Home extends Component {
         isLoading: true
     }
 
+    constructor() {
+        super();
+        UserProvider.getUserIdFromLocalStorage()
+            .then(data => {
+                userId = data;
+                debugger;
+                ToastAndroid.show(userId, 5000);
+                if (userId == null) {
+                    this.props.navigation.replace('Login');
+                }
+            })
+    }
     componentWillMount() {
-        this.setState({ isLoading: true });
-        AppState.addEventListener('change', this._handleAppStateChange);
-        eventObj = EventSingleton.geteventEmitterObj();
+        UserProvider.getUserIdFromLocalStorage().then(userId => {
+            if (userId) {
+                this.setState({ isLoading: true });
+                AppState.addEventListener('change', this._handleAppStateChange);
+                eventObj = EventSingleton.geteventEmitterObj();
 
-        eventObj.on('startday', (id, status) => {
-            console.log("status", id, status);
-            startDayId = id;
-            this.setState({ startDay: status });
-        });
+                eventObj.on('startday', (id, status) => {
+                    console.log("status", id, status);
+                    startDayId = id;
+                    startDayDetails.status = status;
+                    this.setState({ startDay: status });
+                });
 
-        eventObj.on('startvisit', (id, status) => {
-            console.log("status", id, status);
-            startVisitId = id;
-            this.setState({ startVisit: status });
-        });
+                eventObj.on('startvisit', (id, status) => {
+                    console.log("status", id, status);
+                    startVisitId = id;
+                    this.setState({ startVisit: status });
+                });
 
-        eventObj.on('stopVisit', () => {
-            this.setState({ startVisit: 'false' })
+                eventObj.on('stopVisit', () => {
+                    this.setState({ startVisit: 'false' })
+                })
+            }
         })
+
 
     }
 
@@ -70,17 +88,21 @@ export default class Home extends Component {
 
     _handleAppStateChange = (nextAppState) => {
         if (nextAppState === 'active') {
-            this.setState({ isLoading: true });
-            this.resetStatus().then(data => {
-                ToastAndroid.show("reset status promise resolved", 5000);
-                this.setLocalVaribles();
-                this.setState({ isLoading: false });
-            })
-                .catch(e => {
-                    this.setLocalVaribles();
-                    this.setState({ isLoading: false });
+            UserProvider.getUserIdFromLocalStorage().then(userId => {
+                if (userId) {
+                    this.setState({ isLoading: true });
+                    this.resetStatus().then(data => {
+                        ToastAndroid.show("reset status promise resolved", 5000);
+                        this.setLocalVaribles();
+                        this.setState({ isLoading: false });
+                    }).catch(e => {
+                        this.setLocalVaribles();
+                        this.setState({ isLoading: false });
 
-                })
+                    })
+                }
+            })
+
         }
     }
 
@@ -90,18 +112,20 @@ export default class Home extends Component {
         UserProvider.getUserIdFromLocalStorage()
             .then(data => {
                 userId = data;
-                this.resetStatus()
-                    .then(data => {
-                        ToastAndroid.show("reset status promise resolved", 5000);
-                        this.setLocalVaribles();
-                        this.setState({ isLoading: false });
+                if (userId) {
+                    this.resetStatus()
+                        .then(data => {
+                            ToastAndroid.show("reset status promise resolved", 5000);
+                            this.setLocalVaribles();
+                            this.setState({ isLoading: false });
 
-                    })
-                    .catch(e => {
-                        this.setLocalVaribles();
-                        this.setState({ isLoading: false });
+                        })
+                        .catch(e => {
+                            this.setLocalVaribles();
+                            this.setState({ isLoading: false });
 
-                    })
+                        })
+                }
             });
         // StartDayProvider.getStartDayDetails(userId)
         //     .then(data => {
@@ -167,13 +191,13 @@ export default class Home extends Component {
         //     });
     }
 
-    constructor() {
-        super();
-        UserProvider.getUserTokenFromLocalStorage()
-            .then(data => {
-                token = data;
-            });
-    };
+    // constructor() {
+    //     super();
+    //     UserProvider.getUserTokenFromLocalStorage()
+    //         .then(data => {
+    //             token = data;
+    //         });
+    // };
 
     static navigationOptions = {
         title: 'Home',
@@ -314,7 +338,7 @@ export default class Home extends Component {
                     Custom.stopService();
                     ToastAndroid.show("set local", 1000);
                     let startDayStatus = JSON.parse(status[0]);
-                    if (startDayStatus.status == 'true' || startDayStatus.status == true) {
+                    if (!!startDayStatus && (startDayStatus.status == 'true' || startDayStatus.status == true)) {
                         Custom.show("Start Service", 1000);
                     }
                     let visitStatus = JSON.parse(status[1]);
@@ -329,12 +353,12 @@ export default class Home extends Component {
             });
     }
 
-    gotoStartOrStopVisitPage() {
+    gotoStartOrStopVisitPage(visitTitle) {
         visitStatus = this.state.startVisit || 'false';
         if (visitStatus === 'true') {
-            this.props.navigation.navigate('StopVisit', { title: "End Visit", startVisitId: (!!startVisitId) ? startVisitId : null });
+            this.props.navigation.navigate('StopVisit', { title: visitTitle, startVisitId: (!!startVisitId) ? startVisitId : null });
         } else {
-            this.props.navigation.navigate('StartVisit', { title: "Start Visit", startVisitId: (!!startVisitId) ? startVisitId : null });
+            this.props.navigation.navigate('StartVisit', { title:visitTitle, startVisitId: (!!startVisitId) ? startVisitId : null });
         }
     }
 
@@ -350,21 +374,21 @@ export default class Home extends Component {
         this.props.navigation.push('AboutPage');
     }
 
-    gotoStartDayPage() {
+    gotoStartDayPage(dayTitle) {
         if (startDayDetails.status === 'false' && startDayDetails.startDayId !== null) {
             Alert.alert(
                 'Warning',
                 'You have already completed day, Contact your manager',
                 [
-                  {text: 'OK', onPress: () => console.log('OK Pressed')},
+                    { text: 'OK', onPress: () => console.log('OK Pressed') },
                 ],
                 { cancelable: true }
-              )
+            )
             // ToastAndroid.show("You have alrady completed day, Contact your manager",1000);
             return;
         }
         else
-            this.props.navigation.navigate('StartDay', { title: dayTitle ? dayTitle :"Start Day", startDayId: (!!startDayId) ? startDayId : null });
+            this.props.navigation.navigate('StartDay', { title: dayTitle ? dayTitle : "Start Day", startDayId: (!!startDayId) ? startDayId : null });
     }
 
     render() {
@@ -376,35 +400,35 @@ export default class Home extends Component {
                 {/* <View style={styles.innerContainer}> */}
                 {this.state.isLoading === false && <View>
                     {/* <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.navigate('StartDay', { title: dayTitle, startDayId: (!!startDayId) ? startDayId : null })}> */}
-                    <TouchableOpacity style={styles.button} onPress={() => this.gotoStartDayPage()}>
+                    <TouchableOpacity style={styles.button} onPress={() => this.gotoStartDayPage(dayTitle)}>
                         <Text style={styles.textInsideButton}>
                             {/* Start Day {this.state.token} */}
                             {dayTitle} {this.state.token ? this.state.token.toString() : null}
                         </Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={startDayDetails.status === 'false' ? styles.disabled:styles.button} disabled={startDayDetails.status === 'false'} onPress={() => this.gotoStartOrStopVisitPage()}>
+                    <TouchableOpacity style={startDayDetails.status === 'false' ? styles.disabled : styles.button} disabled={startDayDetails.status === 'false'} onPress={() => this.gotoStartOrStopVisitPage(visitTitle)}>
                         <Text style={styles.textInsideButton}>
                             {/* Start Day {this.state.token} */}
                             {visitTitle} {this.state.token ? this.state.token.toString() : null}
                         </Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={ styles.button} onPress={() => this.gotoTodayVisitsPage()}>
+                    <TouchableOpacity style={styles.button} onPress={() => this.gotoTodayVisitsPage()}>
                         <Text style={styles.textInsideButton}>
                             {/* Start Day {this.state.token} */}
                             Today Visits
                     </Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.button}  onPress={() => this.gotoTodayExpensePage()}>
+                    <TouchableOpacity style={styles.button} onPress={() => this.gotoTodayExpensePage()}>
                         <Text style={styles.textInsideButton}>
                             {/* Start Day {this.state.token} */}
                             Today Expense
                     </Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.button}  onPress={() => this.gotoAboutPage()}>
+                    <TouchableOpacity style={styles.button} onPress={() => this.gotoAboutPage()}>
                         <Text style={styles.textInsideButton}>
                             {/* Start Day {this.state.token} */}
                             About
@@ -443,7 +467,7 @@ const styles = StyleSheet.create({
     textInsideButton: {
         color: "#fafafa"
     },
-    disabled:{
+    disabled: {
         backgroundColor: "#B2DFDB",
         margin: 10,
         padding: 10,
@@ -452,7 +476,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     }
 
-    
+
 
 
 })

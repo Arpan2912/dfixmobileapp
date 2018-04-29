@@ -55,7 +55,9 @@ export default class StartVisit extends Component {
         orgNameErrorMsg: null,
 
         latitude: null,
-        longitude: null
+        longitude: null,
+        locationError: true,
+        locationErrorMsg: null
     }
 
     componentWillMount() {
@@ -65,7 +67,7 @@ export default class StartVisit extends Component {
     static navigationOptions = {};
 
     static navigationOptions = ({ navigation }) => ({
-        //title: navigation.state.params.title,
+        title: navigation.state.params.title,
         headerStyle: {
             backgroundColor: '#009688'
         },
@@ -92,19 +94,20 @@ export default class StartVisit extends Component {
     setOrgName = (text) => {
         this.setState({ orgName: text });
         let orgError = Validation.onlyWhiteSpaceNotAllowed(text);
+        // this.setState({orgErrorMsg:orgError.toString()})
         if (orgError) {
-            this.setState({ orgError: orgError.error });
-            this.setState({ orgErrorMsg: orgError.errorMsg });
+            this.setState({ orgNameError: orgError.error,orgNameErrorMsg: orgError.errorMsg  });
+            // this.setState({ });
         } else {
-            this.setState({ orgError: false });
-            this.setState({ orgErrorMsg: null });
+            this.setState({ orgNameError: false, orgNameErrorMsg: null });
+            // this.setState({ });
         }
     }
 
     getCurrentLocation = () => {
         navigator.geolocation.getCurrentPosition(position => {
             let coordinates = position.coords;
-            this.setState({ longitude: coordinates.longitude, latitude: coordinates.latitude })
+            this.setState({ longitude: coordinates.longitude, latitude: coordinates.latitude, locationError: false })
         }, err => {
 
         });
@@ -158,6 +161,7 @@ export default class StartVisit extends Component {
                         closeCameraModal={this.closeCameraModal}
                         saveImage={this.saveImage}
                     />
+
                     <TextInput style={styles.TextInput}
                         placeholder="Enter Organization Name"
                         underlineColorAndroid='#009688'
@@ -166,11 +170,12 @@ export default class StartVisit extends Component {
                     >{this.state.orgName}
                     </TextInput>
 
+                    
                     <TouchableOpacity style={styles.cameraButton}>
                         <Text style={styles.textInsideButton}
                             onPress={this.openCameraModal}
                         >
-                            Capture Image
+                            Capture Image 
                         </Text>
                     </TouchableOpacity>
                     {this.state.base64 !== '' &&
@@ -204,12 +209,13 @@ export default class StartVisit extends Component {
                     >
                         </Marker>
                     </MapView>}
+
                 </ScrollView>
 
-                <Footer style={this.state.base64Error || this.state.orgNameError ?styles.FooterDesignDisabled :styles.FooterDesign}>
+                <Footer style={(this.state.base64Error || this.state.orgNameError || this.state.locationError) ? styles.FooterDesignDisabled : styles.FooterDesign}>
                     <TouchableOpacity
-                        disabled={this.state.base64Error || this.state.orgNameError}
-                        style={this.state.base64Error || this.state.orgNameError ? styles.FooterButtonDisabled :styles.FooterButton}
+                        disabled={(this.state.base64Error || this.state.orgNameError || this.state.locationError)}
+                        style={(this.state.base64Error || this.state.orgNameError || this.state.locationError )? styles.FooterButtonDisabled : styles.FooterButton}
                         onPress={() => this.startVisit()}
                     >
                         <Text style={styles.FooterText}>

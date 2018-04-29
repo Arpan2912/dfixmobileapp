@@ -19,7 +19,10 @@ import CameraPage from '../screens/CameraPage/CameraPage';
 import AboutPage from '../screens/About/About';
 
 const stack = StackNavigator({
-    Login: {
+    
+    Home: {
+        screen: Home
+    },Login: {
         screen: Login
     },
     Signup: {

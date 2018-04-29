@@ -137,21 +137,22 @@ export default class StartDay extends Component {
             // AsyncStorage.getItem('userId')
             .then(data => {
                 this.setState({ userId: data[0] });
-            })
-        console.log("id", id);
-        StartDayProvider.stopDay(this.state.km, this.state.base64, this.state.userId, id)
-            .then(res => {
-                if (res.success === true) {
-                    Custom.stopService();
-                    let status = {
-                        startDayId: data[1] && data[1].startDayId ? data[1].startDayId : null,
-                        status: 'false'
-                    }
-                    if (this.props.navigation.state.params.title === 'Stop Day')
-                        eventObj.emit('startday', null, 'false');
-                    UserProvider.setStartDayStatus(JSON.stringify(status));
-                    this.props.navigation.goBack();
-                }
+
+                console.log("id", id);
+                StartDayProvider.stopDay(this.state.km, this.state.base64, this.state.userId, id)
+                    .then(res => {
+                        if (res.success === true) {
+                            Custom.stopService();
+                            let status = {
+                                startDayId: data[1] && data[1].startDayId ? data[1].startDayId : null,
+                                status: 'false'
+                            }
+                            if (this.props.navigation.state.params.title === 'Stop Day')
+                                eventObj.emit('startday', null, 'false');
+                            UserProvider.setStartDayStatus(JSON.stringify(status));
+                            this.props.navigation.goBack();
+                        }
+                    })
             })
     }
 
@@ -203,7 +204,7 @@ export default class StartDay extends Component {
                 </View>
 
                 <Footer style={this.state.kmError || this.state.base64Error ? styles.FooterDesignDisabled : styles.FooterDesign}>
-                    <TouchableOpacity disabled={this.state.kmError || this.state.base64Error} style={this.state.kmError || this.state.base64Error ? styles.FooterButtonDisabled : styles.FooterButton}  onPress={() => (title === 'Start Day') ? this.startDay() : this.stopDay()}>
+                    <TouchableOpacity disabled={this.state.kmError || this.state.base64Error} style={this.state.kmError || this.state.base64Error ? styles.FooterButtonDisabled : styles.FooterButton} onPress={() => (title === 'Start Day') ? this.startDay() : this.stopDay()}>
                         <Text style={styles.FooterText}>
                             Save
                         </Text>

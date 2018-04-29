@@ -34,6 +34,7 @@ import EventSingleton from '../../event/eventSingleton';
 import UserProvider from '../../provider/user-provider';
 import MapView, { Marker } from 'react-native-maps';
 import ExpenseProvider from '../../provider/expense-provider';
+import Custom from '../../components/Custom';
 
 // import MapView from 'react-native-maps';
 
@@ -63,7 +64,8 @@ export default class Logout extends Component {
     componentWillMount() {
         UserProvider.removeAll()
             .then(data => {
-                this.props.navigation.push('Login');
+                Custom.stopService();
+                this.props.navigation.replace('Login');
             })
             .catch(e => {
 

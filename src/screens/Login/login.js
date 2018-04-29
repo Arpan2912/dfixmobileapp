@@ -42,14 +42,14 @@ export default class Login extends Component {
 
     componentWillMount() {
         ToastAndroid.show("hello", 5000);
-        UserProvider.getUserIdFromLocalStorage()
-            .then(data => {
-                userId = data;
-                ToastAndroid.show(userId, 5000);
-                if (userId) {
-                    this.props.navigation.replace('Home');
-                }
-            })
+        // UserProvider.getUserIdFromLocalStorage()
+        //     .then(data => {
+        //         userId = data;
+        //         ToastAndroid.show(userId, 5000);
+        //         if (userId) {
+        //             this.props.navigation.replace('Home');
+        //         }
+        //     })
     }
 
     verifyEmailExistOrNot = () => {
