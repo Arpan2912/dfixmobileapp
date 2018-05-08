@@ -47,7 +47,7 @@ export default class Logout extends Component {
     title = 'Start'
     constructor(props) {
         super();
-        this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+        // this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         console.log("constructor calls");
         console.log("id", JSON.stringify(props));
     }

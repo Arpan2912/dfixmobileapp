@@ -90,7 +90,7 @@ export default class Login extends Component {
             <View style={styles.container}>
 
                 <View>
-                    <Text style={styles.titleText}>Arpan Shah</Text>
+                    <Text style={styles.titleText}>D Fix</Text>
                 </View>
                 <View style={styles.innerContainer}>
                     <TextInput style={styles.TextInput}

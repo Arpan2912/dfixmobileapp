@@ -13,13 +13,16 @@ import {
     AppState,
     Dimensions,
     ActivityIndicator,
-    Alert
+    Alert,
+    Image
 } from 'react-native';
+import { Card, CardItem, Container, Header, Content, Icon } from 'native-base';
 import UserProvider from '../../provider/user-provider';
 import EventSingleton from '../../event/eventSingleton';
 import MeetingProvider from '../../provider/meeting-provider';
 import StartDayProvider from '../../provider/startday-provider';
 import Custom from '../../components/Custom';
+import { Col, Row, Grid } from "react-native-easy-grid";
 var { height, width } = Dimensions.get('screen');
 
 
@@ -46,7 +49,6 @@ export default class Home extends Component {
         UserProvider.getUserIdFromLocalStorage()
             .then(data => {
                 userId = data;
-                debugger;
                 ToastAndroid.show(userId, 5000);
                 if (userId == null) {
                     this.props.navigation.replace('Login');
@@ -79,7 +81,6 @@ export default class Home extends Component {
             }
         })
 
-
     }
 
     componentWillUnmount() {
@@ -108,14 +109,16 @@ export default class Home extends Component {
 
 
     componentDidMount() {
+        ToastAndroid.show("Inside Did Mount", 5000);
         this.setState({ isLoading: true });
         UserProvider.getUserIdFromLocalStorage()
             .then(data => {
                 userId = data;
                 if (userId) {
+                    ToastAndroid.show("UserId Check Pass", 5000);
                     this.resetStatus()
                         .then(data => {
-                            ToastAndroid.show("reset status promise resolved", 5000);
+                            // ToastAndroid.show("reset status promise resolved", 5000);
                             this.setLocalVaribles();
                             this.setState({ isLoading: false });
 
@@ -124,6 +127,12 @@ export default class Home extends Component {
                             this.setLocalVaribles();
                             this.setState({ isLoading: false });
 
+                        })
+                } else {
+                    this.setLocalVaribles();
+                    this.resetStatus()
+                        .then(data => {
+                            this.setState({ isLoading: false });
                         })
                 }
             });
@@ -236,8 +245,7 @@ export default class Home extends Component {
                             }
                             UserProvider.setStartDayStatus(JSON.stringify(status));
                             startDayDetails = status;
-                        }
-                        else {
+                        } else {
                             let status = {
                                 startDayId: null,
                                 status: 'false'
@@ -358,7 +366,7 @@ export default class Home extends Component {
         if (visitStatus === 'true') {
             this.props.navigation.navigate('StopVisit', { title: visitTitle, startVisitId: (!!startVisitId) ? startVisitId : null });
         } else {
-            this.props.navigation.navigate('StartVisit', { title:visitTitle, startVisitId: (!!startVisitId) ? startVisitId : null });
+            this.props.navigation.navigate('StartVisit', { title: visitTitle, startVisitId: (!!startVisitId) ? startVisitId : null });
         }
     }
 
@@ -375,7 +383,8 @@ export default class Home extends Component {
     }
 
     gotoStartDayPage(dayTitle) {
-        if (startDayDetails.status === 'false' && startDayDetails.startDayId !== null) {
+
+        if (startDayDetails && startDayDetails.status === 'false' && startDayDetails.startDayId !== null) {
             Alert.alert(
                 'Warning',
                 'You have already completed day, Contact your manager',
@@ -397,44 +406,117 @@ export default class Home extends Component {
         let visitTitle = (this.state.startVisit === 'true') ? "End Visit" : "Start Visit";
         return (
             <View style={styles.container}>
+                {this.state.isLoading === false && <View style={styles.container}>
+                    <Image resizeMethod="resize" resizeMode="stretch" style={{ height: 150, width: width / 1.5, padding: 50 }}
+                        source={require('../../images/dfix-Copy.png')}
+                    />
+                    <Grid>
+                        <Row style={{ height: 100 }}>
+                            <Col
+                                style={{
+                                    width: width / 2, backgroundColor: '#009688', alignItems: 'center',
+                                    justifyContent: 'center', borderColor: '#fafafa', borderWidth: 1
+                                }}
+                            >
+                                <TouchableOpacity
+                                    onPress={() => this.gotoStartDayPage(dayTitle)}
+                                    style={styles.buttonInsideCol}
+                                >
+                                    <Icon name="power" style={{ color: "#fafafa" }}></Icon>
+                                    <Text style={{ color: "#fafafa" }}>{dayTitle}</Text>
+                                </TouchableOpacity>
+                            </Col>
+                            <Col style={{
+                                width: width / 2, backgroundColor: '#009688', alignItems: 'center',
+                                justifyContent: 'center', borderColor: '#fafafa', borderWidth: 1
+                            }}>
+                                <TouchableOpacity
+                                    style={(startDayDetails && (startDayDetails.status === 'false')) ? styles.disabled : styles.buttonInsideCol} disabled={!(startDayDetails && (startDayDetails.status === 'true'))}
+                                    onPress={() => this.gotoStartOrStopVisitPage(visitTitle)}
+                                    //onPress={() => this.gotoStartDayPage(dayTitle)}
+                                    style={styles.buttonInsideCol}
+                                >
+                                    <Icon name="calendar" style={{ color: "#fafafa" }}></Icon>
+                                    <Text style={{ color: "#fafafa" }}>{visitTitle}</Text>
+                                </TouchableOpacity>
+                            </Col>
+                        </Row>
+                        <Row style={{ height: 100 }}>
+                            <Col style={{
+                                width: width / 2, backgroundColor: '#009688', alignItems: 'center',
+                                justifyContent: 'center', borderColor: '#fafafa', borderWidth: 1
+                            }}>
+                                <TouchableOpacity
+                                    onPress={() => this.gotoTodayVisitsPage()}
+                                    style={styles.buttonInsideCol}
+                                >
+                                    <Icon name="bicycle" style={{ color: "#fafafa" }}></Icon>
+                                    <Text style={{ color: "#fafafa" }}>Today Visits</Text>
+                                </TouchableOpacity>
+                            </Col>
+                            <Col style={{
+                                width: width / 2, backgroundColor: '#009688', alignItems: 'center',
+                                justifyContent: 'center', borderColor: '#fafafa', borderWidth: 1
+                            }}>
+                                <TouchableOpacity
+                                    onPress={() => this.gotoTodayExpensePage()}
+                                    style={styles.buttonInsideCol}
+                                >
+                                    <Icon name="logo-usd" style={{ color: "#fafafa" }}></Icon>
+                                    <Text style={{ color: "#fafafa" }}>Today Expense</Text>
+                                </TouchableOpacity>
+                            </Col>
+                        </Row>
+                        <Row style={{ height: 100 }}>
+                            <Col style={{
+                                width: width, backgroundColor: '#009688', alignItems: 'center',
+                                justifyContent: 'center', borderColor: '#fafafa', borderWidth: 1
+                            }}>
+                                <TouchableOpacity
+                                    onPress={() => this.gotoAboutPage()}
+                                    style={styles.buttonInsideCol}
+                                >
+                                    <Icon name="information-circle" style={{ color: "#fafafa" }}></Icon>
+                                    <Text style={{ color: "#fafafa" }}>About</Text>
+                                </TouchableOpacity>
+                            </Col>
+
+                        </Row>
+                    </Grid>
+                </View>}
                 {/* <View style={styles.innerContainer}> */}
-                {this.state.isLoading === false && <View>
-                    {/* <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.navigate('StartDay', { title: dayTitle, startDayId: (!!startDayId) ? startDayId : null })}> */}
+                {/* {this.state.isLoading === false && <View>
                     <TouchableOpacity style={styles.button} onPress={() => this.gotoStartDayPage(dayTitle)}>
                         <Text style={styles.textInsideButton}>
-                            {/* Start Day {this.state.token} */}
+
                             {dayTitle} {this.state.token ? this.state.token.toString() : null}
                         </Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity style={startDayDetails.status === 'false' ? styles.disabled : styles.button} disabled={startDayDetails.status === 'false'} onPress={() => this.gotoStartOrStopVisitPage(visitTitle)}>
                         <Text style={styles.textInsideButton}>
-                            {/* Start Day {this.state.token} */}
                             {visitTitle} {this.state.token ? this.state.token.toString() : null}
                         </Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.button} onPress={() => this.gotoTodayVisitsPage()}>
                         <Text style={styles.textInsideButton}>
-                            {/* Start Day {this.state.token} */}
                             Today Visits
                     </Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.button} onPress={() => this.gotoTodayExpensePage()}>
                         <Text style={styles.textInsideButton}>
-                            {/* Start Day {this.state.token} */}
                             Today Expense
                     </Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.button} onPress={() => this.gotoAboutPage()}>
                         <Text style={styles.textInsideButton}>
-                            {/* Start Day {this.state.token} */}
                             About
                     </Text>
                     </TouchableOpacity>
-                </View>}
+                </View>} */}
                 {this.state.isLoading === true && <View>
                     <ActivityIndicator size="small" color="#00ff00" />
                 </View>}
@@ -449,7 +531,7 @@ export default class Home extends Component {
 const styles = StyleSheet.create({
 
     container: {
-        backgroundColor: "#fafafa",
+        backgroundColor: "#ffffff",
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center'
@@ -464,6 +546,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
+    buttonInsideCol: {
+        alignItems: 'center',
+        width: width / 2,
+        height: 100,
+        justifyContent: 'center'
+    },
     textInsideButton: {
         color: "#fafafa"
     },
@@ -474,6 +562,14 @@ const styles = StyleSheet.create({
         width: width * 4 / 5,
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    column: {
+        width: width / 2,
+        backgroundColor: '#009688',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderColor: '#fafafa',
+        borderWidth: 1
     }
 
 
