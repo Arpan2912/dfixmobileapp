@@ -218,7 +218,7 @@ export default class TodayVisits extends Component {
 
                     }
 
-                    {loading === true &&  <ActivityIndicator size="small" color="#00ff00" />}
+                    {loading === true &&  <ActivityIndicator size="large" color="#009688" />}
 
 
                     {/* </View> */}
@@ -226,14 +226,14 @@ export default class TodayVisits extends Component {
 
                 </ScrollView>
 
-                <Footer style={styles.FooterDesign} >
+                {/* <Footer style={styles.FooterDesign} >
                     <TouchableOpacity onPress={() => this.stopVisit()}
                         style={styles.FooterButton}>
                         <Text style={styles.FooterText}>
                             Save
                         </Text>
                     </TouchableOpacity>
-                </Footer>
+                </Footer> */}
             </Container >
         )
     }

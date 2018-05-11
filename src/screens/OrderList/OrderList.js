@@ -176,8 +176,8 @@ export default class OrderList extends Component {
                     <List style={{ width: width }}
                         dataSource={this.ds.cloneWithRows(this.state.orderList)}
                         renderRow={data =>
-                            <ListItem style={{ paddingTop: 10, paddingBottom: 10 }}>
-                                <Body style={{ paddingLeft: 15, paddingRight: 15 }}>
+                            <ListItem style={{ paddingTop: 20, paddingBottom: 20 }}>
+                                <Body style={{ paddingLeft: 20, paddingRight: 20 }}>
                                     <Text style={{ color: '#009688', fontWeight: 'bold' }}>{data.item_name}</Text>
 
                                 </Body>

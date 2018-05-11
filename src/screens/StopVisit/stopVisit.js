@@ -34,6 +34,7 @@ import EventSingleton from '../../event/eventSingleton';
 import UserProvider from '../../provider/user-provider';
 import MapView, { Marker } from 'react-native-maps';
 import MeetingProvider from '../../provider/meeting-provider';
+import Loader from '../../components/Loader';
 
 // import MapView from 'react-native-maps';
 
@@ -56,7 +57,9 @@ export default class StopVisit extends Component {
 
         orderList: [],
         itemIndex: null,
-        editItemData: null
+        editItemData: null,
+
+        loading: false
     }
 
     componentWillMount() {
@@ -150,15 +153,20 @@ export default class StopVisit extends Component {
             orderArray: this.state.orderList
         }
         console.log("stop visit obj", JSON.stringify(stopVisitObj));
+        this.setState({ loading: true });
         MeetingProvider.stopVisit(stopVisitObj)
             .then(data => {
+                this.setState({ loading: false });
                 if (data.success == true) {
                     UserProvider.resetVisitStatus();
                     this.props.navigation.goBack();
                     eventObj.emit('stopVisit');
                 } else {
-                    
+
                 }
+            }).catch(e => {
+                this.setState({ loading: false });
+
             })
     }
 
@@ -185,6 +193,8 @@ export default class StopVisit extends Component {
                 </Header>
                 <ScrollView contentContainerStyle={styles.container}>
                     {/* <View style={styles.innerContainer}> */}
+                    <Loader
+                        loading={this.state.loading} />
                     <OrderModal
                         modalVisible={this.state.modalVisible}
                         closeOrderModal={this.closeOrderModal}

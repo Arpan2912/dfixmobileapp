@@ -6,7 +6,7 @@ import {
     Text,
     View,
     Modal,
-    Button,
+    // Button,
     TextInput,
     TouchableOpacity,
     Image,
@@ -17,7 +17,14 @@ import {
 import CameraModal from '../../modal/camera-modal';
 import {
     Container,
-    Footer
+    Footer,
+    Header,
+    Left,
+    Right,
+    Body,
+    Icon,
+    Title,
+    Button
 } from 'native-base';
 import Validation from '../../provider/validation';
 import StartDayProvider from '../../provider/startday-provider';
@@ -25,6 +32,7 @@ import EventSingleton from '../../event/eventSingleton';
 import UserProvider from '../../provider/user-provider';
 import MapView, { Marker } from 'react-native-maps';
 import MeetingProvider from '../../provider/meeting-provider';
+import Loader from '../../components/Loader';
 
 
 // import MapView from 'react-native-maps';
@@ -57,7 +65,9 @@ export default class StartVisit extends Component {
         latitude: null,
         longitude: null,
         locationError: true,
-        locationErrorMsg: null
+        locationErrorMsg: null,
+
+        loading: false
     }
 
     componentWillMount() {
@@ -67,7 +77,8 @@ export default class StartVisit extends Component {
     static navigationOptions = {};
 
     static navigationOptions = ({ navigation }) => ({
-        title: navigation.state.params.title,
+        // title: navigation.state.params.title,
+        header: null,
         headerStyle: {
             backgroundColor: '#009688'
         },
@@ -96,7 +107,7 @@ export default class StartVisit extends Component {
         let orgError = Validation.onlyWhiteSpaceNotAllowed(text);
         // this.setState({orgErrorMsg:orgError.toString()})
         if (orgError) {
-            this.setState({ orgNameError: orgError.error,orgNameErrorMsg: orgError.errorMsg  });
+            this.setState({ orgNameError: orgError.error, orgNameErrorMsg: orgError.errorMsg });
             // this.setState({ });
         } else {
             this.setState({ orgNameError: false, orgNameErrorMsg: null });
@@ -129,8 +140,10 @@ export default class StartVisit extends Component {
                     userId: userId,//get it from local storage
                 }
 
+                this.setState({ loading: true })
                 MeetingProvider.startMeeting(startVisitObj)
                     .then(data => {
+                        this.setState({ loading: false })
                         if (data.success === true) {
                             let status = {
                                 startVisitId: data.data._id,
@@ -142,6 +155,7 @@ export default class StartVisit extends Component {
                         }
                     })
                     .catch(e => {
+                        this.setState({ loading: false })
                         console.error(e);
                     })
             })
@@ -153,9 +167,25 @@ export default class StartVisit extends Component {
         let longitude = this.state.longitude;
         return (
             <Container>
-
+                <Header style={styles.Header}>
+                    <Left>
+                        <Button transparent onPress={() => this.props.navigation.pop()}>
+                            <Icon name='arrow-back' />
+                        </Button>
+                    </Left>
+                    <Body>
+                        <Title>Start Visit</Title>
+                    </Body>
+                    {/* <Right>
+                    <Button transparent>
+                        <Icon name='add' />
+                    </Button>
+                </Right> */}
+                </Header>
                 <ScrollView contentContainerStyle={styles.container}>
                     {/* <View style={styles.innerContainer}> */}
+                    <Loader
+                        loading={this.state.loading} />
                     <CameraModal
                         modalVisible={this.state.modalVisible}
                         closeCameraModal={this.closeCameraModal}
@@ -170,12 +200,12 @@ export default class StartVisit extends Component {
                     >{this.state.orgName}
                     </TextInput>
 
-                    
-                    <TouchableOpacity style={styles.cameraButton}>
+
+                    <TouchableOpacity style={styles.cameraButton} onPress={this.openCameraModal}>
                         <Text style={styles.textInsideButton}
-                            onPress={this.openCameraModal}
+
                         >
-                            Capture Image 
+                            Capture Image
                         </Text>
                     </TouchableOpacity>
                     {this.state.base64 !== '' &&
@@ -186,9 +216,10 @@ export default class StartVisit extends Component {
                     }
 
                     {/* </View> */}
-                    <TouchableOpacity style={styles.cameraButton}>
+                    <TouchableOpacity style={styles.cameraButton}
+                        onPress={() => this.getCurrentLocation()}
+                    >
                         <Text style={styles.textInsideButton}
-                            onPress={() => this.getCurrentLocation()}
                         >
                             Capture Location
                         </Text>
@@ -215,7 +246,7 @@ export default class StartVisit extends Component {
                 <Footer style={(this.state.base64Error || this.state.orgNameError || this.state.locationError) ? styles.FooterDesignDisabled : styles.FooterDesign}>
                     <TouchableOpacity
                         disabled={(this.state.base64Error || this.state.orgNameError || this.state.locationError)}
-                        style={(this.state.base64Error || this.state.orgNameError || this.state.locationError )? styles.FooterButtonDisabled : styles.FooterButton}
+                        style={(this.state.base64Error || this.state.orgNameError || this.state.locationError) ? styles.FooterButtonDisabled : styles.FooterButton}
                         onPress={() => this.startVisit()}
                     >
                         <Text style={styles.FooterText}>
@@ -307,6 +338,8 @@ const styles = StyleSheet.create({
         padding: 10,
         justifyContent: 'center',
         alignItems: 'center'
-    }
+    }, Header: {
+        backgroundColor: '#009688'
+    },
 
 })

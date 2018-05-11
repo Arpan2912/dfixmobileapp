@@ -517,8 +517,8 @@ export default class Home extends Component {
                     </Text>
                     </TouchableOpacity>
                 </View>} */}
-                {this.state.isLoading === true && <View>
-                    <ActivityIndicator size="small" color="#00ff00" />
+                {this.state.isLoading === true && <View style={styles.container}>
+                    <ActivityIndicator size="large" color="#009688" />
                 </View>}
 
             </View>
