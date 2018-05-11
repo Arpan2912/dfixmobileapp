@@ -25,6 +25,8 @@ import EventSingleton from '../../event/eventSingleton';
 import UserProvider from '../../provider/user-provider';
 import commonCss from '../../css/commonCss';
 import Custom from '../../components/Custom';
+import Loader from '../../components/Loader';
+
 // import my_lzma from 'lzma';
 
 var { height, width } = Dimensions.get('screen');
@@ -51,7 +53,9 @@ export default class StartDay extends Component {
 
         km: null,
         kmError: true,
-        kmErrorMsg: null
+        kmErrorMsg: null,
+
+        loading: false
     }
 
     componentWillMount() {
@@ -111,8 +115,11 @@ export default class StartDay extends Component {
                 // result = my_lzma.compress(this.state.base64,1);
                 if (this.state.userId) {
                     // StartDayProvider.startDay(this.state.km, result, this.state.userId)
+                    this.setState({ loading: true });
                     StartDayProvider.startDay(this.state.km, this.state.base64, this.state.userId)
                         .then(data => {
+                            this.setState({ loading: false });
+
                             if (data.success === true) {
                                 Custom.show("background is running", 2000);
                                 let status = {
@@ -125,6 +132,8 @@ export default class StartDay extends Component {
                                 UserProvider.setStartDayStatus(JSON.stringify(status));
                                 this.props.navigation.goBack();
                             }
+                        }).catch(e=>{
+                            this.setState({ loading: false });
                         })
                 } else {
 
@@ -136,11 +145,15 @@ export default class StartDay extends Component {
         Promise.all(UserProvider.getUserIdFromLocalStorage(), UserProvider.getStartDayStatus())
             // AsyncStorage.getItem('userId')
             .then(data => {
-                this.setState({ userId: data[0] });
+                this.setState({ userId: data[0],loading: true });
 
                 console.log("id", id);
+                // this.setState({ loading: true });
+                
                 StartDayProvider.stopDay(this.state.km, this.state.base64, this.state.userId, id)
                     .then(res => {
+                    this.setState({ loading: false });
+                    
                         if (res.success === true) {
                             Custom.stopService();
                             let status = {
@@ -152,6 +165,9 @@ export default class StartDay extends Component {
                             UserProvider.setStartDayStatus(JSON.stringify(status));
                             this.props.navigation.goBack();
                         }
+                    }).catch(e=>{
+                    this.setState({ loading: false });
+                    
                     })
             })
     }
@@ -162,7 +178,8 @@ export default class StartDay extends Component {
         let title = this.props.navigation.state.params.title;
         return (
             <Container>
-
+                <Loader
+                    loading={this.state.loading} />
                 <View style={styles.container}>
                     {/* <View style={styles.innerContainer}> */}
 
@@ -180,9 +197,9 @@ export default class StartDay extends Component {
                         {this.state.km}
                     </TextInput>
                     {this.state.kmErrorMsg && <Text style={commonCss.error}>{this.state.kmErrorMsg}</Text>}
-                    <TouchableOpacity style={styles.cameraButton}>
+                    <TouchableOpacity style={styles.cameraButton} onPress={this.openCameraModal}>
                         <Text style={styles.textInsideButton}
-                            onPress={this.openCameraModal}
+                            
                         >
                             Capture Image
                         </Text>

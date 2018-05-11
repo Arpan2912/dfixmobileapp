@@ -27,6 +27,7 @@ import MeetingProvider from '../../provider/meeting-provider';
 import UserProvider from '../../provider/user-provider';
 import EventSingleton from '../../event/eventSingleton';
 import commonCss from '../../css/commonCss';
+import Loader from '../../components/Loader';
 
 var { height, width } = Dimensions.get('screen');
 let orderData = null;
@@ -50,6 +51,9 @@ export default class UpdateOrder extends Component {
         itemPrice: null,
         itemPriceError: true,
         itemPriceErrorMsg: null,
+
+        loading: false,
+
     }
 
     constructor(props) {
@@ -81,8 +85,11 @@ export default class UpdateOrder extends Component {
         if (orderDetail) {
             this.setState({
                 itemName: orderDetail.item_name,
+                itemNameError: false,
                 itemPrice: orderDetail.item_price,
-                itemQuantity: orderDetail.item_quantity
+                itemPriceError: false,
+                itemQuantity: orderDetail.item_quantity,
+                itemQuantityError: false
             });
         }
     }
@@ -125,8 +132,10 @@ export default class UpdateOrder extends Component {
         order.itemPrice = this.state.itemPrice;
         order.itemQuantity = this.state.itemQuantity;
         order._id = this.orderData._id;
+        this.setState({ loading: true });
         MeetingProvider.updateOrder(order)
             .then(data => {
+                this.setState({ loading: false });
                 if (data.success === true) {
                     if (eventObj) {
                         eventObj.emit('updateOrder', data.data);
@@ -135,7 +144,7 @@ export default class UpdateOrder extends Component {
                 }
             })
             .catch(e => {
-
+                this.setState({ loading: false });
             })
     }
 
@@ -148,8 +157,10 @@ export default class UpdateOrder extends Component {
         order.itemQuantity = this.state.itemQuantity;
         order.meetingId = meetingId;
         //order._id = this.orderData._id;
+        this.setState({ loading: true })
         MeetingProvider.addOrder(order)
             .then(data => {
+                this.setState({ loading: false })
                 if (data.success === true) {
                     if (eventObj) {
                         eventObj.emit('updateOrder', data.data);
@@ -158,7 +169,7 @@ export default class UpdateOrder extends Component {
                 }
             })
             .catch(e => {
-
+                this.setState({ loading: false })
             })
     }
 
@@ -174,7 +185,7 @@ export default class UpdateOrder extends Component {
                         </Button>
                     </Left>
                     <Body>
-                        <Title>{title} Order</Title>
+                        <Title>{title === 'update' ? 'Update' : 'Add'} Order</Title>
                     </Body>
                     {/* <Right>
                         <Button transparent>
@@ -183,6 +194,8 @@ export default class UpdateOrder extends Component {
                     </Right> */}
                 </Header>
                 <View style={styles.container}>
+                    <Loader
+                        loading={this.state.loading} />
                     <TextInput style={styles.TextInput}
                         placeholder="Item Name"
                         underlineColorAndroid='#009688'
@@ -210,12 +223,22 @@ export default class UpdateOrder extends Component {
                     </TextInput>
                     {this.state.itemPriceErrorMsg && <Text style={commonCss.error}>{this.state.itemPriceErrorMsg}</Text>}
 
-                    {title === 'update' && <TouchableHighlight style={styles.addButton} onPress={this.updateOrder}>
+                    {title === 'update' && <TouchableHighlight
+                        //style={styles.addButton}
+                        style={(this.state.itemNameError || this.state.itemPriceError || this.state.itemQuantityError) ? styles.FooterButtonDisabled : styles.addButton}
+                        onPress={this.updateOrder}
+                        disabled={this.state.itemNameError || this.state.itemPriceError || this.state.itemQuantityError}
+                    >
                         <Text style={styles.textInsideButton}>
                             Update
                     </Text>
                     </TouchableHighlight>}
-                    {title === 'add' && <TouchableHighlight style={styles.addButton} onPress={this.addOrder}>
+                    {title === 'add' && <TouchableHighlight
+                        style={(this.state.itemNameError || this.state.itemPriceError || this.state.itemQuantityError) ? styles.FooterButtonDisabled : styles.addButton}
+                        onPress={this.addOrder}
+                        disabled={this.state.itemNameError || this.state.itemPriceError || this.state.itemQuantityError}
+                    >
+
                         <Text style={styles.textInsideButton}>
                             Add
                     </Text>
@@ -250,7 +273,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#009688",
         padding: 10,
         // width: width - 100,
-        width:300,
+        width: 300,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 0
@@ -289,6 +312,22 @@ const styles = StyleSheet.create({
         color: '#fafafa',
         fontSize: 20,
         fontWeight: 'bold'
+    },
+    FooterDesignDisabled: {
+        backgroundColor: '#B2DFDB',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+
+    FooterButtonDisabled: {
+        
+        // width: width - 100,
+        width: 300,
+        borderRadius: 0,
+        backgroundColor: "#B2DFDB",
+        padding: 10,
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 
 })

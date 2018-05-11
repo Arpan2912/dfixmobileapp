@@ -30,6 +30,8 @@ import UserProvider from '../../provider/user-provider';
 import EventSingleton from '../../event/eventSingleton';
 import CameraModal from '../../modal/camera-modal';
 import commonCss from '../../css/commonCss';
+import Loader from '../../components/Loader';
+
 
 var { height, width } = Dimensions.get('screen');
 let expenseData = null;
@@ -60,6 +62,8 @@ export default class UpdateExpense extends Component {
         expenseAmount: null,
         expenseAmountError: true,
         expenseAmountErrorMsg: null,
+
+        loading: false
     }
 
     constructor(props) {
@@ -90,10 +94,14 @@ export default class UpdateExpense extends Component {
         let expenseDetail = this.props.navigation.state.params.expenseDetail;
         this.expenseData = expenseDetail;
         if (expenseDetail) {
+            ToastAndroid.show("Inside expense", 1000);
             this.setState({
                 description: expenseDetail.description,
+                descriptionError: false,
                 expenseAmount: expenseDetail.expense_amount,
-                imgUrl: expenseDetail.image_url
+                expenseAmountError: false,
+                imgUrl: expenseDetail.image_url,
+                base64Error: false
             });
         }
     }
@@ -147,8 +155,10 @@ export default class UpdateExpense extends Component {
         // expense.base64 = this.state.base64;
         // expense.itemQuantity = this.state.itemQuantity;
         expense._id = this.expenseData._id;
+        this.setState({ loading: true });
         ExpenseProvider.updateExpense(expense)
             .then(data => {
+                this.setState({ loading: false });
                 if (data.success === true) {
                     if (eventObj) {
                         eventObj.emit('updateExpense', data.data);
@@ -157,7 +167,7 @@ export default class UpdateExpense extends Component {
                 }
             })
             .catch(e => {
-
+                this.setState({ loading: false });
             })
     }
 
@@ -171,8 +181,10 @@ export default class UpdateExpense extends Component {
         // expense.itemQuantity = this.state.itemQuantity;
         expense.expenseId = expenseId;
         //expense._id = this.expenseData._id;
+        this.setState({ loading: true });
         ExpenseProvider.addExpense(expense)
             .then(data => {
+                this.setState({ loading: false });
                 if (data.success === true) {
                     if (eventObj) {
                         eventObj.emit('addExpense', data.data);
@@ -181,6 +193,7 @@ export default class UpdateExpense extends Component {
                 }
             })
             .catch(e => {
+                this.setState({ loading: false });
                 ToastAndroid.show(e.toString(), 5000);
                 this.props.navigation.pop();
             })
@@ -215,7 +228,7 @@ export default class UpdateExpense extends Component {
                         </Button>
                     </Left>
                     <Body>
-                        <Title>{title} Expense</Title>
+                        <Title>{title === 'update' ? 'Update' : 'Add'} Expense</Title>
                     </Body>
                     {/* <Right>
                         <Button transparent>
@@ -229,6 +242,8 @@ export default class UpdateExpense extends Component {
                         closeCameraModal={this.closeCameraModal}
                         saveImage={this.saveImage}
                     />
+                    <Loader
+                        loading={this.state.loading} />
                     <TextInput style={styles.TextInput}
                         placeholder="Item Name"
                         underlineColorAndroid='#009688'
@@ -258,9 +273,9 @@ export default class UpdateExpense extends Component {
                     {this.state.expenseAmountErrorMsg && <Text style={commonCss.error}>{this.state.expenseAmountErrorMsg}</Text>}
 
 
-                    <TouchableHighlight style={styles.addButton}>
+                    <TouchableHighlight style={styles.addButton} onPress={this.openCameraModal}>
                         <Text style={styles.textInsideButton}
-                            onPress={this.openCameraModal}
+                            
                         >
                             Capture Image
                         </Text>
@@ -293,22 +308,23 @@ export default class UpdateExpense extends Component {
                     </Text>
                     </TouchableHighlight>} */}
                 </View>
-                <Footer style={!(this.state.base64 && this.state.expenseAmount && this.state.description) ? styles.FooterDesignDisabled :styles.FooterDesign}>
+                <Footer style={(this.state.base64Error
+                    || this.state.expenseAmountError || this.state.descriptionError) ? styles.FooterDesignDisabled : styles.FooterDesign}>
                     {title === 'update' && <TouchableHighlight
-                        style={!(this.state.base64 && this.state.expenseAmount && this.state.description) ? styles.FooterButtonDisabled : styles.FooterButton}
-                        disabled={!(this.state.base64 && this.state.expenseAmount && this.state.description)}
+                        style={(this.state.base64Error || this.state.expenseAmountError || this.state.descriptionError) ? styles.FooterButtonDisabled : styles.FooterButton}
+                        disabled={(this.state.base64Error || this.state.expenseAmountError || this.state.descriptionError)}
                         onPress={this.updateExpense}>
                         <Text style={styles.FooterText}>
                             Update Expense
-            </Text>
+                        </Text>
                     </TouchableHighlight>}
                     {title === 'add' && <TouchableHighlight
-                        style={!(this.state.base64 && this.state.expenseAmount && this.state.description) ? styles.FooterButtonDisabled : styles.FooterButton}
-                        disabled={!(this.state.base64 && this.state.expenseAmount && this.state.description)}
+                        style={(this.state.base64Error || this.state.expenseAmountError || this.state.descriptionError) ? styles.FooterButtonDisabled : styles.FooterButton}
+                        disabled={(this.state.base64Error || this.state.expenseAmountError || this.state.descriptionError)}
                         onPress={this.addExpense}>
                         <Text style={styles.FooterText}>
                             Add Expense
-            </Text>
+                        </Text>
                     </TouchableHighlight>}
                 </Footer>
             </Container>

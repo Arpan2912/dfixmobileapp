@@ -12,7 +12,8 @@ import {
     Dimensions,
     ScrollView,
     AsyncStorage,
-    ListView
+    ListView,
+    ActivityIndicator
 } from 'react-native';
 import OrderModal from '../../modal/order-modal';
 import {
@@ -26,7 +27,7 @@ import {
     Right,
     Title,
     ListItem,
-    List
+    List,
 } from 'native-base';
 import Validation from '../../provider/validation';
 import StartDayProvider from '../../provider/startday-provider';
@@ -57,7 +58,9 @@ export default class ExpenseList extends Component {
 
         expenseList: [],
         itemIndex: null,
-        editItemData: null
+        editItemData: null,
+
+        isLoading: true
     }
 
     componentWillMount() {
@@ -81,7 +84,7 @@ export default class ExpenseList extends Component {
                 return ExpenseProvider.getTodayExpense(userId);
             })
             .then(data => {
-                this.setState({ expenseList: data.data });
+                this.setState({ expenseList: data.data, isLoading: false });
             })
             .catch(e => {
 
@@ -120,7 +123,7 @@ export default class ExpenseList extends Component {
                 if (data.success === true) {
                     // eventObj.emit("updateExpense");
                     arr.splice(rowId, 1);
-                    console.log("arr",JSON.stringify(arr));
+                    console.log("arr", JSON.stringify(arr));
                     this.setState({ expenseList: arr });
 
                 } else {
@@ -142,11 +145,11 @@ export default class ExpenseList extends Component {
         }
     }
 
-    addEventListener = (addExpense)=>{
-        if(addExpense){
-            let obj =this.state.expenseList;
+    addEventListener = (addExpense) => {
+        if (addExpense) {
+            let obj = this.state.expenseList;
             obj.push(addExpense);
-            this.setState({expenseList:obj});
+            this.setState({ expenseList: obj });
         }
     }
 
@@ -169,13 +172,13 @@ export default class ExpenseList extends Component {
                         </Button>
                     </Right>
                 </Header>
-                <ScrollView contentContainerStyle={styles.container}>
+                {this.state.isLoading === false && <ScrollView contentContainerStyle={styles.container}>
 
                     <List style={{ width: width }}
                         dataSource={this.ds.cloneWithRows(this.state.expenseList)}
                         renderRow={data =>
-                            <ListItem style={{ paddingTop: 10, paddingBottom: 10 }}>
-                                <Body style={{ paddingLeft: 15, paddingRight: 15 }}>
+                            <ListItem style={{ paddingTop: 20, paddingBottom: 20 }}>
+                                <Body style={{ paddingLeft: 20, paddingRight: 20 }}>
                                     <Text style={{ color: '#009688', fontWeight: 'bold' }}>{data.description}</Text>
                                 </Body>
                                 <Right>
@@ -185,7 +188,7 @@ export default class ExpenseList extends Component {
                                     <Text note style={{ fontWeight: 'bold' }}>{data.item_price} Rs</Text>
                                 </Body> */}
                             </ListItem>
-                            }
+                        }
                         renderLeftHiddenRow={(data, secId, rowId) =>
                             <Button full danger onPress={() => this.deleteExpense(data, secId, rowId)}>
                                 <Text style={{ color: '#fafafa' }}>Delete</Text>
@@ -202,7 +205,11 @@ export default class ExpenseList extends Component {
                     {/* </View> */}
 
 
-                </ScrollView>
+                </ScrollView>}
+                {this.state.isLoading === true && <View style={styles.containerLoading}>
+                    <ActivityIndicator size="large" color="#009688" />
+                </View>}
+
             </Container >
         )
     }
@@ -214,7 +221,13 @@ const styles = StyleSheet.create({
         backgroundColor: "#fafafa",
         ///flex: 1,
         alignItems: 'center',
-        //justifyContent: 'center'
+        // justifyContent: 'center'
+    },
+    containerLoading: {
+        backgroundColor: "#fafafa",
+        ///flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     Header: {
         backgroundColor: '#009688'
