@@ -155,7 +155,7 @@ export default class StartVisit extends Component {
                             }
                             UserProvider.setVisitStatus(JSON.stringify(status));
                             eventObj.emit('startvisit', data.data._id, 'true');
-                            // this.props.navigation.goBack();
+                            this.props.navigation.goBack();
                         }
                     })
                     .catch(e => {
