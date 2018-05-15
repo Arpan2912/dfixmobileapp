@@ -12,7 +12,8 @@ import {
     Image,
     Dimensions,
     ScrollView,
-    AsyncStorage
+    AsyncStorage,
+    ToastAndroid
 } from 'react-native';
 import CameraModal from '../../modal/camera-modal';
 import {
@@ -144,14 +145,17 @@ export default class StartVisit extends Component {
                 MeetingProvider.startMeeting(startVisitObj)
                     .then(data => {
                         this.setState({ loading: false })
+                        
                         if (data.success === true) {
+                            ToastAndroid.show("meeting started",1000);
                             let status = {
                                 startVisitId: data.data._id,
+                                orgName : this.state.orgName,
                                 status: 'true'
                             }
                             UserProvider.setVisitStatus(JSON.stringify(status));
                             eventObj.emit('startvisit', data.data._id, 'true');
-                            this.props.navigation.goBack();
+                            // this.props.navigation.goBack();
                         }
                     })
                     .catch(e => {

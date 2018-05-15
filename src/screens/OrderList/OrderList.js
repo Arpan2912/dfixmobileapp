@@ -42,6 +42,7 @@ let eventObj;
 let startVisitId = null;
 let userId = null;
 let meetingId = null;
+let orgName = null;
 export default class OrderList extends Component {
     title = 'Start'
     constructor(props) {
@@ -63,7 +64,7 @@ export default class OrderList extends Component {
     componentWillMount() {
         eventObj = EventSingleton.geteventEmitterObj();
         meetingId = this.props.navigation.state.params.meetingId;
-
+        orgName = this.props.navigation.state.params.orgName;
         eventObj.on('updateOrder', this.updateOrderListener);
         Promise.all([
             UserProvider.getVisitStatus(),
@@ -114,7 +115,7 @@ export default class OrderList extends Component {
     });
 
     addOrder = (obj) => {
-        this.props.navigation.push('UpdateOrder', { title: "add", orderDetail: null, meetingId: meetingId });
+        this.props.navigation.push('UpdateOrder', { title: "add", orderDetail: null, meetingId: meetingId,orgName:orgName });
     }
 
     editOrder = (data, secId, rowId, rowMap) => {

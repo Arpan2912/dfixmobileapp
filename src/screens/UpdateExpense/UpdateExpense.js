@@ -31,6 +31,8 @@ import EventSingleton from '../../event/eventSingleton';
 import CameraModal from '../../modal/camera-modal';
 import commonCss from '../../css/commonCss';
 import Loader from '../../components/Loader';
+import constants from '../../config/constant';
+let API_URL = constants.API_URL;
 
 
 var { height, width } = Dimensions.get('screen');
@@ -292,7 +294,7 @@ export default class UpdateExpense extends Component {
                         <Image
                             style={styles.ImageView}
                             // source={{ uri: '/storage/emulated/0/DCIM/Camera/1518296786611.jpg' }}
-                            source={{ uri: 'http://192.168.43.72:3333/' + this.state.imgUrl }}
+                            source={{ uri: API_URL + this.state.imgUrl }}
                         />
                     }
 

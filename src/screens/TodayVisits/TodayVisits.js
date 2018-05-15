@@ -142,7 +142,8 @@ export default class TodayVisits extends Component {
     goToOrderListPage = (meetingData) => {
         let orders = meetingData.orders;
         let meetingId = meetingData.todayMeeting._id;
-        this.props.navigation.push('OrderList', { title: "Orders List", orders: orders, meetingId: meetingId });
+        let orgName = meetingData.todayMeeting.org_name;
+        this.props.navigation.push('OrderList', { title: "Orders List", orders: orders, meetingId: meetingId,orgName:orgName });
     }
 
 

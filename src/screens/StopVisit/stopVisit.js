@@ -12,7 +12,8 @@ import {
     Dimensions,
     ScrollView,
     AsyncStorage,
-    ListView
+    ListView,
+    ToastAndroid
 } from 'react-native';
 import OrderModal from '../../modal/order-modal';
 import {
@@ -42,6 +43,8 @@ var { height, width } = Dimensions.get('screen');
 let eventObj;
 let startVisitId = null;
 let userId = null;
+let orgName, userName;
+
 export default class StopVisit extends Component {
     title = 'Start'
     constructor(props) {
@@ -66,15 +69,18 @@ export default class StopVisit extends Component {
         eventObj = EventSingleton.geteventEmitterObj();
         Promise.all([
             UserProvider.getVisitStatus(),
-            UserProvider.getUserIdFromLocalStorage()
+            UserProvider.getUserIdFromLocalStorage(),
+            UserProvider.getUserNameFromLocalStorage()
         ]).then(data => {
             let visitStatus = null;
             let visitStatusString = data[0];
             let usersId = data[1];
+            userName = data[2];
             try {
                 console.log("obj", visitStatusString);
                 visitStatus = JSON.parse(visitStatusString);
                 startVisitId = visitStatus.startVisitId;
+                orgName = visitStatus.orgName;
                 userId = usersId;
                 console.log("\n\n userId : ", userId, "\n StartVisitId: ", startVisitId);
             } catch (e) {
@@ -84,11 +90,7 @@ export default class StopVisit extends Component {
     }
 
     componentDidMount() {
-        let arrList = [{
-            itemPrice: '10000',
-            itemName: 'pencil',
-            itemQuantity: '100'
-        }];
+        let arrList = [];
         this.setState({ orderList: arrList });
     }
 
@@ -150,8 +152,12 @@ export default class StopVisit extends Component {
         let stopVisitObj = {
             id: startVisitId,
             userId: userId,
-            orderArray: this.state.orderList
+            orderArray: this.state.orderList,
+            orgName: orgName,
+            userName: userName
         }
+
+        ToastAndroid.show(JSON.stringify(stopVisitObj), 1000);
         console.log("stop visit obj", JSON.stringify(stopVisitObj));
         this.setState({ loading: true });
         MeetingProvider.stopVisit(stopVisitObj)
@@ -209,7 +215,7 @@ export default class StopVisit extends Component {
                     <List style={{ width: width }}
                         dataSource={this.ds.cloneWithRows(this.state.orderList)}
                         renderRow={data =>
-                            <ListItem style={{ paddingTop: 10, paddingBottom: 10 }}>
+                            <ListItem style={{ paddingTop: 20, paddingBottom: 20 }}>
                                 <Body style={{ paddingLeft: 15, paddingRight: 15 }}>
                                     <Text style={{ color: '#009688', fontWeight: 'bold' }}>{data.itemName}</Text>
 

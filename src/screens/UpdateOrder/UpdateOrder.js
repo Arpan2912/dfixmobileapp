@@ -9,7 +9,8 @@ import {
     View,
     Modal,
     Image,
-    TextInput
+    TextInput,
+    ToastAndroid
 } from 'react-native';
 import Validation from '../../provider/validation';
 import {
@@ -34,6 +35,8 @@ let orderData = null;
 let eventObj = null;
 let userId = null;
 let meetingId = null;
+let orgName = null;
+let userName = null;
 
 export default class UpdateOrder extends Component {
     state = {
@@ -73,6 +76,9 @@ export default class UpdateOrder extends Component {
     componentWillMount() {
         eventObj = EventSingleton.geteventEmitterObj();
         meetingId = this.props.navigation.state.params.meetingId;
+        ToastAndroid.show(JSON.stringify(this.props.navigation.state.params),1000);
+        orgName = this.props.navigation.state.params.orgName;
+        // ToastAndroid.show("orgName"+orgName,1000);
         UserProvider.getUserIdFromLocalStorage()
             .then(data => {
                 userId = data;
@@ -80,18 +86,22 @@ export default class UpdateOrder extends Component {
     }
 
     componentDidMount() {
-        let orderDetail = this.props.navigation.state.params.orderDetail;
-        this.orderData = orderDetail;
-        if (orderDetail) {
-            this.setState({
-                itemName: orderDetail.item_name,
-                itemNameError: false,
-                itemPrice: orderDetail.item_price,
-                itemPriceError: false,
-                itemQuantity: orderDetail.item_quantity,
-                itemQuantityError: false
-            });
-        }
+        UserProvider.getUserNameFromLocalStorage()
+            .then(data => {
+                userName = data;
+                let orderDetail = this.props.navigation.state.params.orderDetail;
+                this.orderData = orderDetail;
+                if (orderDetail) {
+                    this.setState({
+                        itemName: orderDetail.item_name,
+                        itemNameError: false,
+                        itemPrice: orderDetail.item_price,
+                        itemPriceError: false,
+                        itemQuantity: orderDetail.item_quantity,
+                        itemQuantityError: false
+                    });
+                }
+            })
     }
 
     setItemName = (iname) => {
@@ -156,6 +166,8 @@ export default class UpdateOrder extends Component {
         order.itemPrice = this.state.itemPrice;
         order.itemQuantity = this.state.itemQuantity;
         order.meetingId = meetingId;
+        order.userName = userName;
+        order.orgName = orgName;
         //order._id = this.orderData._id;
         this.setState({ loading: true })
         MeetingProvider.addOrder(order)
@@ -320,7 +332,7 @@ const styles = StyleSheet.create({
     },
 
     FooterButtonDisabled: {
-        
+
         // width: width - 100,
         width: 300,
         borderRadius: 0,
