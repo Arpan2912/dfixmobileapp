@@ -20,11 +20,27 @@ export default class UserProvider {
         })
     }
 
-    static authenticateUser(email, password) {
+    static getUserDetailsByPhone(phone) {
+        return new Promise((resolve, reject) => {
+            fetch(`${API_URL}api/get-user-by-phone`, {
+                method: 'POST',
+                body: JSON.stringify({ phone: phone }),
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                }
+            }).then((response) => response.json())
+                .then(data => {
+                    resolve(data);
+                })
+        })
+    }
+
+    static authenticateUser(phone, password) {
         return new Promise((resolve, reject) => {
             fetch(`${API_URL}api/login`, {
                 method: 'POST',
-                body: JSON.stringify({ email: email, password: password }),
+                body: JSON.stringify({ phone: phone, password: password }),
                 headers: {
                     Accept: 'application/json',
                     'Content-Type': 'application/json',

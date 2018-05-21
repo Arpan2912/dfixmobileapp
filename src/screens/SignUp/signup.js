@@ -29,6 +29,11 @@ export default class Signup extends Component {
         phoneError: true,
         phoneErrorMsg: null,
 
+        email: null,
+        emailError: true,
+        emailErrorMsg: null,
+
+
         password: null,
         confirmPassword: null,
         passwordError: true,
@@ -88,6 +93,18 @@ export default class Signup extends Component {
         }
     }
 
+    setEmail = (email) => {
+        this.setState({ email: email })
+        let emailError = Validation.emailValidator(email);
+        if (emailError) {
+            this.setState({ emailError: emailError.error });
+            this.setState({ emailErrorMsg: emailError.errorMsg });
+        } else {
+            this.setState({ emailError: false });
+            this.setState({ emailErrorMsg: null });
+        }
+    }
+
     setPassword = (password) => {
         this.setState({ confirmPassword: password });
         let passwordError = Validation.passwordMatchValidator(this.state.password, password);
@@ -104,17 +121,17 @@ export default class Signup extends Component {
     updateDetails = () => {
         let user = {};
         user.userId = this.props.navigation.state.params.userId;
-        user.email = this.props.navigation.state.params.email;
+        user.phone = this.props.navigation.state.params.phone;
         user.firstName = (!!this.state.firstName) ? this.state.firstName : null;
         user.lastName = (!!this.state.lastName) ? this.state.lastName : null;
         user.password = (!!this.state.password) ? this.state.password : null;
-        user.phone = (!!this.state.phone) ? this.state.phone : null;
+        user.email = (!!this.state.email) ? this.state.email : null;
         user.address = (!!this.state.address) ? this.state.address : null;
 
         UserProvider.updateUserDetail(user)
             .then(data => {
                 if (data.success == true) {
-                    this.props.navigation.navigate('Password', { email: user.email });
+                    this.props.navigation.navigate('Password', { phone: user.phone });
                 } else {
 
                 }
@@ -157,13 +174,13 @@ export default class Signup extends Component {
                 {this.state.addressErrorMsg && <Text style={commonCss.error}>{this.state.addressErrorMsg}</Text>}
 
                 <TextInput style={styles.TextInput}
-                    placeholder="Phone No"
+                    placeholder="Email"
                     underlineColorAndroid='#fafafa'
                     placeholderTextColor="#26A69A"
-                    onChangeText={(txt) => { this.setPhone(txt) }}
+                    onChangeText={(txt) => { this.setEmail(txt) }}
                 >
                 </TextInput>
-                {this.state.phoneErrorMsg && <Text style={commonCss.error}>{this.state.phoneErrorMsg}</Text>}
+                {this.state.emailErrorMsg && <Text style={commonCss.error}>{this.state.emailErrorMsg}</Text>}
 
                 <TextInput style={styles.TextInput}
                     placeholder="Password"
@@ -183,7 +200,7 @@ export default class Signup extends Component {
                 {this.state.passwordErrorMsg && <Text style={commonCss.error}>{this.state.passwordErrorMsg}</Text>}
 
                 <TouchableOpacity
-                    disabled={this.state.firstNameError || this.state.lastNameError || this.state.addressError || this.state.phoneError || this.state.passwordError}
+                    disabled={this.state.firstNameError || this.state.lastNameError || this.state.addressError || this.state.emailError || this.state.passwordError}
                     style={styles.button}
                     onPress={() => this.updateDetails()}>
                     <Text style={styles.textInsideButton}>

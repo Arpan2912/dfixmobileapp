@@ -13,6 +13,7 @@ import {
     ScrollView,
     AsyncStorage,
     ListView,
+    Alert,
     ToastAndroid
 } from 'react-native';
 import OrderModal from '../../modal/order-modal';
@@ -164,6 +165,14 @@ export default class StopVisit extends Component {
             .then(data => {
                 this.setState({ loading: false });
                 if (data.success == true) {
+                    Alert.alert(
+                        'Success',
+                        'Visit finish successfuly',
+                        [
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ],
+                        { cancelable: true }
+                    )
                     UserProvider.resetVisitStatus();
                     this.props.navigation.goBack();
                     eventObj.emit('stopVisit');
@@ -171,6 +180,14 @@ export default class StopVisit extends Component {
 
                 }
             }).catch(e => {
+                Alert.alert(
+                    'Error',
+                    'Something went wrong',
+                    [
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    ],
+                    { cancelable: true }
+                )
                 this.setState({ loading: false });
 
             })

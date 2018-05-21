@@ -12,7 +12,9 @@ import {
     Image,
     Dimensions,
     ScrollView,
-    AsyncStorage
+    Alert,
+    AsyncStorage,
+    ToastAndroid
 } from 'react-native';
 import CameraModal from '../../modal/camera-modal';
 import {
@@ -126,13 +128,29 @@ export default class StartDay extends Component {
                                     startDayId: data.data._id,
                                     status: 'true'
                                 }
+                                Alert.alert(
+                                    'Success',
+                                    'Day started successfully',
+                                    [
+                                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                                    ],
+                                    { cancelable: true }
+                                )
                                 // this.setState({ startday: status });
                                 if (this.props.navigation.state.params.title === 'Start Day')
                                     eventObj.emit('startday', data.data._id, 'true');
                                 UserProvider.setStartDayStatus(JSON.stringify(status));
                                 this.props.navigation.goBack();
                             }
-                        }).catch(e=>{
+                        }).catch(e => {
+                            Alert.alert(
+                                'Error',
+                                'Something went wrong',
+                                [
+                                    { text: 'OK', onPress: () => console.log('OK Pressed') },
+                                ],
+                                { cancelable: true }
+                            )
                             this.setState({ loading: false });
                         })
                 } else {
@@ -142,32 +160,49 @@ export default class StartDay extends Component {
     }
 
     stopDay() {
-        Promise.all(UserProvider.getUserIdFromLocalStorage(), UserProvider.getStartDayStatus())
-            // AsyncStorage.getItem('userId')
+        Promise.all([UserProvider.getUserIdFromLocalStorage(), UserProvider.getStartDayStatus()])
             .then(data => {
-                this.setState({ userId: data[0],loading: true });
+                this.setState({ userId: data[0], loading: true });
 
                 console.log("id", id);
                 // this.setState({ loading: true });
-                
+                data[1] = JSON.parse(data[1]);
+                ToastAndroid.show("stop day"+data[0].toString(),1000);
+                ToastAndroid.show("Stop DAy"+data[1].toString(),1000);
                 StartDayProvider.stopDay(this.state.km, this.state.base64, this.state.userId, id)
                     .then(res => {
                     this.setState({ loading: false });
-                    
+
                         if (res.success === true) {
                             Custom.stopService();
                             let status = {
                                 startDayId: data[1] && data[1].startDayId ? data[1].startDayId : null,
                                 status: 'false'
                             }
+                            Alert.alert(
+                                'Success',
+                                'Day stopped successfully',
+                                [
+                                    { text: 'OK', onPress: () => console.log('OK Pressed') },
+                                ],
+                                { cancelable: true }
+                            )
                             if (this.props.navigation.state.params.title === 'Stop Day')
                                 eventObj.emit('startday', null, 'false');
                             UserProvider.setStartDayStatus(JSON.stringify(status));
                             this.props.navigation.goBack();
                         }
                     }).catch(e=>{
+                        Alert.alert(
+                            'Error',
+                            'Something went wrong',
+                            [
+                                { text: 'OK', onPress: () => console.log('OK Pressed') },
+                            ],
+                            { cancelable: true }
+                        )
                     this.setState({ loading: false });
-                    
+
                     })
             })
     }
@@ -180,6 +215,7 @@ export default class StartDay extends Component {
             <Container>
                 <Loader
                     loading={this.state.loading} />
+
                 <View style={styles.container}>
                     {/* <View style={styles.innerContainer}> */}
 
@@ -188,6 +224,7 @@ export default class StartDay extends Component {
                         closeCameraModal={this.closeCameraModal}
                         saveImage={this.saveImage}
                     />
+
                     <TextInput style={styles.TextInput}
                         placeholder="Enter Km"
                         underlineColorAndroid='#009688'
@@ -199,7 +236,7 @@ export default class StartDay extends Component {
                     {this.state.kmErrorMsg && <Text style={commonCss.error}>{this.state.kmErrorMsg}</Text>}
                     <TouchableOpacity style={styles.cameraButton} onPress={this.openCameraModal}>
                         <Text style={styles.textInsideButton}
-                            
+
                         >
                             Capture Image
                         </Text>
@@ -216,8 +253,8 @@ export default class StartDay extends Component {
 
                     {/* </View> */}
 
-                    <Text>{JSON.stringify(this.state.startday)}   {(!!id) ? id.toString() : null}</Text>
-
+                    {/* <Text>{JSON.stringify(this.state.startday)}   {(!!id) ? id.toString() : null}</Text> */}
+                    {/* <Text>{this.state.userId} </Text> */}
                 </View>
 
                 <Footer style={this.state.kmError || this.state.base64Error ? styles.FooterDesignDisabled : styles.FooterDesign}>

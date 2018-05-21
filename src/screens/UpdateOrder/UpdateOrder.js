@@ -10,6 +10,7 @@ import {
     Modal,
     Image,
     TextInput,
+    Alert,
     ToastAndroid
 } from 'react-native';
 import Validation from '../../provider/validation';
@@ -150,10 +151,26 @@ export default class UpdateOrder extends Component {
                     if (eventObj) {
                         eventObj.emit('updateOrder', data.data);
                     }
+                    Alert.alert(
+                        'Success',
+                        'Order updated successfully',
+                        [
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ],
+                        { cancelable: true }
+                    )
                     this.props.navigation.pop();
                 }
             })
             .catch(e => {
+                Alert.alert(
+                    'Error',
+                    'Something went wrong',
+                    [
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    ],
+                    { cancelable: true }
+                )
                 this.setState({ loading: false });
             })
     }
@@ -177,10 +194,26 @@ export default class UpdateOrder extends Component {
                     if (eventObj) {
                         eventObj.emit('updateOrder', data.data);
                     }
+                    Alert.alert(
+                        'Success',
+                        'Order added successfully',
+                        [
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ],
+                        { cancelable: true }
+                    )
                     this.props.navigation.pop();
                 }
             })
             .catch(e => {
+                Alert.alert(
+                    'Error',
+                    'Something went wrong',
+                    [
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    ],
+                    { cancelable: true }
+                )
                 this.setState({ loading: false })
             })
     }

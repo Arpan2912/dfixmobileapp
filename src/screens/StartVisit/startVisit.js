@@ -13,6 +13,7 @@ import {
     Dimensions,
     ScrollView,
     AsyncStorage,
+    Alert,
     ToastAndroid
 } from 'react-native';
 import CameraModal from '../../modal/camera-modal';
@@ -153,12 +154,28 @@ export default class StartVisit extends Component {
                                 orgName : this.state.orgName,
                                 status: 'true'
                             }
+                            Alert.alert(
+                                'Success',
+                                'Visit started successfully',
+                                [
+                                    { text: 'OK', onPress: () => console.log('OK Pressed') },
+                                ],
+                                { cancelable: true }
+                            )
                             UserProvider.setVisitStatus(JSON.stringify(status));
                             eventObj.emit('startvisit', data.data._id, 'true');
                             this.props.navigation.goBack();
                         }
                     })
                     .catch(e => {
+                        Alert.alert(
+                            'Error',
+                            'Something went wrong',
+                            [
+                                { text: 'OK', onPress: () => console.log('OK Pressed') },
+                            ],
+                            { cancelable: true }
+                        )
                         this.setState({ loading: false })
                         console.error(e);
                     })

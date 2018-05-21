@@ -11,6 +11,7 @@ import {
     Image,
     TextInput,
     ToastAndroid,
+    Alert,
     TouchableOpacity
 } from 'react-native';
 import Validation from '../../provider/validation';
@@ -165,10 +166,26 @@ export default class UpdateExpense extends Component {
                     if (eventObj) {
                         eventObj.emit('updateExpense', data.data);
                     }
+                    Alert.alert(
+                        'Success',
+                        'Expense Updated successfully',
+                        [
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ],
+                        { cancelable: true }
+                    )
                     this.props.navigation.pop();
                 }
             })
             .catch(e => {
+                Alert.alert(
+                    'Error',
+                    'Something went wrong',
+                    [
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    ],
+                    { cancelable: true }
+                )
                 this.setState({ loading: false });
             })
     }
@@ -191,10 +208,26 @@ export default class UpdateExpense extends Component {
                     if (eventObj) {
                         eventObj.emit('addExpense', data.data);
                     }
+                    Alert.alert(
+                        'Success',
+                        'Expense Added successfully',
+                        [
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ],
+                        { cancelable: true }
+                    )
                     this.props.navigation.pop();
                 }
             })
             .catch(e => {
+                Alert.alert(
+                    'Error',
+                    'Something went wrong',
+                    [
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    ],
+                    { cancelable: true }
+                )
                 this.setState({ loading: false });
                 ToastAndroid.show(e.toString(), 5000);
                 this.props.navigation.pop();

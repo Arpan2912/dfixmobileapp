@@ -21,6 +21,10 @@ export default class Login extends Component {
         email: null,
         emailError: true,
         emailErrorMsg: null,
+
+        phone: null,
+        phoneError: true,
+        phoneErrorMsg: null,        
     }
 
     static navigationOptions = {
@@ -40,6 +44,18 @@ export default class Login extends Component {
         }
     }
 
+    setPhone(phone) {
+        this.setState({ phone: phone });
+        let phoneError = Validation.mobileNumberValidator(phone);
+        if (phoneError) {
+            this.setState({ phoneError: phoneError.error });
+            this.setState({ phoneErrorMsg: phoneError.errorMsg });
+        } else {
+            this.setState({ phoneError: false });
+            this.setState({ phoneErrorMsg: null });
+        }
+    }
+
     componentWillMount() {
         ToastAndroid.show("hello", 5000);
         // UserProvider.getUserIdFromLocalStorage()
@@ -52,7 +68,7 @@ export default class Login extends Component {
         //     })
     }
 
-    verifyEmailExistOrNot = () => {
+    verifyphoneExistOrNot = () => {
         // UserProvider.getStartDayStatus()
         // .then(data => {
         //     this.setState({ email: data });
@@ -64,17 +80,17 @@ export default class Login extends Component {
         //     .then(data => {
         //         this.setState({ email: JSON.stringify(data) });
         //     });
-        UserProvider.getUserDetailsByEmail(this.state.email)
+        UserProvider.getUserDetailsByPhone(this.state.phone)
             .then(data1 => {
                 let userId, email;
                 let data = data1;
                 if (data.success === true) {
                     let userId = data.data._id;
-                    let email = this.state.email;
+                    let phone = this.state.phone;
                     if (data.data.password == null)
-                        this.props.navigation.navigate('Signup', { email: email, userId: userId });
+                        this.props.navigation.navigate('Signup', { phone: phone, userId: userId });
                     else
-                        this.props.navigation.navigate('Password', { email: email, data: data1 });
+                        this.props.navigation.navigate('Password', { phone: phone, data: data1 });
                 } else {
                     // this.props.navigation.navigate('Signup');
                 }
@@ -94,19 +110,19 @@ export default class Login extends Component {
                 </View>
                 <View style={styles.innerContainer}>
                     <TextInput style={styles.TextInput}
-                        placeholder="Enter Email"
+                        placeholder="Enter Phone Number"
                         underlineColorAndroid='#fafafa'
                         placeholderTextColor="#26A69A"
-                        onChangeText={(text) => this.setState({ email: text })}
+                        onChangeText={(text) => this.setState({ phone: text })}
                     >
                     </TextInput>
-                        {this.state.emailErrorMsg && <Text style={commonCss.error}>{this.state.emailErrorMsg}</Text>}
+                        {this.state.phoneErrorMsg && <Text style={commonCss.error}>{this.state.phoneErrorMsg}</Text>}
                     
                     <TouchableOpacity
-                        disabled={this.state.emailErrorMsg}
-                        style={styles.button} onPress={this.verifyEmailExistOrNot}>
+                        disabled={this.state.phoneErrorMsg}
+                        style={styles.button} onPress={this.verifyphoneExistOrNot}>
                         <Text style={styles.textInsideButton}>
-                            Next {this.state.email ? this.state.email : ''}
+                            Next {this.state.phone ? this.state.phone : ''}
                         </Text>
                     </TouchableOpacity>
                 </View>

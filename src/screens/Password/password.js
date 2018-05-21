@@ -27,9 +27,9 @@ export default class Password extends Component {
         title: ''
     }
     login = () => {
-        let email = this.props.navigation.state.params.email;
+        let phone = this.props.navigation.state.params.phone;
         let password = this.state.password;
-        UserProvider.authenticateUser(email, password)
+        UserProvider.authenticateUser(phone, password)
             .then(data => {
                 this.setState({ title: JSON.stringify(data) })
                 if (data.success === true) {  
@@ -47,7 +47,7 @@ export default class Password extends Component {
                         .then(result => {
                             userId = data.data.userId;
                             ToastAndroid.show(data.data.userId, 5000);
-                            this.props.navigation.navigate('Home');
+                            this.props.navigation.replace('Home');
                             // return Promise.all([
                             //     StartDayProvider.getStartDayDetails(data.data.userId),
                             //     MeetingProvider.getTodayLastRiunningVisit(data.data.userId)

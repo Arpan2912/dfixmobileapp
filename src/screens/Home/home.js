@@ -84,7 +84,11 @@ export default class Home extends Component {
     }
 
     componentWillUnmount() {
+        // ToastAndroid.show("COmponent unmount called", 1000);
         AppState.removeEventListener('change', this._handleAppStateChange);
+        // ToastAndroid.show("eventObj" + eventObj, 1000);
+        // eventObj.removeEventListener('stopVisit');
+        // eventObj.removeEventListener('startvisit');
     }
 
     _handleAppStateChange = (nextAppState) => {
@@ -285,6 +289,10 @@ export default class Home extends Component {
                     // ToastAndroid.show(JSON.stringify(data), 5000);
                 })
                 .catch(e => {
+                    Alert.alert(
+                        'Error',
+                        'Something went wrong'
+                    )
                     this.resetStatus();
                     resolve(true);
                 })
@@ -329,6 +337,10 @@ export default class Home extends Component {
                     }
                 })
                 .catch(e => {
+                    Alert.alert(
+                        'Error',
+                        'Something went wrong'
+                    )
                     return resolve(true);
                     // UserProvider.setTodayDateToLocalStorage(dateString);
                     // UserProvider.setStartDayStatus(JSON.stringify(startDatStatus));
@@ -383,21 +395,27 @@ export default class Home extends Component {
     }
 
     gotoStartDayPage(dayTitle) {
+        UserProvider.getStartDayStatus().then(data => {
+            startDayDetails = JSON.parse(data);
+            ToastAndroid.show(data,1000);
+            if (startDayDetails && startDayDetails.status === 'false' && startDayDetails.startDayId !== null) {
+                Alert.alert(
+                    'Warning',
+                    'You have already completed day, Contact your manager',
+                    [
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    ],
+                    { cancelable: true }
+                )
+                // ToastAndroid.show("You have alrady completed day, Contact your manager",1000);
+                return;
+            }
+            else
+                this.props.navigation.navigate('StartDay', { title: dayTitle ? dayTitle : "Start Day", startDayId: (!!startDayId) ? startDayId : null });
+        }).catch(e => {
 
-        if (startDayDetails && startDayDetails.status === 'false' && startDayDetails.startDayId !== null) {
-            Alert.alert(
-                'Warning',
-                'You have already completed day, Contact your manager',
-                [
-                    { text: 'OK', onPress: () => console.log('OK Pressed') },
-                ],
-                { cancelable: true }
-            )
-            // ToastAndroid.show("You have alrady completed day, Contact your manager",1000);
-            return;
-        }
-        else
-            this.props.navigation.navigate('StartDay', { title: dayTitle ? dayTitle : "Start Day", startDayId: (!!startDayId) ? startDayId : null });
+        })
+        
     }
 
     render() {
