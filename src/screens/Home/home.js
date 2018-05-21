@@ -6,7 +6,7 @@ import {
     Text,
     View,
     Modal,
-    Button,
+    // Button,
     TextInput,
     TouchableOpacity,
     ToastAndroid,
@@ -16,7 +16,8 @@ import {
     Alert,
     Image
 } from 'react-native';
-import { Card, CardItem, Container, Header, Content, Icon } from 'native-base';
+import { Button, Title, Body, Right, Left, Footer, Card, CardItem, Container, Header, Content, Icon } from 'native-base';
+
 import UserProvider from '../../provider/user-provider';
 import EventSingleton from '../../event/eventSingleton';
 import MeetingProvider from '../../provider/meeting-provider';
@@ -213,6 +214,7 @@ export default class Home extends Component {
     // };
 
     static navigationOptions = {
+        header: null,
         title: 'Home',
         headerStyle: {
             backgroundColor: '#009688'
@@ -397,7 +399,7 @@ export default class Home extends Component {
     gotoStartDayPage(dayTitle) {
         UserProvider.getStartDayStatus().then(data => {
             startDayDetails = JSON.parse(data);
-            ToastAndroid.show(data,1000);
+            ToastAndroid.show(data, 1000);
             if (startDayDetails && startDayDetails.status === 'false' && startDayDetails.startDayId !== null) {
                 Alert.alert(
                     'Warning',
@@ -415,7 +417,7 @@ export default class Home extends Component {
         }).catch(e => {
 
         })
-        
+
     }
 
     render() {
@@ -423,87 +425,103 @@ export default class Home extends Component {
         let dayTitle = (this.state.startDay === 'true') ? "Stop Day" : "Start Day";
         let visitTitle = (this.state.startVisit === 'true') ? "End Visit" : "Start Visit";
         return (
-            <View style={styles.container}>
-                {this.state.isLoading === false && <View style={styles.container}>
-                    <Image resizeMethod="resize" resizeMode="stretch" style={{ height: 150, width: width / 1.5, padding: 50 }}
-                        source={require('../../images/dfix-Copy.png')}
-                    />
-                    <Grid>
-                        <Row style={{ height: 100 }}>
-                            <Col
-                                style={{
+            <Container>
+                <Header style={styles.Header}>
+                    {/* <Left>
+                        <Button transparent onPress={() => this.props.navigation.pop()}>
+                            <Icon name='arrow-back' />
+                        </Button>
+                    </Left> */}
+                    <Body style={styles.Header}>
+                        <Title style={{fontWeight:'bold'}}>Home</Title>
+                    </Body>
+                    {/* <Right>
+                    <Button transparent>
+                        <Icon name='add' />
+                    </Button>
+                </Right> */}
+                </Header>
+                <View style={styles.container}>
+                    {this.state.isLoading === false && <View style={styles.container}>
+                        <Image resizeMethod="resize" resizeMode="stretch" style={{ height: 150, width: width / 1.5, padding: 50 }}
+                            source={require('../../images/dfix-Copy.png')}
+                        />
+                        <Grid>
+                            <Row style={{ height: 100 }}>
+                                <Col
+                                    style={{
+                                        width: width / 2, backgroundColor: '#009688', alignItems: 'center',
+                                        justifyContent: 'center', borderColor: '#fafafa', borderWidth: 1
+                                    }}
+                                >
+                                    <TouchableOpacity
+                                        onPress={() => this.gotoStartDayPage(dayTitle)}
+                                        style={styles.buttonInsideCol}
+                                    >
+                                        <Icon name="power" style={{ color: "#fafafa" }}></Icon>
+                                        <Text style={{ color: "#fafafa" }}>{dayTitle}</Text>
+                                    </TouchableOpacity>
+                                </Col>
+                                <Col style={{
                                     width: width / 2, backgroundColor: '#009688', alignItems: 'center',
                                     justifyContent: 'center', borderColor: '#fafafa', borderWidth: 1
-                                }}
-                            >
-                                <TouchableOpacity
-                                    onPress={() => this.gotoStartDayPage(dayTitle)}
-                                    style={styles.buttonInsideCol}
-                                >
-                                    <Icon name="power" style={{ color: "#fafafa" }}></Icon>
-                                    <Text style={{ color: "#fafafa" }}>{dayTitle}</Text>
-                                </TouchableOpacity>
-                            </Col>
-                            <Col style={{
-                                width: width / 2, backgroundColor: '#009688', alignItems: 'center',
-                                justifyContent: 'center', borderColor: '#fafafa', borderWidth: 1
-                            }}>
-                                <TouchableOpacity
-                                    style={(startDayDetails && (startDayDetails.status === 'false')) ? styles.disabled : styles.buttonInsideCol} disabled={!(startDayDetails && (startDayDetails.status === 'true'))}
-                                    onPress={() => this.gotoStartOrStopVisitPage(visitTitle)}
-                                    //onPress={() => this.gotoStartDayPage(dayTitle)}
-                                    style={styles.buttonInsideCol}
-                                >
-                                    <Icon name="calendar" style={{ color: "#fafafa" }}></Icon>
-                                    <Text style={{ color: "#fafafa" }}>{visitTitle}</Text>
-                                </TouchableOpacity>
-                            </Col>
-                        </Row>
-                        <Row style={{ height: 100 }}>
-                            <Col style={{
-                                width: width / 2, backgroundColor: '#009688', alignItems: 'center',
-                                justifyContent: 'center', borderColor: '#fafafa', borderWidth: 1
-                            }}>
-                                <TouchableOpacity
-                                    onPress={() => this.gotoTodayVisitsPage()}
-                                    style={styles.buttonInsideCol}
-                                >
-                                    <Icon name="bicycle" style={{ color: "#fafafa" }}></Icon>
-                                    <Text style={{ color: "#fafafa" }}>Today Visits</Text>
-                                </TouchableOpacity>
-                            </Col>
-                            <Col style={{
-                                width: width / 2, backgroundColor: '#009688', alignItems: 'center',
-                                justifyContent: 'center', borderColor: '#fafafa', borderWidth: 1
-                            }}>
-                                <TouchableOpacity
-                                    onPress={() => this.gotoTodayExpensePage()}
-                                    style={styles.buttonInsideCol}
-                                >
-                                    <Icon name="logo-usd" style={{ color: "#fafafa" }}></Icon>
-                                    <Text style={{ color: "#fafafa" }}>Today Expense</Text>
-                                </TouchableOpacity>
-                            </Col>
-                        </Row>
-                        <Row style={{ height: 100 }}>
-                            <Col style={{
-                                width: width, backgroundColor: '#009688', alignItems: 'center',
-                                justifyContent: 'center', borderColor: '#fafafa', borderWidth: 1
-                            }}>
-                                <TouchableOpacity
-                                    onPress={() => this.gotoAboutPage()}
-                                    style={styles.buttonInsideCol}
-                                >
-                                    <Icon name="information-circle" style={{ color: "#fafafa" }}></Icon>
-                                    <Text style={{ color: "#fafafa" }}>About</Text>
-                                </TouchableOpacity>
-                            </Col>
+                                }}>
+                                    <TouchableOpacity
+                                        style={(startDayDetails && (startDayDetails.status === 'false')) ? styles.disabled : styles.buttonInsideCol} disabled={!(startDayDetails && (startDayDetails.status === 'true'))}
+                                        onPress={() => this.gotoStartOrStopVisitPage(visitTitle)}
+                                        //onPress={() => this.gotoStartDayPage(dayTitle)}
+                                        style={styles.buttonInsideCol}
+                                    >
+                                        <Icon name="calendar" style={{ color: "#fafafa" }}></Icon>
+                                        <Text style={{ color: "#fafafa" }}>{visitTitle}</Text>
+                                    </TouchableOpacity>
+                                </Col>
+                            </Row>
+                            <Row style={{ height: 100 }}>
+                                <Col style={{
+                                    width: width / 2, backgroundColor: '#009688', alignItems: 'center',
+                                    justifyContent: 'center', borderColor: '#fafafa', borderWidth: 1
+                                }}>
+                                    <TouchableOpacity
+                                        onPress={() => this.gotoTodayVisitsPage()}
+                                        style={styles.buttonInsideCol}
+                                    >
+                                        <Icon name="bicycle" style={{ color: "#fafafa" }}></Icon>
+                                        <Text style={{ color: "#fafafa" }}>Today Visits</Text>
+                                    </TouchableOpacity>
+                                </Col>
+                                <Col style={{
+                                    width: width / 2, backgroundColor: '#009688', alignItems: 'center',
+                                    justifyContent: 'center', borderColor: '#fafafa', borderWidth: 1
+                                }}>
+                                    <TouchableOpacity
+                                        onPress={() => this.gotoTodayExpensePage()}
+                                        style={styles.buttonInsideCol}
+                                    >
+                                        <Icon name="logo-usd" style={{ color: "#fafafa" }}></Icon>
+                                        <Text style={{ color: "#fafafa" }}>Today Expense</Text>
+                                    </TouchableOpacity>
+                                </Col>
+                            </Row>
+                            <Row style={{ height: 100 }}>
+                                <Col style={{
+                                    width: width, backgroundColor: '#009688', alignItems: 'center',
+                                    justifyContent: 'center', borderColor: '#fafafa', borderWidth: 1
+                                }}>
+                                    <TouchableOpacity
+                                        onPress={() => this.gotoAboutPage()}
+                                        style={styles.buttonInsideCol}
+                                    >
+                                        <Icon name="information-circle" style={{ color: "#fafafa" }}></Icon>
+                                        <Text style={{ color: "#fafafa" }}>About</Text>
+                                    </TouchableOpacity>
+                                </Col>
 
-                        </Row>
-                    </Grid>
-                </View>}
-                {/* <View style={styles.innerContainer}> */}
-                {/* {this.state.isLoading === false && <View>
+                            </Row>
+                        </Grid>
+                    </View>}
+                    {/* <View style={styles.innerContainer}> */}
+                    {/* {this.state.isLoading === false && <View>
                     <TouchableOpacity style={styles.button} onPress={() => this.gotoStartDayPage(dayTitle)}>
                         <Text style={styles.textInsideButton}>
 
@@ -535,11 +553,12 @@ export default class Home extends Component {
                     </Text>
                     </TouchableOpacity>
                 </View>} */}
-                {this.state.isLoading === true && <View style={styles.container}>
-                    <ActivityIndicator size="large" color="#009688" />
-                </View>}
+                    {this.state.isLoading === true && <View style={styles.container}>
+                        <ActivityIndicator size="large" color="#009688" />
+                    </View>}
 
-            </View>
+                </View>
+            </Container>
 
             // </View>
         )
@@ -588,7 +607,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderColor: '#fafafa',
         borderWidth: 1
-    }
+    },
+    Header: {
+        backgroundColor: '#009688',
+        alignItems:'center',
+        justifyContent:'center',
+        
+        // fontWeight:'bold'
+    },
 
 
 

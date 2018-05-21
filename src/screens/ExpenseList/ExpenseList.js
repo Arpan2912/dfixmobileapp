@@ -209,6 +209,9 @@ export default class ExpenseList extends Component {
                 {this.state.isLoading === true && <View style={styles.containerLoading}>
                     <ActivityIndicator size="large" color="#009688" />
                 </View>}
+                {this.state.isLoading === false && this.state.expenseList.length === 0 && <View style={styles.containerLoading}>
+                    <Text>Today you have added no expense</Text>
+                </View>}
 
             </Container >
         )
@@ -227,7 +230,8 @@ const styles = StyleSheet.create({
         backgroundColor: "#fafafa",
         ///flex: 1,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        height:height
     },
     Header: {
         backgroundColor: '#009688'

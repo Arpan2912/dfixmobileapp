@@ -143,7 +143,7 @@ export default class TodayVisits extends Component {
         let orders = meetingData.orders;
         let meetingId = meetingData.todayMeeting._id;
         let orgName = meetingData.todayMeeting.org_name;
-        this.props.navigation.push('OrderList', { title: "Orders List", orders: orders, meetingId: meetingId,orgName:orgName });
+        this.props.navigation.push('OrderList', { title: "Orders List", orders: orders, meetingId: meetingId, orgName: orgName });
     }
 
 
@@ -179,7 +179,7 @@ export default class TodayVisits extends Component {
                         editItemData={this.state.editItemData}
                     />
 
-                    {this.state.visitList.length > 0 && <List style={{ width: width }}
+                    {this.state.visitList.length > 0 && <List style={{ width: width, height: height }}
                         dataSource={this.ds.cloneWithRows(this.state.visitList)}
                         renderRow={data =>
                             <ListItem style={{ paddingTop: 10, paddingBottom: 10 }}>
@@ -202,31 +202,31 @@ export default class TodayVisits extends Component {
                                     >View Orders</Text>
                                 </Right>
                             </ListItem>
-                            }
-                        renderLeftHiddenRow={(data, secId, rowId) =>
-                            {/* <Button full danger onPress={() => this.deleteExpense(data, secId, rowId)}>
+                        }
+                        renderLeftHiddenRow={(data, secId, rowId) => {/* <Button full danger onPress={() => this.deleteExpense(data, secId, rowId)}>
                                 <Text style={{ color: '#fafafa' }}>Delete</Text>
                             </Button> */}
-                            }
-                        renderRightHiddenRow={(data, secId, rowId, rowMap) =>
-                            {/* <Button full onPress={() => this.editExpense(data, secId, rowId, rowMap)}>
+                        }
+                        renderRightHiddenRow={(data, secId, rowId, rowMap) => {/* <Button full onPress={() => this.editExpense(data, secId, rowId, rowMap)}>
                                 <Text style={{ color: '#fafafa' }}>Edit</Text>
                             </Button> */}
-                            }
+                        }
                         leftOpenValue={0}
                         rightOpenValue={0}
                     />
 
                     }
 
-                    {loading === true &&  <ActivityIndicator size="large" color="#009688" />}
+                    {loading === true && <ActivityIndicator size="large" color="#009688" />}
 
 
                     {/* </View> */}
 
 
                 </ScrollView>
-
+                {loading === false && this.state.visitList.length === 0 && <View style={{ height: height, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text>You have not started any visit</Text>
+                </View>}
                 {/* <Footer style={styles.FooterDesign} >
                     <TouchableOpacity onPress={() => this.stopVisit()}
                         style={styles.FooterButton}>

@@ -6,7 +6,7 @@ import {
     Text,
     View,
     Modal,
-    Button,
+    // Button,
     TextInput,
     TouchableOpacity,
     Image,
@@ -19,7 +19,14 @@ import {
 import CameraModal from '../../modal/camera-modal';
 import {
     Container,
-    Footer
+    Footer,
+    Header,
+    Left,
+    Right,
+    Body,
+    Icon,
+    Title,
+    Button
 } from 'native-base';
 import Validation from '../../provider/validation';
 import StartDayProvider from '../../provider/startday-provider';
@@ -34,7 +41,7 @@ import Loader from '../../components/Loader';
 var { height, width } = Dimensions.get('screen');
 let eventObj;
 let id = null;
-
+let title = null;
 
 export default class StartDay extends Component {
     title = 'Start'
@@ -42,6 +49,7 @@ export default class StartDay extends Component {
         super();
         console.log("constructor calls");
         id = props.navigation.state.params.startDayId;
+        title = props.navigation.state.params.title;
         console.log("id", JSON.stringify(props));
     }
     state = {
@@ -75,6 +83,7 @@ export default class StartDay extends Component {
     static navigationOptions = {};
 
     static navigationOptions = ({ navigation }) => ({
+        header: null,
         title: navigation.state.params.title,
         headerStyle: {
             backgroundColor: '#009688'
@@ -167,11 +176,11 @@ export default class StartDay extends Component {
                 console.log("id", id);
                 // this.setState({ loading: true });
                 data[1] = JSON.parse(data[1]);
-                ToastAndroid.show("stop day"+data[0].toString(),1000);
-                ToastAndroid.show("Stop DAy"+data[1].toString(),1000);
+                ToastAndroid.show("stop day" + data[0].toString(), 1000);
+                ToastAndroid.show("Stop DAy" + data[1].toString(), 1000);
                 StartDayProvider.stopDay(this.state.km, this.state.base64, this.state.userId, id)
                     .then(res => {
-                    this.setState({ loading: false });
+                        this.setState({ loading: false });
 
                         if (res.success === true) {
                             Custom.stopService();
@@ -192,7 +201,7 @@ export default class StartDay extends Component {
                             UserProvider.setStartDayStatus(JSON.stringify(status));
                             this.props.navigation.goBack();
                         }
-                    }).catch(e=>{
+                    }).catch(e => {
                         Alert.alert(
                             'Error',
                             'Something went wrong',
@@ -201,7 +210,7 @@ export default class StartDay extends Component {
                             ],
                             { cancelable: true }
                         )
-                    this.setState({ loading: false });
+                        this.setState({ loading: false });
 
                     })
             })
@@ -213,6 +222,21 @@ export default class StartDay extends Component {
         let title = this.props.navigation.state.params.title;
         return (
             <Container>
+                <Header style={styles.Header}>
+                    <Left>
+                        <Button transparent onPress={() => this.props.navigation.pop()}>
+                            <Icon name='arrow-back' />
+                        </Button>
+                    </Left>
+                    <Body>
+                        <Title>{title}</Title>
+                    </Body>
+                    {/* <Right>
+                    <Button transparent>
+                        <Icon name='add' />
+                    </Button>
+                </Right> */}
+                </Header>
                 <Loader
                     loading={this.state.loading} />
 
@@ -342,6 +366,9 @@ const styles = StyleSheet.create({
         padding: 10,
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    Header: {
+        backgroundColor: '#009688'
     },
 
 })
