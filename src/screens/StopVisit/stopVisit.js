@@ -201,11 +201,11 @@ export default class StopVisit extends Component {
             <Container>
                 <Header style={styles.Header}>
                     <Left>
-                        <Button transparent>
+                        <Button transparent onPress={() => this.props.navigation.pop()}>
                             <Icon name='arrow-back' />
                         </Button>
                     </Left>
-                    <Body>
+                    <Body style={{alignContent:'center',alignItems:'center'}}>
                         <Title>Orders</Title>
                     </Body>
                     <Right>

@@ -163,8 +163,8 @@ export default class ExpenseList extends Component {
                             <Icon name='arrow-back' />
                         </Button>
                     </Left>
-                    <Body>
-                        <Title>Today Expenses</Title>
+                    <Body  style={{alignContent:'center',alignItems:'center'}}>
+                        <Title>Expenses</Title>
                     </Body>
                     <Right>
                         <Button transparent onPress={this.addExpense}>

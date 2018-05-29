@@ -187,7 +187,7 @@ export default class TodayVisits extends Component {
                                     {/* <Body style={{width:width/100 * 10}}> */}
                                     <Text>{moment(data.todayMeeting.start_time).format("HH:mm").toString()}</Text>
                                     <Text>To</Text>
-                                    <Text>{moment(data.todayMeeting.end_time).format("HH:mm").toString()}</Text>
+                                    {data.todayMeeting.end_time ? <Text>{moment(data.todayMeeting.end_time).format("HH:mm").toString()}</Text>:<Text>running</Text>}
                                     {/* </Body> */}
                                 </Right>
                                 <Body style={{ paddingLeft: 15 }}>

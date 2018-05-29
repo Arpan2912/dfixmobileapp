@@ -228,14 +228,14 @@ export default class StartDay extends Component {
                             <Icon name='arrow-back' />
                         </Button>
                     </Left>
-                    <Body>
+                    <Body style={{alignContent:'center',alignItems:'center'}}>
                         <Title>{title}</Title>
                     </Body>
-                    {/* <Right>
-                    <Button transparent>
+                    <Right>
+                    {/* <Button transparent>
                         <Icon name='add' />
-                    </Button>
-                </Right> */}
+                    </Button> */}
+                </Right>
                 </Header>
                 <Loader
                     loading={this.state.loading} />

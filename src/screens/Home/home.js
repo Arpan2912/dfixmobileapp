@@ -109,6 +109,8 @@ export default class Home extends Component {
                 }
             })
 
+        } else {
+
         }
     }
 
@@ -443,7 +445,7 @@ export default class Home extends Component {
                 </Header>
                 <View style={styles.container}>
                     {this.state.isLoading === false && <View style={styles.container}>
-                        <Image resizeMethod="resize" resizeMode="stretch" style={{ height: 150, width: width / 1.5, padding: 50 }}
+                        <Image resizeMethod="resize" resizeMode="stretch" style={{ height: 70, width: width / 1.5, padding: 50,margin:20 }}
                             source={require('../../images/dfix-Copy.png')}
                         />
                         <Grid>
