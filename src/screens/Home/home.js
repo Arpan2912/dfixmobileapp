@@ -57,30 +57,31 @@ export default class Home extends Component {
             })
     }
     componentWillMount() {
-        UserProvider.getUserIdFromLocalStorage().then(userId => {
-            if (userId) {
-                this.setState({ isLoading: true });
-                AppState.addEventListener('change', this._handleAppStateChange);
-                eventObj = EventSingleton.geteventEmitterObj();
+        UserProvider.getUserIdFromLocalStorage()
+            .then(userId => {
+                if (userId) {
+                    this.setState({ isLoading: true });
+                    AppState.addEventListener('change', this._handleAppStateChange);
+                    eventObj = EventSingleton.geteventEmitterObj();
 
-                eventObj.on('startday', (id, status) => {
-                    console.log("status", id, status);
-                    startDayId = id;
-                    startDayDetails.status = status;
-                    this.setState({ startDay: status });
-                });
+                    eventObj.on('startday', (id, status) => {
+                        console.log("status", id, status);
+                        startDayId = id;
+                        startDayDetails.status = status;
+                        this.setState({ startDay: status });
+                    });
 
-                eventObj.on('startvisit', (id, status) => {
-                    console.log("status", id, status);
-                    startVisitId = id;
-                    this.setState({ startVisit: status });
-                });
+                    eventObj.on('startvisit', (id, status) => {
+                        console.log("status", id, status);
+                        startVisitId = id;
+                        this.setState({ startVisit: status });
+                    });
 
-                eventObj.on('stopVisit', () => {
-                    this.setState({ startVisit: 'false' })
-                })
-            }
-        })
+                    eventObj.on('stopVisit', () => {
+                        this.setState({ startVisit: 'false' })
+                    })
+                }
+            })
 
     }
 
@@ -94,20 +95,21 @@ export default class Home extends Component {
 
     _handleAppStateChange = (nextAppState) => {
         if (nextAppState === 'active') {
-            UserProvider.getUserIdFromLocalStorage().then(userId => {
-                if (userId) {
-                    this.setState({ isLoading: true });
-                    this.resetStatus().then(data => {
-                        ToastAndroid.show("reset status promise resolved", 5000);
-                        this.setLocalVaribles();
-                        this.setState({ isLoading: false });
-                    }).catch(e => {
-                        this.setLocalVaribles();
-                        this.setState({ isLoading: false });
+            UserProvider.getUserIdFromLocalStorage()
+                .then(userId => {
+                    if (userId) {
+                        this.setState({ isLoading: true });
+                        this.resetStatus().then(data => {
+                            ToastAndroid.show("reset status promise resolved", 5000);
+                            this.setLocalVaribles();
+                            this.setState({ isLoading: false });
+                        }).catch(e => {
+                            this.setLocalVaribles();
+                            this.setState({ isLoading: false });
 
-                    })
-                }
-            })
+                        })
+                    }
+                })
 
         } else {
 
@@ -311,7 +313,7 @@ export default class Home extends Component {
         dateString = date.toString();
         return new Promise((resolve, reject) => {
             UserProvider.getTodayDateFromLocalStorage()
-                .then(data => {
+                .then(data => {                    
                     if (data) {
                         let storedDate = new Date(data);
                         ToastAndroid.show("stored date" + data, 5000);
@@ -329,9 +331,13 @@ export default class Home extends Component {
                         } else {
                             // do nothing
                             this.setTodayStatus().then(data => resolve(true));
-
+                    
                         }
                     } else {
+                        let startDatStatus = {
+                            startDayId: null,
+                            status: 'false'
+                        }
                         UserProvider.setTodayDateToLocalStorage(dateString);
                         UserProvider.setStartDayStatus(JSON.stringify(startDatStatus));
                         UserProvider.resetLocationFromLocalStorage();
@@ -343,7 +349,7 @@ export default class Home extends Component {
                 .catch(e => {
                     Alert.alert(
                         'Error',
-                        'Something went wrong'
+                        'Error in reset status'+e.toString()
                     )
                     return resolve(true);
                     // UserProvider.setTodayDateToLocalStorage(dateString);
@@ -435,7 +441,7 @@ export default class Home extends Component {
                         </Button>
                     </Left> */}
                     <Body style={styles.Header}>
-                        <Title style={{fontWeight:'bold'}}>Home</Title>
+                        <Title style={{ fontWeight: 'bold' }}>Home</Title>
                     </Body>
                     {/* <Right>
                     <Button transparent>
@@ -445,7 +451,7 @@ export default class Home extends Component {
                 </Header>
                 <View style={styles.container}>
                     {this.state.isLoading === false && <View style={styles.container}>
-                        <Image resizeMethod="resize" resizeMode="stretch" style={{ height: 70, width: width / 1.5, padding: 50,margin:20 }}
+                        <Image resizeMethod="resize" resizeMode="stretch" style={{ height: 70, width: width / 1.5, padding: 50, margin: 20 }}
                             source={require('../../images/dfix-Copy.png')}
                         />
                         <Grid>
@@ -612,9 +618,9 @@ const styles = StyleSheet.create({
     },
     Header: {
         backgroundColor: '#009688',
-        alignItems:'center',
-        justifyContent:'center',
-        
+        alignItems: 'center',
+        justifyContent: 'center',
+
         // fontWeight:'bold'
     },
 

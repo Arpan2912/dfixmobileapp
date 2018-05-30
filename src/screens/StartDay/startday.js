@@ -228,7 +228,7 @@ export default class StartDay extends Component {
                             <Icon name='arrow-back' />
                         </Button>
                     </Left>
-                    <Body style={{alignContent:'center',alignItems:'center'}}>
+                    <Body style={{justifyContent:'center',alignItems:'center'}}>
                         <Title>{title}</Title>
                     </Body>
                     <Right>

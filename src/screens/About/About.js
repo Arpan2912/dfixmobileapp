@@ -71,14 +71,27 @@ export default class AboutPage extends Component {
         // Custom.show("background is running", 2000);
         return (
             <View style={styles.container}>
-                <Image style={{ height: 100, width: 300 }} source={require('../../images/dfix.png')}></Image>
-                <TouchableOpacity style={styles.button}>
+                {/* <Image style={{ height: 100, width: 300 }} source={require('../../images/dfix.png')}></Image> */}
+
+                <TouchableOpacity style={styles.button} onPress={() => { this.props.navigation.push('PdfView',{pdf:'profile'}); }}>
+                    <Text style={styles.textInsideButton}>
+                        {/* Start Day {this.state.token} */}
+                        Dfix Profile
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={() => { this.props.navigation.push('PdfView',{pdf:'flooring'}); }}>
+                    <Text style={styles.textInsideButton}>
+                        {/* Start Day {this.state.token} */}
+                        Dfix Flooring
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={() => { this.props.navigation.push('PdfView',{pdf:'enterprice'}); }}>
                     <Text style={styles.textInsideButton}>
                         {/* Start Day {this.state.token} */}
                         Dfix EnterPrise
                     </Text>
                 </TouchableOpacity>
-                <Text>
+                {/* <Text>
                 D FIX ENTERPRISE and its group companies 
                 are engaged in manufacturing of industrial
                  goods since last 20 years to market high 
@@ -89,20 +102,20 @@ export default class AboutPage extends Component {
                  Industries with a wide market range 
                  for industrial- Architectural sectors 
                  along with consumer sectors
-                </Text>
-                <TouchableOpacity style={styles.button}>
+                </Text> */}
+                {/* <TouchableOpacity style={styles.button}>
                     <Text style={styles.textInsideButton}>
-                        {/* Start Day {this.state.token} */}
+                      
                         Face Synopsis
                     </Text>
-                </TouchableOpacity>
-                <Text>D Fix Enterprise has complete product solutions for all your needs.
+                </TouchableOpacity> */}
+                {/* <Text>D Fix Enterprise has complete product solutions for all your needs.
                 D Fix has a wide range of industrial products in consumer 
                 range – Epoxy Adhesive range, construction chemicals, 
                 stone care; Electricals & Electronics – Potting compounds, 
                 Epoxy Transformer; FRP composites, Flooring & coating.
-                </Text>
-               
+                </Text> */}
+
             </View>
 
             // </View>
@@ -116,7 +129,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         flex: 1,
         alignItems: 'center',
-        // justifyContent: 'center'
+        justifyContent: 'center'
     },
 
 
@@ -124,7 +137,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#009688",
         margin: 10,
         padding: 10,
-        width: width ,
+        width: width*4/5,
         justifyContent: 'center',
         alignItems: 'center'
     },
