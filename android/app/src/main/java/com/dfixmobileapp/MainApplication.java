@@ -4,6 +4,8 @@ import android.app.Application;
 
 import com.dfixmobileapp.newtoast.AnExampleReactPackage;
 import com.facebook.react.ReactApplication;
+import org.wonday.pdf.RCTPdfView;
+import com.RNFetchBlob.RNFetchBlobPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.wix.RNCameraKit.RNCameraKitPackage;
 // import com.lwansbrough.RCTCamera.RCTCameraPackage;
@@ -27,6 +29,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RCTPdfView(),
+            new RNFetchBlobPackage(),
             new VectorIconsPackage(),
             new RNCameraKitPackage(),
             new MapsPackage(),

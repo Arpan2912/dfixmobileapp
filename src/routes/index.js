@@ -17,6 +17,7 @@ import UserProvider from '../provider/user-provider';
 import Logout from '../screens/Logout/Logout';
 import CameraPage from '../screens/CameraPage/CameraPage';
 import AboutPage from '../screens/About/About';
+import PdfView from '../screens/PdfView/pdfview';
 
 const stack = StackNavigator({
     
@@ -63,6 +64,9 @@ const stack = StackNavigator({
     },
     AboutPage:{
         screen:AboutPage
+    },
+    PdfView:{
+        screen:PdfView
     }
 
 },
