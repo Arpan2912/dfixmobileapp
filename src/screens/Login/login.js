@@ -9,7 +9,8 @@ import {
     Button,
     TextInput,
     TouchableOpacity,
-    ToastAndroid
+    ToastAndroid,
+    Alert
 } from 'react-native';
 import UserProvider from '../../provider/user-provider';
 import commonCss from '../../css/commonCss';
@@ -24,7 +25,7 @@ export default class Login extends Component {
 
         phone: null,
         phoneError: true,
-        phoneErrorMsg: null,        
+        phoneErrorMsg: null,
     }
 
     static navigationOptions = {
@@ -48,11 +49,9 @@ export default class Login extends Component {
         this.setState({ phone: phone });
         let phoneError = Validation.mobileNumberValidator(phone);
         if (phoneError) {
-            this.setState({ phoneError: phoneError.error });
-            this.setState({ phoneErrorMsg: phoneError.errorMsg });
+            this.setState({ phoneError: phoneError.error, phoneErrorMsg: phoneError.errorMsg });
         } else {
-            this.setState({ phoneError: false });
-            this.setState({ phoneErrorMsg: null });
+            this.setState({ phoneError: false, phoneErrorMsg: null });
         }
     }
 
@@ -96,7 +95,18 @@ export default class Login extends Component {
                 }
             })
             .catch(e => {
-
+                console.log("e", e);
+                if(!e.hasOwnPropery('message')){
+                    e.message ="Something went wrong";
+                }
+                Alert.alert(
+                    'Access Denied',
+                    e.message,
+                    [
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    ],
+                    { cancelable: true }
+                )
             })
     }
 
@@ -113,16 +123,18 @@ export default class Login extends Component {
                         placeholder="Enter Phone Number"
                         underlineColorAndroid='#fafafa'
                         placeholderTextColor="#26A69A"
-                        onChangeText={(text) => this.setState({ phone: text })}
+                        selectionColor="#fafafa"
+                        onChangeText={(text) => this.setPhone(text)}
+                    //onChangeText={(text) => this.setState({ phone: text })}
                     >
                     </TextInput>
-                        {this.state.phoneErrorMsg && <Text style={commonCss.error}>{this.state.phoneErrorMsg}</Text>}
-                    
+                    {this.state.phoneErrorMsg && <Text style={commonCss.error}>{this.state.phoneErrorMsg}</Text>}
+
                     <TouchableOpacity
                         disabled={this.state.phoneErrorMsg}
                         style={styles.button} onPress={this.verifyphoneExistOrNot}>
                         <Text style={styles.textInsideButton}>
-                            Next {this.state.phone ? this.state.phone : ''}
+                            Next
                         </Text>
                     </TouchableOpacity>
                 </View>
@@ -165,8 +177,8 @@ const styles = StyleSheet.create({
     textInsideButton: {
         color: "#009688"
     },
-    error:{
-        color:"red"
+    error: {
+        color: "red"
     }
 
 

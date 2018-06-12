@@ -470,12 +470,15 @@ export default class Home extends Component {
                                         <Text style={{ color: "#fafafa" }}>{dayTitle}</Text>
                                     </TouchableOpacity>
                                 </Col>
-                                <Col style={{
-                                    width: width / 2, backgroundColor: '#009688', alignItems: 'center',
-                                    justifyContent: 'center', borderColor: '#fafafa', borderWidth: 1
-                                }}>
+                                <Col 
+                                style={!(startDayDetails && (startDayDetails.status === 'true')) ? styles.columnDisabled : styles.column}
+                                //style={{
+                                  //  width: width / 2, backgroundColor: '#009688', alignItems: 'center',
+                                    //justifyContent: 'center', borderColor: '#fafafa', borderWidth: 1
+                                //}}
+                                >
                                     <TouchableOpacity
-                                        style={(startDayDetails && (startDayDetails.status === 'false')) ? styles.disabled : styles.buttonInsideCol} disabled={!(startDayDetails && (startDayDetails.status === 'true'))}
+                                        style={!(startDayDetails && (startDayDetails.status === 'true')) ? styles.disabled : styles.buttonInsideCol} disabled={!(startDayDetails && (startDayDetails.status === 'true'))}
                                         onPress={() => this.gotoStartOrStopVisitPage(visitTitle)}
                                         //onPress={() => this.gotoStartDayPage(dayTitle)}
                                         style={styles.buttonInsideCol}
@@ -616,6 +619,14 @@ const styles = StyleSheet.create({
         borderColor: '#fafafa',
         borderWidth: 1
     },
+    columnDisabled: {
+        width: width / 2,
+        backgroundColor: '#B2DFDB',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderColor: '#fafafa',
+        borderWidth: 1
+    },    
     Header: {
         backgroundColor: '#009688',
         alignItems: 'center',

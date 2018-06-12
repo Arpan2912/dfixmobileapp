@@ -26,7 +26,9 @@ export default class Validation {
         } else {
           return null;
         }
-      } else {
+      } else if(text === ''){
+        return { error: true, errorMsg: null };
+      }else {
         return null;
       }
     } else {

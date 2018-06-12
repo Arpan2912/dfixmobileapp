@@ -103,12 +103,12 @@ export default class AboutPage extends Component {
                  for industrial- Architectural sectors 
                  along with consumer sectors
                 </Text> */}
-                {/* <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button} onPress={() => { this.props.navigation.push('CameraPage',{pdf:'enterprice'}); }}>
                     <Text style={styles.textInsideButton}>
                       
                         Face Synopsis
                     </Text>
-                </TouchableOpacity> */}
+                </TouchableOpacity>
                 {/* <Text>D Fix Enterprise has complete product solutions for all your needs.
                 D Fix has a wide range of industrial products in consumer 
                 range – Epoxy Adhesive range, construction chemicals, 

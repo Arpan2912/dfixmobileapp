@@ -32,10 +32,10 @@ export default class Password extends Component {
         UserProvider.authenticateUser(phone, password)
             .then(data => {
                 this.setState({ title: JSON.stringify(data) })
-                if (data.success === true) {  
+                if (data.success === true) {
                     // UserProvider.setUserNameToLocalStorage(data.data.userName)
                     // .then(data=>{
-                        // ToastAndroid.show("user name is stored",5000);
+                    // ToastAndroid.show("user name is stored",5000);
                     // })
                     Promise.all([
                         UserProvider.setUserIdToLocalStorage(data.data.userId),
@@ -117,19 +117,20 @@ export default class Password extends Component {
         return (
             <View style={styles.container}>
 
-
+                <Text style={styles.titleText}>D Fix</Text>
                 <View style={styles.innerContainer}>
                     <TextInput style={styles.TextInput}
                         placeholder="Enter Password"
                         underlineColorAndroid='#fafafa'
                         placeholderTextColor="#26A69A"
+                        selectionColor="#fafafa"
                         onChangeText={(text) => this.setState({ password: text })}
                     >
 
                     </TextInput>
                     <TouchableOpacity style={styles.button} onPress={this.login}>
                         <Text style={styles.textInsideButton}>
-                            Login {this.state.title}
+                            Login
                         </Text>
                     </TouchableOpacity>
                 </View>

@@ -21,6 +21,7 @@ export default class UserProvider {
     }
 
     static getUserDetailsByPhone(phone) {
+        let responseStatus;
         return new Promise((resolve, reject) => {
             fetch(`${API_URL}api/get-user-by-phone`, {
                 method: 'POST',
@@ -29,10 +30,19 @@ export default class UserProvider {
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
                 }
-            }).then((response) => response.json())
-                .then(data => {
+            }).then((data) => {
+                responseStatus = data.status;
+                return data.json();
+            }).then(data => {
+                if (responseStatus > 400) {
+                    reject(data);
+                } else {
                     resolve(data);
-                })
+                }
+            }).catch(e => {
+                console.log("e", e);
+                reject(e);
+            })
         })
     }
 
@@ -119,27 +129,27 @@ export default class UserProvider {
     }
 
     static resetVisitStatus(status) {
-        return AsyncStorage.setItem('visitStatus',JSON.stringify(null));
+        return AsyncStorage.setItem('visitStatus', JSON.stringify(null));
     }
 
-    static setLocationToLocalStorage(status){
-        return AsyncStorage.setItem('location',status);
+    static setLocationToLocalStorage(status) {
+        return AsyncStorage.setItem('location', status);
     }
 
-    static getLocationFromLocalStorage(){
+    static getLocationFromLocalStorage() {
         return AsyncStorage.getItem('location');
     }
 
-    static resetLocationFromLocalStorage(){
+    static resetLocationFromLocalStorage() {
         return AsyncStorage.removeItem('location');
     }
 
-    static setTodayDateToLocalStorage(date){
-        return AsyncStorage.setItem('date',date);
+    static setTodayDateToLocalStorage(date) {
+        return AsyncStorage.setItem('date', date);
     }
 
-    static getTodayDateFromLocalStorage(date){
+    static getTodayDateFromLocalStorage(date) {
         return AsyncStorage.getItem('date');
     }
-    
+
 }

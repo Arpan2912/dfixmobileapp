@@ -5,7 +5,9 @@ import {
     StyleSheet,
     Text,
     View,
-    TextInput, TouchableOpacity
+    TextInput, 
+    TouchableOpacity,
+    Alert
 } from 'react-native';
 import UserProvider from '../../provider/user-provider';
 import Validation from '../../provider/validation';
@@ -30,7 +32,7 @@ export default class Signup extends Component {
         phoneErrorMsg: null,
 
         email: null,
-        emailError: true,
+        emailError: false,
         emailErrorMsg: null,
 
 
@@ -119,6 +121,7 @@ export default class Signup extends Component {
     }
 
     updateDetails = () => {
+        
         let user = {};
         user.userId = this.props.navigation.state.params.userId;
         user.phone = this.props.navigation.state.params.phone;
@@ -137,7 +140,14 @@ export default class Signup extends Component {
                 }
             })
             .catch(e => {
-
+                Alert.alert(
+                    'Error',
+                    'Something went wrong',
+                    [
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    ],
+                    { cancelable: true }
+                )
             })
     }
 
@@ -145,11 +155,13 @@ export default class Signup extends Component {
         return (
 
             <View style={styles.container}>
+                 <Text style={styles.titleText}>D Fix</Text>
                 {/* <Text>{JSON.stringify(navigator.geolocation.getCurrentPosition())}</Text> */}
                 <TextInput style={styles.TextInput}
                     placeholder="First Name"
                     underlineColorAndroid='#fafafa'
                     placeholderTextColor="#26A69A"
+                    selectionColor="#fafafa"
                     onChangeText={(txt) => { this.setFirstName(txt) }}
                 >
                 </TextInput>
@@ -159,8 +171,9 @@ export default class Signup extends Component {
                     placeholder="Last Name"
                     underlineColorAndroid='#fafafa'
                     placeholderTextColor="#26A69A"
+                    selectionColor="#fafafa"
                     onChangeText={(txt) => { this.setLastName(txt) }}
-                >{global.val}
+                >
                 </TextInput>
                 {this.state.lastNameErrorMsg && <Text style={commonCss.error}>{this.state.lastNameErrorMsg}</Text>}
 
@@ -168,6 +181,7 @@ export default class Signup extends Component {
                     placeholder="Address"
                     underlineColorAndroid='#fafafa'
                     placeholderTextColor="#26A69A"
+                    selectionColor="#fafafa"
                     onChangeText={(txt) => { this.setAddress(txt) }}
                 >
                 </TextInput>
@@ -177,6 +191,7 @@ export default class Signup extends Component {
                     placeholder="Email"
                     underlineColorAndroid='#fafafa'
                     placeholderTextColor="#26A69A"
+                    selectionColor="#fafafa"
                     onChangeText={(txt) => { this.setEmail(txt) }}
                 >
                 </TextInput>
@@ -186,6 +201,7 @@ export default class Signup extends Component {
                     placeholder="Password"
                     underlineColorAndroid='#fafafa'
                     placeholderTextColor="#26A69A"
+                    selectionColor="#fafafa"
                     onChangeText={(txt) => { this.setState({ password: txt }) }}
                 >
                 </TextInput>
@@ -194,6 +210,7 @@ export default class Signup extends Component {
                     placeholder="Confirm Password"
                     underlineColorAndroid='#fafafa'
                     placeholderTextColor="#26A69A"
+                    selectionColor="#fafafa"
                     onChangeText={(txt) => { this.setPassword(txt) }}
                 >
                 </TextInput>
