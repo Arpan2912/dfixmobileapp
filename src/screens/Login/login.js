@@ -37,11 +37,11 @@ export default class Login extends Component {
         this.setState({ email: email });
         let emailError = Validation.emailValidator(email);
         if (emailError) {
-            this.setState({ emailError: emailError.error });
-            this.setState({ emailErrorMsg: emailError.errorMsg });
+            this.setState({ emailError: emailError.error,emailErrorMsg: emailError.errorMsg });
+            // this.setState({  });
         } else {
-            this.setState({ emailError: false });
-            this.setState({ emailErrorMsg: null });
+            this.setState({ emailError: false,emailErrorMsg: null  });
+            // this.setState({ });
         }
     }
 
@@ -96,11 +96,11 @@ export default class Login extends Component {
             })
             .catch(e => {
                 console.log("e", e);
-                if(!e.hasOwnPropery('message')){
+                if(!e.hasOwnProperty('message')){
                     e.message ="Something went wrong";
                 }
                 Alert.alert(
-                    'Access Denied',
+                    'Login',
                     e.message,
                     [
                         { text: 'OK', onPress: () => console.log('OK Pressed') },

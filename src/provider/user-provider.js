@@ -5,6 +5,7 @@ let API_URL = constants.API_URL;
 
 export default class UserProvider {
     static getUserDetailsByEmail(email) {
+        let responseStatus;
         return new Promise((resolve, reject) => {
             fetch(`${API_URL}api/get-user-by-email`, {
                 method: 'POST',
@@ -13,10 +14,19 @@ export default class UserProvider {
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
                 }
-            }).then((response) => response.json())
-                .then(data => {
+            }).then((data) => {
+                responseStatus = data.status;
+                return data.json();
+            }).then(data => {
+                if (responseStatus > 400) {
+                    reject(data);
+                } else {
                     resolve(data);
-                })
+                }
+            }).catch(e => {
+                console.log("e", e);
+                reject(e);
+            })
         })
     }
 
@@ -47,6 +57,7 @@ export default class UserProvider {
     }
 
     static authenticateUser(phone, password) {
+        let responseStatus;
         return new Promise((resolve, reject) => {
             fetch(`${API_URL}api/login`, {
                 method: 'POST',
@@ -55,14 +66,24 @@ export default class UserProvider {
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
                 }
-            }).then((response) => response.json())
-                .then(data => {
+            }).then((data) => {
+                responseStatus = data.status;
+                return data.json();
+            }).then(data => {
+                if (responseStatus > 400) {
+                    reject(data);
+                } else {
                     resolve(data);
-                })
+                }
+            }).catch(e => {
+                console.log("e", e);
+                reject(e);
+            })
         })
     }
 
     static updateUserDetail(usrObj) {
+        let responseStatus;
         return new Promise((resolve, reject) => {
             fetch(`${API_URL}api/update-user`, {
                 method: 'POST',
@@ -71,10 +92,19 @@ export default class UserProvider {
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
                 }
-            }).then((response) => response.json())
-                .then(data => {
+            }).then((data) => {
+                responseStatus = data.status;
+                return data.json();
+            }).then(data => {
+                if (responseStatus > 400) {
+                    reject(data);
+                } else {
                     resolve(data);
-                })
+                }
+            }).catch(e => {
+                console.log("e", e);
+                reject(e);
+            })
         })
     }
 

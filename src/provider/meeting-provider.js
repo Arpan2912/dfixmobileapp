@@ -9,30 +9,37 @@ export default class MeetingProvider {
     }
 
     static startMeeting(startMeetingOj) {
+        let responseStatus;
         return new Promise((resolve, reject) => {
             Promise.all([
                 AsyncStorage.getItem('userId'),
-                 AsyncStorage.getItem('token'),
-                 AsyncStorage.getItem('userName')
-                ])
-                // AsyncStorage.getItem("token")
-                .then((data => {
+                AsyncStorage.getItem('token'),
+                AsyncStorage.getItem('userName')
+            ]).then((data => {
                     let userId = data[0];
                     let token = data[1];
                     let userName = data[2];
                     fetch(`${API_URL}api/start-visit`, {
                         method: 'POST',
-                        body: JSON.stringify({ location: startMeetingOj.location, base64: startMeetingOj.base64, userId: userId, orgName: startMeetingOj.orgName,userName:userName }),
+                        body: JSON.stringify({ location: startMeetingOj.location, base64: startMeetingOj.base64, userId: userId, orgName: startMeetingOj.orgName, userName: userName }),
                         headers: {
                             Accept: 'application/json',
                             'Content-Type': 'application/json',
                             Authorization: 'Bearer ' + token
                         }
-                    }).then((response) => response.json())
-                        .then(data => {
+                    }).then((data) => {
+                        responseStatus = data.status;
+                        return data.json();
+                    }).then(data => {
+                        if (responseStatus > 400) {
+                            reject(data);
+                        } else {
                             resolve(data);
-                        })
-
+                        }
+                    }).catch(e => {
+                        console.log("e", e);
+                        reject(e);
+                    })
                 }))
         })
     }
@@ -40,6 +47,7 @@ export default class MeetingProvider {
     static stopVisit(obj) {
         console.log("obj in Stop visit pro", JSON.stringify(obj))
         let token = null;
+        let responseStatus;
         return new Promise((resolve, reject) => {
             AsyncStorage.getItem('token')
                 .then(data => {
@@ -53,15 +61,19 @@ export default class MeetingProvider {
                             'Content-Type': 'application/json',
                             Authorization: 'Bearer ' + token
                         }
+                    }).then((data) => {
+                        responseStatus = data.status;
+                        return data.json();
+                    }).then(data => {
+                        if (responseStatus > 400) {
+                            reject(data);
+                        } else {
+                            resolve(data);
+                        }
+                    }).catch(e => {
+                        console.log("e", e);
+                        reject(e);
                     })
-                        .then((response) => response.json())
-                        .then(data => {
-                            return resolve(data);
-                        })
-                        .catch(e => {
-                            console.log("error", e);
-                            reject(e);
-                        })
                 })
         })
     }
@@ -69,6 +81,7 @@ export default class MeetingProvider {
     static getTodayVisits(obj) {
         // console.log("obj in Stop visit pro", JSON.stringify(obj))
         let token = null;
+        let responseStatus;
         return new Promise((resolve, reject) => {
             AsyncStorage.getItem('token')
                 .then(data => {
@@ -82,15 +95,19 @@ export default class MeetingProvider {
                             'Content-Type': 'application/json',
                             Authorization: 'Bearer ' + token
                         }
+                    }).then((data) => {
+                        responseStatus = data.status;
+                        return data.json();
+                    }).then(data => {
+                        if (responseStatus > 400) {
+                            reject(data);
+                        } else {
+                            resolve(data);
+                        }
+                    }).catch(e => {
+                        console.log("e", e);
+                        reject(e);
                     })
-                        .then((response) => response.json())
-                        .then(data => {
-                            return resolve(data);
-                        })
-                        .catch(e => {
-                            console.log("error", e);
-                            reject(e);
-                        })
                 })
         })
     }
@@ -98,6 +115,7 @@ export default class MeetingProvider {
     static updateOrder(obj) {
         // console.log("obj in Stop visit pro", JSON.stringify(obj))
         let token = null;
+        let responseStatus;
         return new Promise((resolve, reject) => {
             AsyncStorage.getItem('token')
                 .then(data => {
@@ -111,15 +129,19 @@ export default class MeetingProvider {
                             'Content-Type': 'application/json',
                             Authorization: 'Bearer ' + token
                         }
+                    }).then((data) => {
+                        responseStatus = data.status;
+                        return data.json();
+                    }).then(data => {
+                        if (responseStatus > 400) {
+                            reject(data);
+                        } else {
+                            resolve(data);
+                        }
+                    }).catch(e => {
+                        console.log("e", e);
+                        reject(e);
                     })
-                        .then((response) => response.json())
-                        .then(data => {
-                            return resolve(data);
-                        })
-                        .catch(e => {
-                            console.log("error", e);
-                            reject(e);
-                        })
                 })
         })
     }
@@ -127,6 +149,7 @@ export default class MeetingProvider {
     static addOrder(obj) {
         // console.log("obj in Stop visit pro", JSON.stringify(obj))
         let token = null;
+        let responseStatus;
         return new Promise((resolve, reject) => {
             AsyncStorage.getItem('token')
                 .then(data => {
@@ -140,15 +163,19 @@ export default class MeetingProvider {
                             'Content-Type': 'application/json',
                             Authorization: 'Bearer ' + token
                         }
+                    }).then((data) => {
+                        responseStatus = data.status;
+                        return data.json();
+                    }).then(data => {
+                        if (responseStatus > 400) {
+                            reject(data);
+                        } else {
+                            resolve(data);
+                        }
+                    }).catch(e => {
+                        console.log("e", e);
+                        reject(e);
                     })
-                        .then((response) => response.json())
-                        .then(data => {
-                            return resolve(data);
-                        })
-                        .catch(e => {
-                            console.log("error", e);
-                            reject(e);
-                        })
                 })
         })
     }
@@ -156,6 +183,7 @@ export default class MeetingProvider {
     static deleteOrder(obj) {
         // console.log("obj in Stop visit pro", JSON.stringify(obj))
         let token = null;
+        let responseStatus;
         return new Promise((resolve, reject) => {
             AsyncStorage.getItem('token')
                 .then(data => {
@@ -169,20 +197,25 @@ export default class MeetingProvider {
                             'Content-Type': 'application/json',
                             Authorization: 'Bearer ' + token
                         }
+                    }).then((data) => {
+                        responseStatus = data.status;
+                        return data.json();
+                    }).then(data => {
+                        if (responseStatus > 400) {
+                            reject(data);
+                        } else {
+                            resolve(data);
+                        }
+                    }).catch(e => {
+                        console.log("e", e);
+                        reject(e);
                     })
-                        .then((response) => response.json())
-                        .then(data => {
-                            return resolve(data);
-                        })
-                        .catch(e => {
-                            console.log("error", e);
-                            reject(e);
-                        })
                 })
         })
     }
 
-    static getTodayLastRiunningVisit(userId){
+    static getTodayLastRiunningVisit(userId) {
+        let responseStatus;
         return new Promise((resolve, reject) => {
             AsyncStorage.getItem('token')
                 // AsyncStorage.getItem("token")
@@ -198,10 +231,19 @@ export default class MeetingProvider {
                             'Content-Type': 'application/json',
                             Authorization: 'Bearer ' + token
                         }
-                    }).then((response) => response.json())
-                        .then(data => {
+                    }).then((data) => {
+                        responseStatus = data.status;
+                        return data.json();
+                    }).then(data => {
+                        if (responseStatus > 400) {
+                            reject(data);
+                        } else {
                             resolve(data);
-                        })
+                        }
+                    }).catch(e => {
+                        console.log("e", e);
+                        reject(e);
+                    })
 
                 })).catch(e => {
 

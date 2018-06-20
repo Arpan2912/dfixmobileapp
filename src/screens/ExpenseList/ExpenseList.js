@@ -13,7 +13,8 @@ import {
     ScrollView,
     AsyncStorage,
     ListView,
-    ActivityIndicator
+    ActivityIndicator,
+    Alert
 } from 'react-native';
 import OrderModal from '../../modal/order-modal';
 import {
@@ -87,7 +88,18 @@ export default class ExpenseList extends Component {
                 this.setState({ expenseList: data.data, isLoading: false });
             })
             .catch(e => {
-
+                console.log("e", e);
+                if(!e.hasOwnProperty('message')){
+                    e.message ="Something went wrong";
+                }
+                Alert.alert(
+                    'Alert',
+                    e.message,
+                    [
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    ],
+                    { cancelable: true }
+                )
             })
     }
 

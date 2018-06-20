@@ -9,35 +9,44 @@ export default class StartDayProvider {
     }
 
     static startDay(km, base64, userId) {
+        let responseStatus;
         return new Promise((resolve, reject) => {
             Promise.all([
                 AsyncStorage.getItem('userId'),
                 AsyncStorage.getItem('token'),
                 AsyncStorage.getItem('userName')
-            ])
-                // AsyncStorage.getItem("token")
-                .then((data => {
-                    let userId = data[0];
-                    let token = data[1];
-                    let userName = data[2];
-                    fetch(`${API_URL}api/start-day`, {
-                        method: 'POST',
-                        body: JSON.stringify({ km: km, base64: base64, userId: userId,userName:userName }),
-                        headers: {
-                            Accept: 'application/json',
-                            'Content-Type': 'application/json',
-                            Authorization: 'Bearer ' + token
-                        }
-                    }).then((response) => response.json())
-                        .then(data => {
-                            resolve(data);
-                        })
+            ]).then((data => {
+                let userId = data[0];
+                let token = data[1];
+                let userName = data[2];
+                fetch(`${API_URL}api/start-day`, {
+                    method: 'POST',
+                    body: JSON.stringify({ km: km, base64: base64, userId: userId, userName: userName }),
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                        Authorization: 'Bearer ' + token
+                    }
+                }).then((data) => {
+                    responseStatus = data.status;
+                    return data.json();
+                }).then(data => {
+                    if (responseStatus > 400) {
+                        reject(data);
+                    } else {
+                        resolve(data);
+                    }
+                }).catch(e => {
+                    console.log("e", e);
+                    reject(e);
+                })
 
-                }))
+            }))
         })
     }
 
     static stopDay(km, base64, userId, id) {
+        let responseStatus;
         return new Promise((resolve, reject) => {
             Promise.all([AsyncStorage.getItem('userId'), AsyncStorage.getItem('token')])
                 // AsyncStorage.getItem("token")
@@ -53,11 +62,19 @@ export default class StartDayProvider {
                             'Content-Type': 'application/json',
                             Authorization: 'Bearer ' + token
                         }
-                    }).then((response) => response.json())
-                        .then(data => {
+                    }).then((data) => {
+                        responseStatus = data.status;
+                        return data.json();
+                    }).then(data => {
+                        if (responseStatus > 400) {
+                            reject(data);
+                        } else {
                             resolve(data);
-                        })
-
+                        }
+                    }).catch(e => {
+                        console.log("e", e);
+                        reject(e);
+                    })
                 })).catch(e => {
 
                 })
@@ -65,6 +82,7 @@ export default class StartDayProvider {
     }
 
     static getStartDayDetails(userId) {
+        let responseStatus;
         return new Promise((resolve, reject) => {
             AsyncStorage.getItem('token')
                 // AsyncStorage.getItem("token")
@@ -80,10 +98,19 @@ export default class StartDayProvider {
                             'Content-Type': 'application/json',
                             Authorization: 'Bearer ' + token
                         }
-                    }).then((response) => response.json())
-                        .then(data => {
+                    }).then((data) => {
+                        responseStatus = data.status;
+                        return data.json();
+                    }).then(data => {
+                        if (responseStatus > 400) {
+                            reject(data);
+                        } else {
                             resolve(data);
-                        })
+                        }
+                    }).catch(e => {
+                        console.log("e", e);
+                        reject(e);
+                    })
 
                 })).catch(e => {
 

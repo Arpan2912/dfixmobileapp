@@ -16,7 +16,20 @@ import {
     Alert,
     Image
 } from 'react-native';
-import { Button, Title, Body, Right, Left, Footer, Card, CardItem, Container, Header, Content, Icon } from 'native-base';
+import {
+    Button,
+    Title,
+    Body,
+    Right,
+    Left,
+    Footer,
+    Card,
+    CardItem,
+    Container,
+    Header,
+    Content,
+    Icon
+} from 'native-base';
 
 import UserProvider from '../../provider/user-provider';
 import EventSingleton from '../../event/eventSingleton';
@@ -130,19 +143,17 @@ export default class Home extends Component {
                             // ToastAndroid.show("reset status promise resolved", 5000);
                             this.setLocalVaribles();
                             this.setState({ isLoading: false });
-
                         })
                         .catch(e => {
                             this.setLocalVaribles();
                             this.setState({ isLoading: false });
-
                         })
                 } else {
-                    this.setLocalVaribles();
-                    this.resetStatus()
-                        .then(data => {
-                            this.setState({ isLoading: false });
-                        })
+                    // this.setLocalVaribles();
+                    // this.resetStatus()
+                    //     .then(data => {
+                    //         this.setState({ isLoading: false });
+                    //     })
                 }
             });
         // StartDayProvider.getStartDayDetails(userId)
@@ -295,9 +306,17 @@ export default class Home extends Component {
                     // ToastAndroid.show(JSON.stringify(data), 5000);
                 })
                 .catch(e => {
+                    console.log("e", e);
+                    if(!e.hasOwnProperty('message')){
+                        e.message ="Something went wrong";
+                    }
                     Alert.alert(
-                        'Error',
-                        'Something went wrong'
+                        'Alert',
+                        e.message,
+                        [
+                            { text: 'OK', onPress: () => console.log('OK Pressed') },
+                        ],
+                        { cancelable: true }
                     )
                     this.resetStatus();
                     resolve(true);
@@ -313,7 +332,7 @@ export default class Home extends Component {
         dateString = date.toString();
         return new Promise((resolve, reject) => {
             UserProvider.getTodayDateFromLocalStorage()
-                .then(data => {                    
+                .then(data => {
                     if (data) {
                         let storedDate = new Date(data);
                         ToastAndroid.show("stored date" + data, 5000);
@@ -331,7 +350,7 @@ export default class Home extends Component {
                         } else {
                             // do nothing
                             this.setTodayStatus().then(data => resolve(true));
-                    
+
                         }
                     } else {
                         let startDatStatus = {
@@ -349,7 +368,7 @@ export default class Home extends Component {
                 .catch(e => {
                     Alert.alert(
                         'Error',
-                        'Error in reset status'+e.toString()
+                        'Error in reset status' + e.toString()
                     )
                     return resolve(true);
                     // UserProvider.setTodayDateToLocalStorage(dateString);
@@ -470,11 +489,11 @@ export default class Home extends Component {
                                         <Text style={{ color: "#fafafa" }}>{dayTitle}</Text>
                                     </TouchableOpacity>
                                 </Col>
-                                <Col 
-                                style={!(startDayDetails && (startDayDetails.status === 'true')) ? styles.columnDisabled : styles.column}
+                                <Col
+                                    style={!(startDayDetails && (startDayDetails.status === 'true')) ? styles.columnDisabled : styles.column}
                                 //style={{
-                                  //  width: width / 2, backgroundColor: '#009688', alignItems: 'center',
-                                    //justifyContent: 'center', borderColor: '#fafafa', borderWidth: 1
+                                //  width: width / 2, backgroundColor: '#009688', alignItems: 'center',
+                                //justifyContent: 'center', borderColor: '#fafafa', borderWidth: 1
                                 //}}
                                 >
                                     <TouchableOpacity
@@ -531,39 +550,7 @@ export default class Home extends Component {
                             </Row>
                         </Grid>
                     </View>}
-                    {/* <View style={styles.innerContainer}> */}
-                    {/* {this.state.isLoading === false && <View>
-                    <TouchableOpacity style={styles.button} onPress={() => this.gotoStartDayPage(dayTitle)}>
-                        <Text style={styles.textInsideButton}>
 
-                            {dayTitle} {this.state.token ? this.state.token.toString() : null}
-                        </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={startDayDetails.status === 'false' ? styles.disabled : styles.button} disabled={startDayDetails.status === 'false'} onPress={() => this.gotoStartOrStopVisitPage(visitTitle)}>
-                        <Text style={styles.textInsideButton}>
-                            {visitTitle} {this.state.token ? this.state.token.toString() : null}
-                        </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={styles.button} onPress={() => this.gotoTodayVisitsPage()}>
-                        <Text style={styles.textInsideButton}>
-                            Today Visits
-                    </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={styles.button} onPress={() => this.gotoTodayExpensePage()}>
-                        <Text style={styles.textInsideButton}>
-                            Today Expense
-                    </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={styles.button} onPress={() => this.gotoAboutPage()}>
-                        <Text style={styles.textInsideButton}>
-                            About
-                    </Text>
-                    </TouchableOpacity>
-                </View>} */}
                     {this.state.isLoading === true && <View style={styles.container}>
                         <ActivityIndicator size="large" color="#009688" />
                     </View>}
@@ -626,7 +613,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderColor: '#fafafa',
         borderWidth: 1
-    },    
+    },
     Header: {
         backgroundColor: '#009688',
         alignItems: 'center',

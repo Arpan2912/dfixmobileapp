@@ -14,7 +14,8 @@ import {
     AsyncStorage,
     ListView,
     ToastAndroid,
-    ActivityIndicator
+    ActivityIndicator,
+    Alert
 } from 'react-native';
 import OrderModal from '../../modal/order-modal';
 import {
@@ -102,6 +103,20 @@ export default class TodayVisits extends Component {
                 loading = false;
                 // console.log("data", data);
                 this.setState({ visitList: data.data });
+            })
+            .catch(e=>{
+                console.log("e", e);
+                if(!e.hasOwnProperty('message')){
+                    e.message ="Something went wrong";
+                }
+                Alert.alert(
+                    'Today Visits',
+                    e.message,
+                    [
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    ],
+                    { cancelable: true }
+                )
             })
     }
 

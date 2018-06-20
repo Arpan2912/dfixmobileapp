@@ -1,4 +1,4 @@
-import { AsyncStorage,ToastAndroid } from 'react-native';
+import { AsyncStorage, ToastAndroid } from 'react-native';
 import constants from '../config/constant';
 let API_URL = constants.API_URL;
 
@@ -10,37 +10,46 @@ export default class LocationProvider {
 
     static addOrUpdateLocation(locationObj) {
         // ToastAndroid.show(JSON.stringify(locationObj),2000);
+        let responseStatus;
         return new Promise((resolve, reject) => {
             Promise.all([
-                AsyncStorage.getItem('userId'), 
+                AsyncStorage.getItem('userId'),
                 AsyncStorage.getItem('token'),
                 AsyncStorage.getItem('userName')
-            ])
-                // AsyncStorage.getItem("token")
-                .then((data => {
-                    let userId = data[0];
-                    let token = data[1];
-                    let userName = data[2];
-                    fetch(`${API_URL}api/add-user-location`, {
-                        method: 'POST',
-                        body: JSON.stringify({ id:locationObj.id,location: locationObj.location, userId: userId, currentLocation: locationObj.currentLocation,userName:userName }),
-                        headers: {
-                            Accept: 'application/json',
-                            'Content-Type': 'application/json',
-                            Authorization: 'Bearer ' + token
-                        }
-                    }).then((response) => response.json())
-                        .then(data => {
-                            resolve(data);
-                        })
+            ]).then((data => {
+                let userId = data[0];
+                let token = data[1];
+                let userName = data[2];
+                fetch(`${API_URL}api/add-user-location`, {
+                    method: 'POST',
+                    body: JSON.stringify({ id: locationObj.id, location: locationObj.location, userId: userId, currentLocation: locationObj.currentLocation, userName: userName }),
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                        Authorization: 'Bearer ' + token
+                    }
+                }).then((data) => {
+                    responseStatus = data.status;
+                    return data.json();
+                }).then(data => {
+                    if (responseStatus > 400) {
+                        reject(data);
+                    } else {
+                        resolve(data);
+                    }
+                }).catch(e => {
+                    console.log("e", e);
+                    reject(e);
+                })
 
-                }))
+            }))
         })
     }
 
     static stopVisit(obj) {
         console.log("obj in Stop visit pro", JSON.stringify(obj))
         let token = null;
+        let responseStatus;
         return new Promise((resolve, reject) => {
             AsyncStorage.getItem('token')
                 .then(data => {
@@ -54,15 +63,19 @@ export default class LocationProvider {
                             'Content-Type': 'application/json',
                             Authorization: 'Bearer ' + token
                         }
+                    }).then((data) => {
+                        responseStatus = data.status;
+                        return data.json();
+                    }).then(data => {
+                        if (responseStatus > 400) {
+                            reject(data);
+                        } else {
+                            resolve(data);
+                        }
+                    }).catch(e => {
+                        console.log("e", e);
+                        reject(e);
                     })
-                        .then((response) => response.json())
-                        .then(data => {
-                            return resolve(data);
-                        })
-                        .catch(e => {
-                            console.log("error", e);
-                            reject(e);
-                        })
                 })
         })
     }
@@ -70,6 +83,7 @@ export default class LocationProvider {
     static getTodayVisits(obj) {
         // console.log("obj in Stop visit pro", JSON.stringify(obj))
         let token = null;
+        let responseStatus;
         return new Promise((resolve, reject) => {
             AsyncStorage.getItem('token')
                 .then(data => {
@@ -83,15 +97,19 @@ export default class LocationProvider {
                             'Content-Type': 'application/json',
                             Authorization: 'Bearer ' + token
                         }
+                    }).then((data) => {
+                        responseStatus = data.status;
+                        return data.json();
+                    }).then(data => {
+                        if (responseStatus > 400) {
+                            reject(data);
+                        } else {
+                            resolve(data);
+                        }
+                    }).catch(e => {
+                        console.log("e", e);
+                        reject(e);
                     })
-                        .then((response) => response.json())
-                        .then(data => {
-                            return resolve(data);
-                        })
-                        .catch(e => {
-                            console.log("error", e);
-                            reject(e);
-                        })
                 })
         })
     }
@@ -99,6 +117,7 @@ export default class LocationProvider {
     static updateOrder(obj) {
         // console.log("obj in Stop visit pro", JSON.stringify(obj))
         let token = null;
+        let responseStatus;
         return new Promise((resolve, reject) => {
             AsyncStorage.getItem('token')
                 .then(data => {
@@ -112,15 +131,19 @@ export default class LocationProvider {
                             'Content-Type': 'application/json',
                             Authorization: 'Bearer ' + token
                         }
+                    }).then((data) => {
+                        responseStatus = data.status;
+                        return data.json();
+                    }).then(data => {
+                        if (responseStatus > 400) {
+                            reject(data);
+                        } else {
+                            resolve(data);
+                        }
+                    }).catch(e => {
+                        console.log("e", e);
+                        reject(e);
                     })
-                        .then((response) => response.json())
-                        .then(data => {
-                            return resolve(data);
-                        })
-                        .catch(e => {
-                            console.log("error", e);
-                            reject(e);
-                        })
                 })
         })
     }
@@ -128,6 +151,7 @@ export default class LocationProvider {
     static addOrder(obj) {
         // console.log("obj in Stop visit pro", JSON.stringify(obj))
         let token = null;
+        let responseStatus;
         return new Promise((resolve, reject) => {
             AsyncStorage.getItem('token')
                 .then(data => {
@@ -141,15 +165,19 @@ export default class LocationProvider {
                             'Content-Type': 'application/json',
                             Authorization: 'Bearer ' + token
                         }
+                    }).then((data) => {
+                        responseStatus = data.status;
+                        return data.json();
+                    }).then(data => {
+                        if (responseStatus > 400) {
+                            reject(data);
+                        } else {
+                            resolve(data);
+                        }
+                    }).catch(e => {
+                        console.log("e", e);
+                        reject(e);
                     })
-                        .then((response) => response.json())
-                        .then(data => {
-                            return resolve(data);
-                        })
-                        .catch(e => {
-                            console.log("error", e);
-                            reject(e);
-                        })
                 })
         })
     }
@@ -157,6 +185,7 @@ export default class LocationProvider {
     static deleteOrder(obj) {
         // console.log("obj in Stop visit pro", JSON.stringify(obj))
         let token = null;
+        let responseStatus;
         return new Promise((resolve, reject) => {
             AsyncStorage.getItem('token')
                 .then(data => {
@@ -170,20 +199,25 @@ export default class LocationProvider {
                             'Content-Type': 'application/json',
                             Authorization: 'Bearer ' + token
                         }
+                    }).then((data) => {
+                        responseStatus = data.status;
+                        return data.json();
+                    }).then(data => {
+                        if (responseStatus > 400) {
+                            reject(data);
+                        } else {
+                            resolve(data);
+                        }
+                    }).catch(e => {
+                        console.log("e", e);
+                        reject(e);
                     })
-                        .then((response) => response.json())
-                        .then(data => {
-                            return resolve(data);
-                        })
-                        .catch(e => {
-                            console.log("error", e);
-                            reject(e);
-                        })
                 })
         })
     }
 
-    static getTodayLastRiunningVisit(userId){
+    static getTodayLastRiunningVisit(userId) {
+        let responseStatus;
         return new Promise((resolve, reject) => {
             AsyncStorage.getItem('token')
                 // AsyncStorage.getItem("token")
@@ -199,11 +233,19 @@ export default class LocationProvider {
                             'Content-Type': 'application/json',
                             Authorization: 'Bearer ' + token
                         }
-                    }).then((response) => response.json())
-                        .then(data => {
+                    }).then((data) => {
+                        responseStatus = data.status;
+                        return data.json();
+                    }).then(data => {
+                        if (responseStatus > 400) {
+                            reject(data);
+                        } else {
                             resolve(data);
-                        })
-
+                        }
+                    }).catch(e => {
+                        console.log("e", e);
+                        reject(e);
+                    })
                 })).catch(e => {
 
                 })

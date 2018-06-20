@@ -91,30 +91,7 @@ export default class AboutPage extends Component {
                         Dfix EnterPrise
                     </Text>
                 </TouchableOpacity>
-                {/* <Text>
-                D FIX ENTERPRISE and its group companies 
-                are engaged in manufacturing of industrial
-                 goods since last 20 years to market high 
-                 Quality Epoxy systems and polyurethane 
-                 systems covering all fields like adhesives, 
-                 floor-coatings, construction chemicals, 
-                 electrical coating and insulation 
-                 Industries with a wide market range 
-                 for industrial- Architectural sectors 
-                 along with consumer sectors
-                </Text> */}
-                <TouchableOpacity style={styles.button} onPress={() => { this.props.navigation.push('CameraPage',{pdf:'enterprice'}); }}>
-                    <Text style={styles.textInsideButton}>
-                      
-                        Face Synopsis
-                    </Text>
-                </TouchableOpacity>
-                {/* <Text>D Fix Enterprise has complete product solutions for all your needs.
-                D Fix has a wide range of industrial products in consumer 
-                range – Epoxy Adhesive range, construction chemicals, 
-                stone care; Electricals & Electronics – Potting compounds, 
-                Epoxy Transformer; FRP composites, Flooring & coating.
-                </Text> */}
+               
 
             </View>
 

@@ -11,7 +11,8 @@ import {
     TouchableOpacity,
     AsyncStorage,
     ToastAndroid,
-    AppState
+    AppState,
+    Alert
 } from 'react-native';
 import UserProvider from '../../provider/user-provider';
 import StartDayProvider from '../../provider/startday-provider';
@@ -41,10 +42,7 @@ export default class Password extends Component {
                         UserProvider.setUserIdToLocalStorage(data.data.userId),
                         UserProvider.setUserNameToLocalStorage(data.data.userName),
                         UserProvider.setUserTokenToLocalStorage(data.data.token),
-                    ])
-                        // AsyncStorage.setItem('userId', data.data.userId);
-                        // AsyncStorage.setItem('token', data.data.token)
-                        .then(result => {
+                    ]).then(result => {
                             userId = data.data.userId;
                             ToastAndroid.show(data.data.userId, 5000);
                             this.props.navigation.replace('Home');
@@ -109,7 +107,19 @@ export default class Password extends Component {
                 }
             })
             .catch(e => {
-                this.props.navigation.navigate('Home')
+                console.log("e", e);
+                if(!e.hasOwnProperty('message')){
+                    e.message ="Something went wrong";
+                }
+                Alert.alert(
+                    'Login',
+                    e.message,
+                    [
+                        { text: 'OK', onPress: () => console.log('OK Pressed') },
+                    ],
+                    { cancelable: true }
+                )
+                // this.props.navigation.navigate('Home')
             })
     }
     render() {

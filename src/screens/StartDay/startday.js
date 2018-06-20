@@ -152,9 +152,13 @@ export default class StartDay extends Component {
                                 this.props.navigation.goBack();
                             }
                         }).catch(e => {
+                            console.log("e", e);
+                            if(!e.hasOwnProperty('message')){
+                                e.message ="Something went wrong";
+                            }
                             Alert.alert(
-                                'Error',
-                                'Something went wrong',
+                                'Login',
+                                e.message,
                                 [
                                     { text: 'OK', onPress: () => console.log('OK Pressed') },
                                 ],
@@ -202,9 +206,13 @@ export default class StartDay extends Component {
                             this.props.navigation.goBack();
                         }
                     }).catch(e => {
+                        console.log("e", e);
+                        if(!e.hasOwnProperty('message')){
+                            e.message ="Something went wrong";
+                        }
                         Alert.alert(
-                            'Error',
-                            'Something went wrong',
+                            'Login',
+                            e.message,
                             [
                                 { text: 'OK', onPress: () => console.log('OK Pressed') },
                             ],
