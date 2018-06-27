@@ -36,6 +36,7 @@ import commonCss from '../../css/commonCss';
 import Custom from '../../components/Custom';
 import Loader from '../../components/Loader';
 import Pdf from 'react-native-pdf';
+import CustomStatusBar from '../../components/StatusBar';
 
 // import my_lzma from 'lzma';
 
@@ -101,6 +102,8 @@ export default class PdfView extends Component {
                     loading={this.state.loading} />
 
                 <View style={styles.container}>
+                <CustomStatusBar></CustomStatusBar>
+
                 <Pdf
                     source={source}
                     onLoadComplete={(numberOfPages,filePath)=>{

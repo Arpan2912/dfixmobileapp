@@ -30,6 +30,7 @@ import UserProvider from '../../provider/user-provider';
 import EventSingleton from '../../event/eventSingleton';
 import commonCss from '../../css/commonCss';
 import Loader from '../../components/Loader';
+import CustomStatusBar from '../../components/StatusBar';
 
 var { height, width } = Dimensions.get('screen');
 let orderData = null;
@@ -77,7 +78,7 @@ export default class UpdateOrder extends Component {
     componentWillMount() {
         eventObj = EventSingleton.geteventEmitterObj();
         meetingId = this.props.navigation.state.params.meetingId;
-        ToastAndroid.show(JSON.stringify(this.props.navigation.state.params),1000);
+        ToastAndroid.show(JSON.stringify(this.props.navigation.state.params), 1000);
         orgName = this.props.navigation.state.params.orgName;
         // ToastAndroid.show("orgName"+orgName,1000);
         UserProvider.getUserIdFromLocalStorage()
@@ -164,8 +165,8 @@ export default class UpdateOrder extends Component {
             })
             .catch(e => {
                 console.log("e", e);
-                if(!e.hasOwnProperty('message')){
-                    e.message ="Something went wrong";
+                if (!e.hasOwnProperty('message')) {
+                    e.message = "Something went wrong";
                 }
                 Alert.alert(
                     'Update Order',
@@ -233,9 +234,11 @@ export default class UpdateOrder extends Component {
                             <Icon name='arrow-back' />
                         </Button>
                     </Left>
-                    <Body>
+                    <Body  style={{justifyContent:'center',alignItems:'center'}}>
                         <Title>{title === 'update' ? 'Update' : 'Add'} Order</Title>
                     </Body>
+                    <Left>
+                    </Left>
                     {/* <Right>
                         <Button transparent>
                             <Icon name='add' />
@@ -243,6 +246,8 @@ export default class UpdateOrder extends Component {
                     </Right> */}
                 </Header>
                 <View style={styles.container}>
+                    <CustomStatusBar></CustomStatusBar>
+
                     <Loader
                         loading={this.state.loading} />
                     <TextInput style={styles.TextInput}

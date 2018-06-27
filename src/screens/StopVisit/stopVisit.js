@@ -37,6 +37,7 @@ import UserProvider from '../../provider/user-provider';
 import MapView, { Marker } from 'react-native-maps';
 import MeetingProvider from '../../provider/meeting-provider';
 import Loader from '../../components/Loader';
+import CustomStatusBar from '../../components/StatusBar';
 
 // import MapView from 'react-native-maps';
 
@@ -212,14 +213,16 @@ export default class StopVisit extends Component {
                     <Body style={{alignContent:'center',alignItems:'center'}}>
                         <Title>Orders</Title>
                     </Body>
-                    <Right>
+                    <Left style={{justifyContent:'flex-end',alignItems:'flex-end'}}>
                         <Button transparent onPress={this.openOrderModal}>
                             <Icon name='add' />
                         </Button>
-                    </Right>
+                    </Left>
                 </Header>
                 <ScrollView contentContainerStyle={styles.container}>
                     {/* <View style={styles.innerContainer}> */}
+                    <CustomStatusBar></CustomStatusBar>
+
                     <Loader
                         loading={this.state.loading} />
                     <OrderModal

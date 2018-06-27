@@ -12,6 +12,7 @@ import {
 import UserProvider from '../../provider/user-provider';
 import Validation from '../../provider/validation';
 import commonCss from '../../css/commonCss';
+import CustomStatusBar from '../../components/StatusBar';
 
 export default class Signup extends Component {
     state = {
@@ -155,6 +156,8 @@ export default class Signup extends Component {
         return (
 
             <View style={styles.container}>
+                                <CustomStatusBar></CustomStatusBar>
+
                  <Text style={styles.titleText}>D Fix</Text>
                 {/* <Text>{JSON.stringify(navigator.geolocation.getCurrentPosition())}</Text> */}
                 <TextInput style={styles.TextInput}

@@ -125,14 +125,14 @@ export default class OrderModal extends Component {
                                 <Icon name='arrow-back' />
                             </Button>
                         </Left>
-                        <Body>
+                        <Body style={{justifyContent:'center',alignItems:'center'}}>
                             <Title>Add Order</Title>
                         </Body>
-                        <Right>
+                        <Left style={{justifyContent:'flex-end',alignItems:'flex-end'}}>
                             <Button transparent>
                                 <Icon name='add' />
                             </Button>
-                        </Right>
+                        </Left>
                     </Header>
                     <View style={styles.container}>
                         <TextInput style={styles.TextInput}

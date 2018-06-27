@@ -36,6 +36,7 @@ import EventSingleton from '../../event/eventSingleton';
 import MeetingProvider from '../../provider/meeting-provider';
 import StartDayProvider from '../../provider/startday-provider';
 import Custom from '../../components/Custom';
+import CustomStatusBar from '../../components/StatusBar';
 import { Col, Row, Grid } from "react-native-easy-grid";
 var { height, width } = Dimensions.get('screen');
 
@@ -307,8 +308,8 @@ export default class Home extends Component {
                 })
                 .catch(e => {
                     console.log("e", e);
-                    if(!e.hasOwnProperty('message')){
-                        e.message ="Something went wrong";
+                    if (!e.hasOwnProperty('message')) {
+                        e.message = "Something went wrong";
                     }
                     Alert.alert(
                         'Alert',
@@ -469,6 +470,7 @@ export default class Home extends Component {
                 </Right> */}
                 </Header>
                 <View style={styles.container}>
+                   <CustomStatusBar></CustomStatusBar>
                     {this.state.isLoading === false && <View style={styles.container}>
                         <Image resizeMethod="resize" resizeMode="stretch" style={{ height: 70, width: width / 1.5, padding: 50, margin: 20 }}
                             source={require('../../images/dfix-Copy.png')}

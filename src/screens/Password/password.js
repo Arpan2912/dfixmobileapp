@@ -17,6 +17,8 @@ import {
 import UserProvider from '../../provider/user-provider';
 import StartDayProvider from '../../provider/startday-provider';
 import MeetingProvider from '../../provider/meeting-provider';
+import CustomStatusBar from '../../components/StatusBar';
+
 let userId = null;
 
 export default class Password extends Component {
@@ -126,6 +128,7 @@ export default class Password extends Component {
 
         return (
             <View style={styles.container}>
+                <CustomStatusBar></CustomStatusBar>
 
                 <Text style={styles.titleText}>D Fix</Text>
                 <View style={styles.innerContainer}>

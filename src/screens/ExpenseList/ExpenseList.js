@@ -36,6 +36,7 @@ import EventSingleton from '../../event/eventSingleton';
 import UserProvider from '../../provider/user-provider';
 import MapView, { Marker } from 'react-native-maps';
 import ExpenseProvider from '../../provider/expense-provider';
+import CustomStatusBar from '../../components/StatusBar';
 
 // import MapView from 'react-native-maps';
 
@@ -175,16 +176,17 @@ export default class ExpenseList extends Component {
                             <Icon name='arrow-back' />
                         </Button>
                     </Left>
-                    <Body  style={{alignContent:'center',alignItems:'center'}}>
+                    <Body  style={{justifyContent:'center',alignItems:'center'}}>
                         <Title>Expenses</Title>
                     </Body>
-                    <Right>
+                    <Left style={{justifyContent:'flex-end',alignItems:'flex-end'}}>
                         <Button transparent onPress={this.addExpense}>
                             <Icon name='add' />
                         </Button>
-                    </Right>
+                    </Left>
                 </Header>
                 {this.state.isLoading === false && <ScrollView contentContainerStyle={styles.container}>
+                <CustomStatusBar></CustomStatusBar>
 
                     <List style={{ width: width }}
                         dataSource={this.ds.cloneWithRows(this.state.expenseList)}
@@ -219,10 +221,14 @@ export default class ExpenseList extends Component {
 
                 </ScrollView>}
                 {this.state.isLoading === true && <View style={styles.containerLoading}>
+                <CustomStatusBar></CustomStatusBar>
+
                     <ActivityIndicator size="large" color="#009688" />
                 </View>}
                 {this.state.isLoading === false && this.state.expenseList.length === 0 && <View style={styles.containerLoading}>
-                    <Text>Today you have added no expense</Text>
+                    
+                <CustomStatusBar></CustomStatusBar>
+<Text>Today you have added no expense</Text>
                 </View>}
 
             </Container >

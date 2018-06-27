@@ -38,6 +38,8 @@ import UserProvider from '../../provider/user-provider';
 import MapView, { Marker } from 'react-native-maps';
 import MeetingProvider from '../../provider/meeting-provider';
 import moment from 'moment';
+import CustomStatusBar from '../../components/StatusBar';
+
 // import MapView from 'react-native-maps';
 
 var { height, width } = Dimensions.get('screen');
@@ -185,6 +187,8 @@ export default class TodayVisits extends Component {
                 </Header>
                 <ScrollView contentContainerStyle={styles.container}>
                     {/* <View style={styles.innerContainer}> */}
+                    <CustomStatusBar></CustomStatusBar>
+
                     <OrderModal
                         modalVisible={this.state.modalVisible}
                         closeOrderModal={this.closeOrderModal}

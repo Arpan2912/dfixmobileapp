@@ -15,6 +15,8 @@ import {
 import UserProvider from '../../provider/user-provider';
 import commonCss from '../../css/commonCss';
 import Validation from '../../provider/validation';
+import CustomStatusBar from '../../components/StatusBar';
+
 
 export default class Login extends Component {
 
@@ -114,6 +116,7 @@ export default class Login extends Component {
 
         return (
             <View style={styles.container}>
+                <CustomStatusBar></CustomStatusBar>
 
                 <View>
                     <Text style={styles.titleText}>D Fix</Text>

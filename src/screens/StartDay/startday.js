@@ -35,6 +35,7 @@ import UserProvider from '../../provider/user-provider';
 import commonCss from '../../css/commonCss';
 import Custom from '../../components/Custom';
 import Loader from '../../components/Loader';
+import CustomStatusBar from '../../components/StatusBar';
 
 // import my_lzma from 'lzma';
 
@@ -239,17 +240,18 @@ export default class StartDay extends Component {
                     <Body style={{justifyContent:'center',alignItems:'center'}}>
                         <Title>{title}</Title>
                     </Body>
-                    <Right>
+                    <Left>
                     {/* <Button transparent>
                         <Icon name='add' />
                     </Button> */}
-                </Right>
+                </Left>
                 </Header>
                 <Loader
                     loading={this.state.loading} />
 
                 <View style={styles.container}>
                     {/* <View style={styles.innerContainer}> */}
+                    <CustomStatusBar></CustomStatusBar>
 
                     <CameraModal
                         modalVisible={this.state.modalVisible}

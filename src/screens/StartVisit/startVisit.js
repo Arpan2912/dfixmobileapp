@@ -35,6 +35,7 @@ import UserProvider from '../../provider/user-provider';
 import MapView, { Marker } from 'react-native-maps';
 import MeetingProvider from '../../provider/meeting-provider';
 import Loader from '../../components/Loader';
+import CustomStatusBar from '../../components/StatusBar';
 
 
 // import MapView from 'react-native-maps';
@@ -208,6 +209,8 @@ export default class StartVisit extends Component {
                 </Right> */}
                 </Header>
                 <ScrollView contentContainerStyle={styles.container}>
+                <CustomStatusBar></CustomStatusBar>
+
                     {/* <View style={styles.innerContainer}> */}
                     <Loader
                         loading={this.state.loading} />

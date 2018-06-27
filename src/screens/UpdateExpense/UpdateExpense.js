@@ -33,6 +33,8 @@ import CameraModal from '../../modal/camera-modal';
 import commonCss from '../../css/commonCss';
 import Loader from '../../components/Loader';
 import constants from '../../config/constant';
+import CustomStatusBar from '../../components/StatusBar';
+
 let API_URL = constants.API_URL;
 
 
@@ -276,6 +278,8 @@ export default class UpdateExpense extends Component {
                     </Right> */}
                 </Header>
                 <View style={styles.container}>
+                <CustomStatusBar></CustomStatusBar>
+
                     <CameraModal
                         modalVisible={this.state.modalVisible}
                         closeCameraModal={this.closeCameraModal}

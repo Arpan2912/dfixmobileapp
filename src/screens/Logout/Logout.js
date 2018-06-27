@@ -35,6 +35,7 @@ import UserProvider from '../../provider/user-provider';
 import MapView, { Marker } from 'react-native-maps';
 import ExpenseProvider from '../../provider/expense-provider';
 import Custom from '../../components/Custom';
+import CustomStatusBar from '../../components/StatusBar';
 
 // import MapView from 'react-native-maps';
 

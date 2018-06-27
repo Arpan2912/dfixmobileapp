@@ -34,6 +34,7 @@ import EventSingleton from '../../event/eventSingleton';
 import UserProvider from '../../provider/user-provider';
 import MapView, { Marker } from 'react-native-maps';
 import MeetingProvider from '../../provider/meeting-provider';
+import CustomStatusBar from '../../components/StatusBar';
 
 // import MapView from 'react-native-maps';
 
@@ -163,17 +164,18 @@ export default class OrderList extends Component {
                             <Icon name='arrow-back' />
                         </Button>
                     </Left>
-                    <Body>
+                    <Body style={{justifyContent:'center',alignItems:'center'}}>
                         <Title>Orders</Title>
                     </Body>
-                    <Right>
+                    <Left style={{justifyContent:'flex-end',alignItems:'flex-end'}}>
                         <Button transparent onPress={this.addOrder}>
                             <Icon name='add' />
                         </Button>
-                    </Right>
+                    </Left>
                 </Header>
                 <ScrollView contentContainerStyle={styles.container}>
-                   
+                <CustomStatusBar></CustomStatusBar>
+
                     <List style={{ width: width }}
                         dataSource={this.ds.cloneWithRows(this.state.orderList)}
                         renderRow={data =>
