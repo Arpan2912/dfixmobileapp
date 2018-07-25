@@ -14,7 +14,9 @@ import {
     Dimensions,
     ActivityIndicator,
     Alert,
-    Image
+    Image,
+    PermissionsAndroid,
+    BackHandler
 } from 'react-native';
 import {
     Button,
@@ -28,7 +30,7 @@ import {
     Container,
     Header,
     Content,
-    Icon
+    Icon,
 } from 'native-base';
 
 import UserProvider from '../../provider/user-provider';
@@ -60,17 +62,42 @@ export default class Home extends Component {
     }
 
     constructor() {
-        super();
+        super()
         UserProvider.getUserIdFromLocalStorage()
             .then(data => {
                 userId = data;
                 ToastAndroid.show(userId, 5000);
                 if (userId == null) {
-                    this.props.navigation.replace('Login');
+                    // this.props.navigation.replace('Login');
                 }
             })
     }
     componentWillMount() {
+        PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
+        .then(isPermission => {
+            // console.log("check permission",isPermission);
+            ToastAndroid.show("ispermission"+isPermission,1000);
+            if (isPermission) {
+
+            } else {
+                return PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
+            }
+        })
+        .then(isGranted=>{
+            // console.log("isgranted",isGranted);
+            ToastAndroid.show("isGranted"+isGranted,1000);
+            
+            if (isGranted === PermissionsAndroid.RESULTS.GRANTED) {
+                // console.log("You can use the app")
+              } else {
+                // console.log("location permission denied")
+                BackHandler.exitApp();
+              }
+        })
+        .catch(e=>{
+            console.log("e",e);
+        })
+
         UserProvider.getUserIdFromLocalStorage()
             .then(userId => {
                 if (userId) {
@@ -101,7 +128,7 @@ export default class Home extends Component {
 
     componentWillUnmount() {
         // ToastAndroid.show("COmponent unmount called", 1000);
-        AppState.removeEventListener('change', this._handleAppStateChange);
+        AppState.removeEventListener('change', this._handleAppStateChange);  
         // ToastAndroid.show("eventObj" + eventObj, 1000);
         // eventObj.removeEventListener('stopVisit');
         // eventObj.removeEventListener('startvisit');
@@ -109,6 +136,10 @@ export default class Home extends Component {
 
     _handleAppStateChange = (nextAppState) => {
         if (nextAppState === 'active') {
+            ToastAndroid.show("active",1000);
+            // console.log("handle app state change");
+            // PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
+            
             UserProvider.getUserIdFromLocalStorage()
                 .then(userId => {
                     if (userId) {
@@ -470,7 +501,7 @@ export default class Home extends Component {
                 </Right> */}
                 </Header>
                 <View style={styles.container}>
-                   <CustomStatusBar></CustomStatusBar>
+                    <CustomStatusBar></CustomStatusBar>
                     {this.state.isLoading === false && <View style={styles.container}>
                         <Image resizeMethod="resize" resizeMode="stretch" style={{ height: 70, width: width / 1.5, padding: 50, margin: 20 }}
                             source={require('../../images/dfix-Copy.png')}
