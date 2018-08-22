@@ -29,7 +29,7 @@ public class NewToast extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void show(String message, int duration) {
-   Toast.makeText(getReactApplicationContext(), "Background service started", Toast.LENGTH_SHORT).show();
+  //  Toast.makeText(getReactApplicationContext(), "Background service started", Toast.LENGTH_SHORT).show();
    
     Intent i = new Intent(getReactApplicationContext(), MyService.class);
 //    i.putExtra("foo", "bar");
@@ -39,7 +39,7 @@ public class NewToast extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void stopService() {
-        Toast.makeText(getReactApplicationContext(), "Background service stoped", Toast.LENGTH_SHORT).show();
+        // Toast.makeText(getReactApplicationContext(), "Background service stoped", Toast.LENGTH_SHORT).show();
 
         Intent i = new Intent(getReactApplicationContext(), MyService.class);
 //    i.putExtra("foo", "bar");

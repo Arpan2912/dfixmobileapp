@@ -8,7 +8,7 @@ import com.dfixmobileapp.service.RecService;
 import com.facebook.react.HeadlessJsTaskService;
 public final class RecReceiver extends BroadcastReceiver {
     public final void onReceive(Context context, Intent intent) {
-        Toast.makeText(context,"background",Toast.LENGTH_LONG).show();
+        // Toast.makeText(context,"background",Toast.LENGTH_LONG).show();
         Intent recIntent = new Intent(context, RecService.class);
         context.startService(recIntent);
         HeadlessJsTaskService.acquireWakeLockNow(context);

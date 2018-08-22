@@ -58,7 +58,7 @@ export default class Login extends Component {
     }
 
     componentWillMount() {
-        ToastAndroid.show("hello", 5000);
+        // ToastAndroid.show("hello", 5000);
         // UserProvider.getUserIdFromLocalStorage()
         //     .then(data => {
         //         userId = data;

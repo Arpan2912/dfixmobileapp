@@ -149,7 +149,7 @@ export default class StartVisit extends Component {
                         this.setState({ loading: false })
                         
                         if (data.success === true) {
-                            ToastAndroid.show("meeting started",1000);
+                            // ToastAndroid.show("meeting started",1000);
                             let status = {
                                 startVisitId: data.data._id,
                                 orgName : this.state.orgName,

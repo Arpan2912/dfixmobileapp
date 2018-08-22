@@ -99,7 +99,7 @@ export default class UpdateExpense extends Component {
         let expenseDetail = this.props.navigation.state.params.expenseDetail;
         this.expenseData = expenseDetail;
         if (expenseDetail) {
-            ToastAndroid.show("Inside expense", 1000);
+            // ToastAndroid.show("Inside expense", 1000);
             this.setState({
                 description: expenseDetail.description,
                 descriptionError: false,
@@ -235,7 +235,7 @@ export default class UpdateExpense extends Component {
                     { cancelable: true }
                 )
                 this.setState({ loading: false });
-                ToastAndroid.show(e.toString(), 5000);
+                // ToastAndroid.show(e.toString(), 5000);
                 this.props.navigation.pop();
             })
     }
@@ -335,7 +335,7 @@ export default class UpdateExpense extends Component {
                         <Image
                             style={styles.ImageView}
                             // source={{ uri: '/storage/emulated/0/DCIM/Camera/1518296786611.jpg' }}
-                            source={{ uri: API_URL + this.state.imgUrl }}
+                            source={{ uri: this.state.imgUrl }}
                         />
                     }
 

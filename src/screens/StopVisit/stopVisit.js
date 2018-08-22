@@ -159,7 +159,7 @@ export default class StopVisit extends Component {
             userName: userName
         }
 
-        ToastAndroid.show(JSON.stringify(stopVisitObj), 1000);
+        // ToastAndroid.show(JSON.stringify(stopVisitObj), 1000);
         console.log("stop visit obj", JSON.stringify(stopVisitObj));
         this.setState({ loading: true });
         MeetingProvider.stopVisit(stopVisitObj)

@@ -50,7 +50,7 @@ export default class CameraModal extends Component {
     }
     takePicture = () => {
         let image = '';
-        this.camera.capture(true)
+        this.camera.capture(false)
             .then(data => {
                 image = data.base64;
                 // this.setState((prevState, props) => {

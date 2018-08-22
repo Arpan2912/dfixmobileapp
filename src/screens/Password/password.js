@@ -46,7 +46,7 @@ export default class Password extends Component {
                         UserProvider.setUserTokenToLocalStorage(data.data.token),
                     ]).then(result => {
                             userId = data.data.userId;
-                            ToastAndroid.show(data.data.userId, 5000);
+                            // ToastAndroid.show(data.data.userId, 5000);
                             this.props.navigation.replace('Home');
                             // return Promise.all([
                             //     StartDayProvider.getStartDayDetails(data.data.userId),

@@ -16,7 +16,7 @@ const Rec = async (data) => {
                 // let data = data;
                 data = JSON.parse(data);
                 if (data) {
-                    ToastAndroid.show(JSON.stringify(data),2000);
+                    // ToastAndroid.show(JSON.stringify(data),2000);
                     id = data.id;
                     location = data.location;
                 }
@@ -50,7 +50,7 @@ const Rec = async (data) => {
 
                 })
             }).catch(e=>{
-                ToastAndroid.show(e.toString(),5000);
+                // ToastAndroid.show(e.toString(),5000);
             })
     }, 15000);
     // ToastAndroid.show('It works', 5000);

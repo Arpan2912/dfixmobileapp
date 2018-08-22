@@ -66,37 +66,24 @@ export default class Home extends Component {
         UserProvider.getUserIdFromLocalStorage()
             .then(data => {
                 userId = data;
-                ToastAndroid.show(userId, 5000);
+                // ToastAndroid.show(userId, 5000);
                 if (userId == null) {
-                    // this.props.navigation.replace('Login');
+                    this.props.navigation.replace('Login');
                 }
             })
     }
     componentWillMount() {
-        PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
-        .then(isPermission => {
-            // console.log("check permission",isPermission);
-            ToastAndroid.show("ispermission"+isPermission,1000);
-            if (isPermission) {
-
-            } else {
-                return PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
-            }
-        })
-        .then(isGranted=>{
-            // console.log("isgranted",isGranted);
-            ToastAndroid.show("isGranted"+isGranted,1000);
-            
-            if (isGranted === PermissionsAndroid.RESULTS.GRANTED) {
-                // console.log("You can use the app")
-              } else {
-                // console.log("location permission denied")
+        
+        this.requestLocationPermission()
+            .then(data => {
+                return this.requestCameraPermission();
+            })
+            .then(data => {
+                return this.requestStoragePermission();
+            })
+            .catch(e => {
                 BackHandler.exitApp();
-              }
-        })
-        .catch(e=>{
-            console.log("e",e);
-        })
+            })
 
         UserProvider.getUserIdFromLocalStorage()
             .then(userId => {
@@ -126,9 +113,89 @@ export default class Home extends Component {
 
     }
 
+    requestLocationPermission() {
+        return PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
+            .then(isPermission => {
+                if (isPermission) {
+                    return Promise.resolve(true);
+                } else {
+                    return PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
+                }
+            })
+            .then(isGranted => {
+
+                if (isGranted === PermissionsAndroid.RESULTS.GRANTED || isGranted === true) {
+                    // console.log("You can use the app")
+                    return Promise.resolve(isGranted);
+                } else {
+                    // console.log("location permission denied")
+                    return Promise.reject(isGranted);
+                    // BackHandler.exitApp();
+                }
+            })
+        // .catch(e => {
+        //     console.log("e", e);
+        // })
+    }
+
+    requestCameraPermission() {
+        return PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CAMERA)
+            .then(isPermission => {
+
+                if (isPermission) {
+                    return Promise.resolve(true);
+                } else {
+                    return PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA)
+                }
+            })
+            .then(isGranted => {
+
+                if (isGranted === PermissionsAndroid.RESULTS.GRANTED || isGranted === true) {
+                    // console.log("You can use the app")
+                    return Promise.resolve(isGranted);
+                } else {
+                    // console.log("location permission denied")
+                    return Promise.reject();
+                    // BackHandler.exitApp();
+                }
+            })
+        // .catch(e => {
+        //     console.log("e", e);
+        // })
+    }
+
+    requestStoragePermission() {
+        return PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE)
+            .then(isPermission => {
+                // console.log("check permission",isPermission);
+                // ToastAndroid.show("ispermission" + isPermission, 1000);
+                if (isPermission) {
+                    return Promise.resolve(true);
+                } else {
+                    return PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE)
+                }
+            })
+            .then(isGranted => {
+                // console.log("isgranted",isGranted);
+                // ToastAndroid.show("isGranted" + isGranted, 1000);
+
+                if (isGranted === PermissionsAndroid.RESULTS.GRANTED || isGranted === true) {
+                    // console.log("You can use the app")
+                    return Promise.resolve(isGranted);
+                } else {
+                    // console.log("location permission denied")
+                    return Promise.reject();
+                    // BackHandler.exitApp();
+                }
+            })
+            // .catch(e => {
+            //     console.log("e", e);
+            // })
+    }
+
     componentWillUnmount() {
         // ToastAndroid.show("COmponent unmount called", 1000);
-        AppState.removeEventListener('change', this._handleAppStateChange);  
+        AppState.removeEventListener('change', this._handleAppStateChange);
         // ToastAndroid.show("eventObj" + eventObj, 1000);
         // eventObj.removeEventListener('stopVisit');
         // eventObj.removeEventListener('startvisit');
@@ -136,16 +203,16 @@ export default class Home extends Component {
 
     _handleAppStateChange = (nextAppState) => {
         if (nextAppState === 'active') {
-            ToastAndroid.show("active",1000);
+            // ToastAndroid.show("active", 1000);
             // console.log("handle app state change");
             // PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION)
-            
+
             UserProvider.getUserIdFromLocalStorage()
                 .then(userId => {
                     if (userId) {
                         this.setState({ isLoading: true });
                         this.resetStatus().then(data => {
-                            ToastAndroid.show("reset status promise resolved", 5000);
+                            // ToastAndroid.show("reset status promise resolved", 5000);
                             this.setLocalVaribles();
                             this.setState({ isLoading: false });
                         }).catch(e => {
@@ -163,13 +230,13 @@ export default class Home extends Component {
 
 
     componentDidMount() {
-        ToastAndroid.show("Inside Did Mount", 5000);
+        // ToastAndroid.show("Inside Did Mount", 5000);
         this.setState({ isLoading: true });
         UserProvider.getUserIdFromLocalStorage()
             .then(data => {
                 userId = data;
                 if (userId) {
-                    ToastAndroid.show("UserId Check Pass", 5000);
+                    // ToastAndroid.show("UserId Check Pass", 5000);
                     this.resetStatus()
                         .then(data => {
                             // ToastAndroid.show("reset status promise resolved", 5000);
@@ -350,8 +417,8 @@ export default class Home extends Component {
                         ],
                         { cancelable: true }
                     )
-                    this.resetStatus();
-                    resolve(true);
+                    // this.resetStatus();
+                    reject(true);
                 })
         })
     }
@@ -367,7 +434,7 @@ export default class Home extends Component {
                 .then(data => {
                     if (data) {
                         let storedDate = new Date(data);
-                        ToastAndroid.show("stored date" + data, 5000);
+                        // ToastAndroid.show("stored date" + data, 5000);
                         if (storedDate < date) {
                             let startDatStatus = {
                                 startDayId: null,
@@ -381,8 +448,9 @@ export default class Home extends Component {
                             return resolve(true);
                         } else {
                             // do nothing
-                            this.setTodayStatus().then(data => resolve(true));
-
+                            this.setTodayStatus()
+                                .then(data => resolve(true))
+                                .catch(e => reject(true));
                         }
                     } else {
                         let startDatStatus = {
@@ -402,7 +470,7 @@ export default class Home extends Component {
                         'Error',
                         'Error in reset status' + e.toString()
                     )
-                    return resolve(true);
+                    return reject(true);
                     // UserProvider.setTodayDateToLocalStorage(dateString);
                     // UserProvider.setStartDayStatus(JSON.stringify(startDatStatus));
                     // UserProvider.resetVisitStatus();
@@ -417,7 +485,7 @@ export default class Home extends Component {
             .then(status => {
                 try {
                     Custom.stopService();
-                    ToastAndroid.show("set local", 1000);
+                    // ToastAndroid.show("set local", 1000);
                     let startDayStatus = JSON.parse(status[0]);
                     if (!!startDayStatus && (startDayStatus.status == 'true' || startDayStatus.status == true)) {
                         Custom.show("Start Service", 1000);
@@ -458,7 +526,7 @@ export default class Home extends Component {
     gotoStartDayPage(dayTitle) {
         UserProvider.getStartDayStatus().then(data => {
             startDayDetails = JSON.parse(data);
-            ToastAndroid.show(data, 1000);
+            // ToastAndroid.show(data, 1000);
             if (startDayDetails && startDayDetails.status === 'false' && startDayDetails.startDayId !== null) {
                 Alert.alert(
                     'Warning',

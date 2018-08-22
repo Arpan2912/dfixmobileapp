@@ -78,7 +78,7 @@ export default class UpdateOrder extends Component {
     componentWillMount() {
         eventObj = EventSingleton.geteventEmitterObj();
         meetingId = this.props.navigation.state.params.meetingId;
-        ToastAndroid.show(JSON.stringify(this.props.navigation.state.params), 1000);
+        // ToastAndroid.show(JSON.stringify(this.props.navigation.state.params), 1000);
         orgName = this.props.navigation.state.params.orgName;
         // ToastAndroid.show("orgName"+orgName,1000);
         UserProvider.getUserIdFromLocalStorage()

@@ -181,8 +181,8 @@ export default class StartDay extends Component {
                 console.log("id", id);
                 // this.setState({ loading: true });
                 data[1] = JSON.parse(data[1]);
-                ToastAndroid.show("stop day" + data[0].toString(), 1000);
-                ToastAndroid.show("Stop DAy" + data[1].toString(), 1000);
+                // ToastAndroid.show("stop day" + data[0].toString(), 1000);
+                // ToastAndroid.show("Stop DAy" + data[1].toString(), 1000);
                 StartDayProvider.stopDay(this.state.km, this.state.base64, this.state.userId, id)
                     .then(res => {
                         this.setState({ loading: false });
