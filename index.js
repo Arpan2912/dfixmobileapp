@@ -1,6 +1,6 @@
 import { AppRegistry, ToastAndroid } from 'react-native';
 import App from './App';
-import { routes } from './src/routes/index';
+import { stack } from './src/routes/index';
 import UserProvider from './src/provider/user-provider';
 import LocationProvider from './src/provider/location-provider';
 
@@ -59,6 +59,6 @@ const Rec = async (data) => {
 
 AppRegistry.registerHeadlessTask('Rec', () => Rec);
 
-AppRegistry.registerComponent('dfixmobileapp', () => routes);
+AppRegistry.registerComponent('dfixmobileapp', () => stack);
 
 // AppRegistry.startHeadlessTask(1, 'Rec', null);

@@ -106,10 +106,10 @@ export default class TodayVisits extends Component {
                 // console.log("data", data);
                 this.setState({ visitList: data.data });
             })
-            .catch(e=>{
+            .catch(e => {
                 console.log("e", e);
-                if(!e.hasOwnProperty('message')){
-                    e.message ="Something went wrong";
+                if (!e.hasOwnProperty('message')) {
+                    e.message = "Something went wrong";
                 }
                 Alert.alert(
                     'Today Visits',
@@ -198,7 +198,8 @@ export default class TodayVisits extends Component {
                         editItemData={this.state.editItemData}
                     />
 
-                    {this.state.visitList.length > 0 && <List style={{ width: width, height: height }}
+                    {this.state.visitList.length > 0 && 
+                    <List style={{ width: width }}
                         dataSource={this.ds.cloneWithRows(this.state.visitList)}
                         renderRow={data =>
                             <ListItem style={{ paddingTop: 10, paddingBottom: 10 }}>
@@ -206,7 +207,7 @@ export default class TodayVisits extends Component {
                                     {/* <Body style={{width:width/100 * 10}}> */}
                                     <Text>{moment(data.todayMeeting.start_time).format("HH:mm").toString()}</Text>
                                     <Text>To</Text>
-                                    {data.todayMeeting.end_time ? <Text>{moment(data.todayMeeting.end_time).format("HH:mm").toString()}</Text>:<Text>running</Text>}
+                                    {data.todayMeeting.end_time ? <Text>{moment(data.todayMeeting.end_time).format("HH:mm").toString()}</Text> : <Text>running</Text>}
                                     {/* </Body> */}
                                 </Right>
                                 <Body style={{ paddingLeft: 15 }}>
@@ -241,11 +242,11 @@ export default class TodayVisits extends Component {
 
                     {/* </View> */}
 
-
+                    {loading === false && this.state.visitList.length === 0 && <View style={{  justifyContent: 'center', alignItems: 'center' }}>
+                        <Text>You have not started any visit</Text>
+                    </View>}
                 </ScrollView>
-                {loading === false && this.state.visitList.length === 0 && <View style={{ height: height, justifyContent: 'center', alignItems: 'center' }}>
-                    <Text>You have not started any visit</Text>
-                </View>}
+
                 {/* <Footer style={styles.FooterDesign} >
                     <TouchableOpacity onPress={() => this.stopVisit()}
                         style={styles.FooterButton}>

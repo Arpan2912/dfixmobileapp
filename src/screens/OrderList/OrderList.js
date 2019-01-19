@@ -116,7 +116,7 @@ export default class OrderList extends Component {
     });
 
     addOrder = (obj) => {
-        this.props.navigation.push('UpdateOrder', { title: "add", orderDetail: null, meetingId: meetingId,orgName:orgName });
+        this.props.navigation.push('UpdateOrder', { title: "add", orderDetail: null, meetingId: meetingId, orgName: orgName });
     }
 
     editOrder = (data, secId, rowId, rowMap) => {
@@ -148,14 +148,18 @@ export default class OrderList extends Component {
         if (updatedOrder) {
             index = this.state.orderList.findIndex(x => x._id === updatedOrder._id);
             let obj = this.state.orderList;
-            obj[index] = updatedOrder;
+            if (index >= 0) {
+                obj[index] = updatedOrder;                
+            } else {
+                obj.push(updatedOrder);
+            }
             this.setState({ orderList: obj });
         } else {
             console.log("nothing to update");
         }
     }
     render() {
-        
+
         return (
             <Container>
                 <Header style={styles.Header}>
@@ -164,17 +168,17 @@ export default class OrderList extends Component {
                             <Icon name='arrow-back' />
                         </Button>
                     </Left>
-                    <Body style={{justifyContent:'center',alignItems:'center'}}>
+                    <Body style={{ justifyContent: 'center', alignItems: 'center' }}>
                         <Title>Orders</Title>
                     </Body>
-                    <Left style={{justifyContent:'flex-end',alignItems:'flex-end'}}>
+                    <Left style={{ justifyContent: 'flex-end', alignItems: 'flex-end' }}>
                         <Button transparent onPress={this.addOrder}>
                             <Icon name='add' />
                         </Button>
                     </Left>
                 </Header>
                 <ScrollView contentContainerStyle={styles.container}>
-                <CustomStatusBar></CustomStatusBar>
+                    <CustomStatusBar></CustomStatusBar>
 
                     <List style={{ width: width }}
                         dataSource={this.ds.cloneWithRows(this.state.orderList)}
@@ -228,7 +232,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#009688",
         padding: 10,
         marginTop: 10,
-        width: 100,  
+        width: 100,
         justifyContent: 'center',
         alignItems: 'center'
     },

@@ -37,7 +37,8 @@ import Custom from '../../components/Custom';
 import Loader from '../../components/Loader';
 import Pdf from 'react-native-pdf';
 import CustomStatusBar from '../../components/StatusBar';
-
+import constants  from '../../config/constant'; 
+let API_URL = constants.API_URL;
 // import my_lzma from 'lzma';
 
 var { height, width } = Dimensions.get('screen');
@@ -74,11 +75,11 @@ export default class PdfView extends Component {
         let pdf = this.props.navigation.state.params.pdf;
         let url;
         if(pdf === 'flooring'){
-            url = 'http://54.175.172.207:3333/flooring.pdf';
+            url = `${API_URL}flooring.pdf`;
         } else if(pdf === 'enterprice'){
-            url = 'http://54.175.172.207:3333/enterprice.pdf';
+            url = `${API_URL}enterprice.pdf`;
         } else {
-            url = 'http://54.175.172.207:3333/profile.pdf';
+            url = `${API_URL}profile.pdf`;
         }
         const source = {uri:url,cache:true};
         return (
